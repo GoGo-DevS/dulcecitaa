@@ -50,20 +50,24 @@ body {
 }
 /* Logo en una línea: corazón + dulcecitaa */
 .dr-brand { display: inline-flex; align-items: center; gap: .55rem; }
+.dr-brand { max-width: 72%; overflow: hidden; }
 .dr-heart {
   color: var(--dr-pink);
-  font-size: 1.9rem;
+  font-size: clamp(1.3rem, 5.5vw, 1.9rem);
   line-height: 1;
+  flex: 0 0 auto;
   filter: drop-shadow(0 3px 6px rgba(215, 124, 158, .25));
 }
 .dr-nav .brand-word {
   font-family: 'Wisdom Merry', 'Dancing Script', cursive;
   color: var(--dr-wine) !important;
-  font-size: 2.5rem;
-  line-height: 1;
+  /* escala con el ancho para no sobrepasar en móvil */
+  font-size: clamp(1.7rem, 8vw, 2.5rem);
+  line-height: 1.25;
   letter-spacing: .01em;
   text-transform: lowercase;
-  padding-top: .1rem;
+  white-space: nowrap;
+  padding: .12rem 0;
 }
 .dr-nav .nav-link {
   color: var(--dr-wine) !important;
@@ -106,9 +110,6 @@ body {
   font-family: 'Manrope', sans-serif; font-size: .68rem; font-weight: 700;
   min-width: 18px; height: 18px; padding: 0 5px;
   border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
-}
-@media (max-width: 992px) {
-  .dr-nav-actions { justify-content: space-between; }
 }
 
 /* ---------- Hero carrusel ---------- */
@@ -215,7 +216,19 @@ body {
 
 @media (max-width: 992px) {
   .dr-hero .carousel-item { height: 52vh; min-height: 300px; }
-  .dr-hero-card { left: 4%; right: 4%; max-width: none; bottom: 6%; }
-  .dr-hero-title { font-size: 1.4rem; }
-  .dr-products-title { font-size: 1.2rem; letter-spacing: .18em; }
+  .dr-hero-card { left: 4%; right: 4%; max-width: none; bottom: 6%; padding: 1.1rem 1.2rem; }
+  .dr-hero-title { font-size: 1.35rem; }
+  .dr-products { padding-top: 2.2rem; }
+  .dr-products-title { font-size: 1.15rem; letter-spacing: .16em; }
+  .dr-products-sub { font-size: .88rem; margin-bottom: 1.4rem; }
+  /* barra superior más compacta */
+  .dr-topbar { font-size: .6rem; letter-spacing: .08em; padding: 6px 10px; line-height: 1.3; }
+  /* grilla a 2 columnas en móvil */
+  .dr-grid { grid-template-columns: repeat(2, 1fr); gap: 5px; }
+  .dr-tile-overlay { opacity: 1; padding: .55rem; background: linear-gradient(to top, rgba(74,58,64,.78), rgba(74,58,64,0) 60%); }
+  .dr-tile-name { font-size: .82rem; }
+  .dr-tile-price { font-size: .8rem; }
+  /* acciones (CTA + carrito) cómodas en el menú colapsado */
+  .dr-nav-actions { justify-content: space-between; padding-top: .4rem; }
+  .dr-corp { padding: 2.2rem 0; }
 }
