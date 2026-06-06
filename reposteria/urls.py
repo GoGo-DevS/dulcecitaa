@@ -1,7 +1,7 @@
 from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import include, path, re_path
+from django.views.static import serve as media_serve
 
 from BebesitaAPP import views
 
@@ -29,5 +29,8 @@ urlpatterns = [
     path('checkout/exito/<int:pedido_id>/', views.checkout_exito, name='checkout_exito'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Servir imágenes de /media/ también en producción (Render).
+# Las fotos de productos van versionadas en el repo, así que es seguro servirlas.
+urlpatterns += [
+    re_path(r"^media/(?P<path>.*)$", media_serve, {"document_root": settings.MEDIA_ROOT}),
+]
