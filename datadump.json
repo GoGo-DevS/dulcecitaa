@@ -1,0 +1,1019 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$8cj0GALtjjKiVdN0rIyJa8$EViNOQ/i+9VS+6EQBqngDcURIy71L323PM4LzU7oDUM=",
+    "last_login": "2026-03-13T20:00:28.465Z",
+    "is_superuser": true,
+    "username": "Bebesito",
+    "first_name": "",
+    "last_name": "",
+    "email": "bebesito@gmail.com",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2025-08-13T03:11:46.634Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$NziMo5V7kmfqL5WTWqV3zJ$nwE5NlnyTgImRTN1j/AVWUxAoa6eKSKLgWHXvkg5k9o=",
+    "last_login": null,
+    "is_superuser": false,
+    "username": "UsuarioPrueba",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2025-08-13T04:08:50.058Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$1000000$tcCwoDRi0JbwqyOdj2h7c8$KKSBdi9gUcsWSVQZZA6FFja2zdQ7Puimee5GXxbBhb0=",
+    "last_login": "2026-06-06T14:50:19.992Z",
+    "is_superuser": true,
+    "username": "Bebesita",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2026-06-06T07:57:21.651Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "BebesitaAPP.categoriaproducto",
+  "pk": 1,
+  "fields": {
+    "nombre": "Dulce",
+    "slug": "dulce",
+    "orden": 0,
+    "activa": true
+  }
+},
+{
+  "model": "BebesitaAPP.categoriaproducto",
+  "pk": 2,
+  "fields": {
+    "nombre": "Salado",
+    "slug": "salado",
+    "orden": 0,
+    "activa": true
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 1,
+  "fields": {
+    "nombre": "Alfajor Negro Premium",
+    "descripcion": "Un alfajor de triple capa que combina galletas suaves, relleno cremoso de manjar y cobertura de chocolate negro. Una mezcla equilibrada de dulzura y amargor, pensada para paladares exigentes.",
+    "precio": 2000,
+    "categoria": null,
+    "destacado": true,
+    "visible": true,
+    "disponible": true,
+    "stock": 0,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_jun_2026_01_05_54_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 2,
+  "fields": {
+    "nombre": "Barquillos Rellenos Premium",
+    "descripcion": "Barquillos crujientes rellenos de cremoso manjar y bañados en chocolate en sus extremos. Una combinación equilibrada de texturas y sabores, perfecta para acompañar un café o disfrutar en cualquier momento.",
+    "precio": 1500,
+    "categoria": null,
+    "destacado": true,
+    "visible": true,
+    "disponible": true,
+    "stock": 0,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_jun_2026_01_07_31_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 3,
+  "fields": {
+    "nombre": "Caja Navideña",
+    "descripcion": "Caja de Regalo Navideña que incluye espumante Valdivieso Limited Brut, barquillos premium de manjar con chocolate, mix de frutos secos y un clásico bastón de caramelo. Una selección elegante y festiva, perfecta para regalar o disfrutar en estas fiestas. 🎄🥂",
+    "precio": 9000,
+    "categoria": null,
+    "destacado": true,
+    "visible": true,
+    "disponible": true,
+    "stock": 0,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_jun_2026_01_13_45_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 4,
+  "fields": {
+    "nombre": "Galletas Glaseadas Premium",
+    "descripcion": "Galletas glaseadas crujientes, decoradas a mano con glaseado real brillante. Más que un postre: una experiencia visual y deliciosa, perfectas para celebraciones o para darse un gusto especial.",
+    "precio": 1500,
+    "categoria": null,
+    "destacado": true,
+    "visible": true,
+    "disponible": true,
+    "stock": 0,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_jun_2026_01_13_13_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 5,
+  "fields": {
+    "nombre": "Cuchuflis bañados en chocolate premium",
+    "descripcion": "Crujientes cuchuflís artesanales bañados en delicioso chocolate y rellenos con suave y cremoso manjar. Una combinación perfecta entre lo crocante y lo dulce que se derrite en cada bocado. Ideales para compartir, regalar o simplemente darte un gusto irresistible.",
+    "precio": 5000,
+    "categoria": 1,
+    "destacado": false,
+    "visible": true,
+    "disponible": true,
+    "stock": 1000,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_mar_2026_12_04_13_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 6,
+  "fields": {
+    "nombre": "Brownie chocolate",
+    "descripcion": "Delicioso brownie de chocolate con una textura húmeda y suave por dentro, y una ligera capa crujiente por fuera. Preparado con cacao de alta calidad para lograr un sabor intenso y profundo que se derrite en cada bocado. Perfecto para los amantes del chocolate y para acompañar con café, helado o simplemente disfrutar solo.",
+    "precio": 5000,
+    "categoria": 1,
+    "destacado": false,
+    "visible": true,
+    "disponible": true,
+    "stock": 1000,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_mar_2026_12_11_13_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 7,
+  "fields": {
+    "nombre": "Pie de Limón",
+    "descripcion": "Exquisito pie de limón con una base crujiente de galleta, relleno con una suave y cremosa mezcla de limón que logra el equilibrio perfecto entre dulzor y acidez. Coronado con un delicado merengue ligeramente dorado que aporta una textura ligera y esponjosa. Un postre fresco, clásico e irresistible, ideal para terminar cualquier comida con un toque dulce y refrescante.",
+    "precio": 7500,
+    "categoria": 1,
+    "destacado": false,
+    "visible": true,
+    "disponible": true,
+    "stock": 100,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_mar_2026_12_13_29_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 8,
+  "fields": {
+    "nombre": "Tiramisú",
+    "descripcion": "Postre italiano clásico elaborado en capas de suaves bizcochos de soletilla ligeramente humedecidos en café, combinados con una crema delicada y aireada de queso mascarpone, huevos y azúcar. Cada capa se equilibra con un toque de cacao amargo espolvoreado en la superficie, creando un contraste perfecto entre lo dulce, lo cremoso y el intenso sabor del café.\r\n\r\nEl tiramisú se caracteriza por su textura suave y sedosa, con un sabor elegante y equilibrado que lo convierte en uno de los postres más famosos de la repostería italiana. ☕🍫",
+    "precio": 8000,
+    "categoria": 1,
+    "destacado": false,
+    "visible": true,
+    "disponible": true,
+    "stock": 0,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_9_mar_2026_07_43_30_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 9,
+  "fields": {
+    "nombre": "Kuchen de Manzana",
+    "descripcion": "Delicioso kuchen de manzana con una base suave y dorada, cubierto con generosas láminas de manzana fresca horneadas lentamente para resaltar su dulzor natural. Su textura esponjosa y su delicado toque de canela crean una combinación cálida y reconfortante en cada bocado. Un clásico de la repostería casera, perfecto para acompañar con café o disfrutar en cualquier momento del día.",
+    "precio": 7900,
+    "categoria": 1,
+    "destacado": false,
+    "visible": true,
+    "disponible": true,
+    "stock": 0,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_13_mar_2026_04_59_49_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 10,
+  "fields": {
+    "nombre": "Caja dia del Padre",
+    "descripcion": "Sorprende a papá con una deliciosa selección de alfajores artesanales elaborados con ingredientes de primera calidad.\r\n\r\nIncluye:\r\n• 2 alfajores bañados en chocolate negro\r\n• 2 alfajores bañados en chocolate blanco\r\n\r\nPresentación especial para regalo en caja decorada para el Día del Padre.\r\n\r\nIdeal para regalos corporativos, familiares y celebraciones especiales.",
+    "precio": 8990,
+    "categoria": 1,
+    "destacado": false,
+    "visible": true,
+    "disponible": true,
+    "stock": 20,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_jun_2026_04_01_08_a.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 12,
+  "fields": {
+    "nombre": "Alfajor Blanco Premium",
+    "descripcion": "Un alfajor de triple capa que combina galletas suaves, relleno cremoso de manjar y cobertura de chocolate negro. Una mezcla equilibrada de dulzura y amargor, pensada para paladares exigentes.",
+    "precio": 2000,
+    "categoria": null,
+    "destacado": false,
+    "visible": true,
+    "disponible": true,
+    "stock": 0,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_jun_2026_10_51_47_a.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.producto",
+  "pk": 13,
+  "fields": {
+    "nombre": "Caja Dia de la Madre",
+    "descripcion": "Sorprende a mamá con una selección de exquisitas delicias artesanales cuidadosamente preparadas para celebrar su día. Esta elegante caja incluye:\r\n✨ 6 cuchuflís rellenos con manjar\r\n✨ 3 alfajores rellenos con abundante manjar\r\n✨ 3 barquillos rellenos con manjar y sellados con chocolate en sus puntas\r\nUna combinación perfecta de sabores tradicionales, texturas crujientes y el inconfundible dulzor del manjar, ideal para regalar un momento especial y lleno de cariño. Presentada con dedicación para convertir cada bocado en una experiencia inolvidable.\r\nPorque mamá merece un regalo tan dulce como ella. 💕🍫🌸",
+    "precio": 8990,
+    "categoria": 1,
+    "destacado": false,
+    "visible": true,
+    "disponible": true,
+    "stock": 0,
+    "orden": 0,
+    "imagen": "productos/ChatGPT_Image_6_jun_2026_01_15_01_p.m..png"
+  }
+},
+{
+  "model": "BebesitaAPP.carrito",
+  "pk": 1,
+  "fields": {
+    "usuario": [
+      "Bebesito"
+    ],
+    "creado_en": "2025-08-13T04:13:18.634Z",
+    "actualizado_en": "2025-08-13T04:13:18.634Z"
+  }
+},
+{
+  "model": "BebesitaAPP.carritoitem",
+  "pk": 1,
+  "fields": {
+    "carrito": 1,
+    "producto": 1,
+    "cantidad": 3
+  }
+},
+{
+  "model": "BebesitaAPP.carritoitem",
+  "pk": 2,
+  "fields": {
+    "carrito": 1,
+    "producto": 2,
+    "cantidad": 1
+  }
+},
+{
+  "model": "BebesitaAPP.carritoitem",
+  "pk": 3,
+  "fields": {
+    "carrito": 1,
+    "producto": 3,
+    "cantidad": 1
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 1,
+  "fields": {
+    "nombre_cliente": "Prueba1",
+    "email_cliente": "diegodinamarca.a@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "retiro",
+    "comuna_sector": "",
+    "direccion": "Ionesco 4175",
+    "costo_despacho": "0.00",
+    "creado": "2025-08-22T04:17:45.940Z",
+    "total": "12500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 2,
+  "fields": {
+    "nombre_cliente": "Tamara Ruz",
+    "email_cliente": "tamiruzb@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "retiro",
+    "comuna_sector": "",
+    "direccion": "Islas monserrat, 3883. Maipu.",
+    "costo_despacho": "0.00",
+    "creado": "2025-08-24T00:33:01.484Z",
+    "total": "14500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 3,
+  "fields": {
+    "nombre_cliente": "Francisca Ruz",
+    "email_cliente": "smilefiestas@gmail.com",
+    "telefono": "133",
+    "tipo_entrega": "retiro",
+    "comuna_sector": "",
+    "direccion": "Islas monserrat, 3883, maipu.",
+    "costo_despacho": "0.00",
+    "creado": "2025-08-24T01:13:34.608Z",
+    "total": "11500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 4,
+  "fields": {
+    "nombre_cliente": "Daniela Dinamarca",
+    "email_cliente": "daniela.dinamarca@aza.cl",
+    "telefono": "912349741",
+    "tipo_entrega": "retiro",
+    "comuna_sector": "",
+    "direccion": "Av. del canal 21300, casa 45",
+    "costo_despacho": "0.00",
+    "creado": "2025-08-24T19:33:44.902Z",
+    "total": "3500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 5,
+  "fields": {
+    "nombre_cliente": "Daniela Dinamarca",
+    "email_cliente": "daniela.dinamarca1@aza.cl",
+    "telefono": "956392509",
+    "tipo_entrega": "retiro",
+    "comuna_sector": "",
+    "direccion": "Av. del canal 21300, Pudahuel.",
+    "costo_despacho": "0.00",
+    "creado": "2025-08-24T19:35:54.240Z",
+    "total": "19500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 6,
+  "fields": {
+    "nombre_cliente": "Claudia Ruz",
+    "email_cliente": "tamiruz.b@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "retiro",
+    "comuna_sector": "",
+    "direccion": "Islas monserrat 3883, maipú.",
+    "costo_despacho": "0.00",
+    "creado": "2025-08-24T22:48:28.900Z",
+    "total": "24500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 7,
+  "fields": {
+    "nombre_cliente": "Tamara Ruz",
+    "email_cliente": "tamiruzbece@gmail.com",
+    "telefono": "+56961192192",
+    "tipo_entrega": "retiro",
+    "comuna_sector": "",
+    "direccion": "pasaje islas monserrat 3883",
+    "costo_despacho": "0.00",
+    "creado": "2025-08-25T00:17:19.208Z",
+    "total": "7000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 8,
+  "fields": {
+    "nombre_cliente": "Tamara Ruz",
+    "email_cliente": "tamiruzbece@gmail.com",
+    "telefono": "+56961192192",
+    "tipo_entrega": "retiro",
+    "comuna_sector": "",
+    "direccion": "pasaje islas monserrat 3883",
+    "costo_despacho": "0.00",
+    "creado": "2025-08-25T00:17:20.621Z",
+    "total": "7000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 9,
+  "fields": {
+    "nombre_cliente": "Diego",
+    "email_cliente": "diegodinamarca.a@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "despacho",
+    "comuna_sector": "maipu",
+    "direccion": "Ionesco 4175\r\nCasa",
+    "costo_despacho": "2500.00",
+    "creado": "2026-03-06T15:00:02.442Z",
+    "total": "4500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 10,
+  "fields": {
+    "nombre_cliente": "Diego",
+    "email_cliente": "diegodinamarca.a@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "despacho",
+    "comuna_sector": "maipu",
+    "direccion": "Ionesco 4175\r\nCasa",
+    "costo_despacho": "2500.00",
+    "creado": "2026-03-06T15:01:26.777Z",
+    "total": "4500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 11,
+  "fields": {
+    "nombre_cliente": "Tamara Ruz",
+    "email_cliente": "tamiruzbece@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "despacho",
+    "comuna_sector": "maipu",
+    "direccion": "Ionesco 4175\r\nCasa",
+    "costo_despacho": "2500.00",
+    "creado": "2026-03-06T15:07:47.162Z",
+    "total": "5500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 12,
+  "fields": {
+    "nombre_cliente": "Diego",
+    "email_cliente": "diegodinamarca.a@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "retiro",
+    "comuna_sector": "maipu",
+    "direccion": "Ionesco 4175\r\nCasa",
+    "costo_despacho": "0.00",
+    "creado": "2026-03-06T15:08:57.707Z",
+    "total": "18000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 13,
+  "fields": {
+    "nombre_cliente": "Diego",
+    "email_cliente": "diegodinamarca.a@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "despacho",
+    "comuna_sector": "maipu",
+    "direccion": "Ionesco 4175\r\nCasa",
+    "costo_despacho": "2500.00",
+    "creado": "2026-03-13T20:01:20.351Z",
+    "total": "10400.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 14,
+  "fields": {
+    "nombre_cliente": "Diego Dinamarca",
+    "email_cliente": "diegodinamarca.a@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "despacho",
+    "comuna_sector": "maipu",
+    "direccion": "Ionesco 4175\r\nCasa",
+    "costo_despacho": "2500.00",
+    "creado": "2026-06-06T19:15:58.837Z",
+    "total": "26490.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedido",
+  "pk": 15,
+  "fields": {
+    "nombre_cliente": "Diego Dinamarca",
+    "email_cliente": "diegodinamarca.a@gmail.com",
+    "telefono": "956392509",
+    "tipo_entrega": "despacho",
+    "comuna_sector": "maipu",
+    "direccion": "Ionesco 4175\r\nCasa",
+    "costo_despacho": "2500.00",
+    "creado": "2026-06-06T19:18:54.097Z",
+    "total": "34500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 1,
+  "fields": {
+    "pedido": 1,
+    "producto": 1,
+    "cantidad": 1,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 2,
+  "fields": {
+    "pedido": 1,
+    "producto": 2,
+    "cantidad": 1,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 3,
+  "fields": {
+    "pedido": 1,
+    "producto": 3,
+    "cantidad": 1,
+    "precio": "9000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 4,
+  "fields": {
+    "pedido": 2,
+    "producto": 1,
+    "cantidad": 2,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 5,
+  "fields": {
+    "pedido": 2,
+    "producto": 2,
+    "cantidad": 1,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 6,
+  "fields": {
+    "pedido": 2,
+    "producto": 3,
+    "cantidad": 1,
+    "precio": "9000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 7,
+  "fields": {
+    "pedido": 3,
+    "producto": 1,
+    "cantidad": 5,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 8,
+  "fields": {
+    "pedido": 3,
+    "producto": 4,
+    "cantidad": 1,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 9,
+  "fields": {
+    "pedido": 4,
+    "producto": 1,
+    "cantidad": 1,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 10,
+  "fields": {
+    "pedido": 4,
+    "producto": 2,
+    "cantidad": 1,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 11,
+  "fields": {
+    "pedido": 5,
+    "producto": 1,
+    "cantidad": 3,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 12,
+  "fields": {
+    "pedido": 5,
+    "producto": 4,
+    "cantidad": 2,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 13,
+  "fields": {
+    "pedido": 5,
+    "producto": 2,
+    "cantidad": 1,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 14,
+  "fields": {
+    "pedido": 5,
+    "producto": 3,
+    "cantidad": 1,
+    "precio": "9000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 15,
+  "fields": {
+    "pedido": 6,
+    "producto": 2,
+    "cantidad": 3,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 16,
+  "fields": {
+    "pedido": 6,
+    "producto": 1,
+    "cantidad": 4,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 17,
+  "fields": {
+    "pedido": 6,
+    "producto": 3,
+    "cantidad": 1,
+    "precio": "9000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 18,
+  "fields": {
+    "pedido": 6,
+    "producto": 4,
+    "cantidad": 2,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 19,
+  "fields": {
+    "pedido": 7,
+    "producto": 1,
+    "cantidad": 2,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 20,
+  "fields": {
+    "pedido": 7,
+    "producto": 2,
+    "cantidad": 1,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 21,
+  "fields": {
+    "pedido": 7,
+    "producto": 4,
+    "cantidad": 1,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 22,
+  "fields": {
+    "pedido": 8,
+    "producto": 1,
+    "cantidad": 2,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 23,
+  "fields": {
+    "pedido": 8,
+    "producto": 2,
+    "cantidad": 1,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 24,
+  "fields": {
+    "pedido": 8,
+    "producto": 4,
+    "cantidad": 1,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 25,
+  "fields": {
+    "pedido": 9,
+    "producto": 1,
+    "cantidad": 1,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 26,
+  "fields": {
+    "pedido": 10,
+    "producto": 1,
+    "cantidad": 1,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 27,
+  "fields": {
+    "pedido": 11,
+    "producto": 4,
+    "cantidad": 2,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 28,
+  "fields": {
+    "pedido": 12,
+    "producto": 3,
+    "cantidad": 2,
+    "precio": "9000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 29,
+  "fields": {
+    "pedido": 13,
+    "producto": 9,
+    "cantidad": 1,
+    "precio": "7900.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 30,
+  "fields": {
+    "pedido": 14,
+    "producto": 12,
+    "cantidad": 2,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 31,
+  "fields": {
+    "pedido": 14,
+    "producto": 1,
+    "cantidad": 4,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 32,
+  "fields": {
+    "pedido": 14,
+    "producto": 13,
+    "cantidad": 1,
+    "precio": "8990.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 33,
+  "fields": {
+    "pedido": 14,
+    "producto": 2,
+    "cantidad": 2,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 34,
+  "fields": {
+    "pedido": 15,
+    "producto": 1,
+    "cantidad": 1,
+    "precio": "2000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 35,
+  "fields": {
+    "pedido": 15,
+    "producto": 2,
+    "cantidad": 2,
+    "precio": "1500.00"
+  }
+},
+{
+  "model": "BebesitaAPP.pedidoitem",
+  "pk": 36,
+  "fields": {
+    "pedido": 15,
+    "producto": 3,
+    "cantidad": 3,
+    "precio": "9000.00"
+  }
+},
+{
+  "model": "BebesitaAPP.productoimagen",
+  "pk": 1,
+  "fields": {
+    "producto": 2,
+    "imagen": "productos/galeria/ChatGPT_Image_6_jun_2026_01_09_19_p.m..png"
+  }
+},
+{
+  "model": "gestion.cliente",
+  "pk": 3,
+  "fields": {
+    "nombre": "Daniela Dinamarca",
+    "empresa": "AZA - Laminación",
+    "area": "",
+    "whatsapp": "+56996511657",
+    "notas": "clienta complicada",
+    "activo": true,
+    "creado": "2026-06-06T07:27:39.019Z"
+  }
+},
+{
+  "model": "gestion.cliente",
+  "pk": 6,
+  "fields": {
+    "nombre": "Daniela Dinamarca",
+    "empresa": "AZA",
+    "area": "Laminación",
+    "whatsapp": "+56956392509",
+    "notas": "Clienta loca",
+    "activo": true,
+    "creado": "2026-06-06T07:54:29.263Z"
+  }
+},
+{
+  "model": "gestion.cliente",
+  "pk": 7,
+  "fields": {
+    "nombre": "Juan",
+    "empresa": "AZA",
+    "area": "Laminación",
+    "whatsapp": "+56988887777",
+    "notas": "",
+    "activo": true,
+    "creado": "2026-06-06T14:46:28.962Z"
+  }
+},
+{
+  "model": "gestion.cliente",
+  "pk": 8,
+  "fields": {
+    "nombre": "Ana",
+    "empresa": "MaxServices",
+    "area": "RRHH",
+    "whatsapp": "",
+    "notas": "",
+    "activo": true,
+    "creado": "2026-06-06T14:46:28.966Z"
+  }
+},
+{
+  "model": "gestion.pedido",
+  "pk": 9,
+  "fields": {
+    "cliente": 6,
+    "descripcion": "Cajas dia del padre",
+    "fecha_pedido": "2026-06-06",
+    "fecha_entrega": "2026-06-19",
+    "estado": "cotizado",
+    "pagado": false,
+    "notas": "",
+    "creado": "2026-06-06T14:49:14.953Z"
+  }
+},
+{
+  "model": "gestion.pedido",
+  "pk": 10,
+  "fields": {
+    "cliente": 8,
+    "descripcion": "Cajas dia del padre",
+    "fecha_pedido": "2026-06-06",
+    "fecha_entrega": "2026-06-20",
+    "estado": "cotizado",
+    "pagado": false,
+    "notas": "",
+    "creado": "2026-06-06T19:16:41.125Z"
+  }
+},
+{
+  "model": "gestion.pedidoitem",
+  "pk": 12,
+  "fields": {
+    "pedido": 9,
+    "producto": 10,
+    "descripcion": "Caja dia del Padre",
+    "cantidad": 435,
+    "precio_unitario": 6000,
+    "costo_unitario": 2000
+  }
+},
+{
+  "model": "gestion.componente",
+  "pk": 2,
+  "fields": {
+    "item": 12,
+    "producto": 12,
+    "cantidad": 2
+  }
+},
+{
+  "model": "gestion.componente",
+  "pk": 3,
+  "fields": {
+    "item": 12,
+    "producto": 1,
+    "cantidad": 2
+  }
+},
+{
+  "model": "gestion.compra",
+  "pk": 1,
+  "fields": {
+    "pedido": null,
+    "proveedor": "La Valledor",
+    "detalle": "Galletas, manjar",
+    "monto": 210000,
+    "fecha": "2026-06-10",
+    "boleta": "",
+    "creado": "2026-06-06T07:26:11.034Z"
+  }
+}
+]

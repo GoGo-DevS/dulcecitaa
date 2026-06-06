@@ -25,3 +25,7 @@ media/
 Thumbs.db
 .idea/
 .vscode/
+
+# backups/dumps viejos locales
+datos_bebesita.json
+db - copia.txt
