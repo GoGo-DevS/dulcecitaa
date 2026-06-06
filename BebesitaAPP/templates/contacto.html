@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block title %}Contacto | {{ site_brand }}{% endblock %}
+{% block meta_description %}Contacta a {{ site_brand }} para pedidos personalizados, regalos especiales y consultas de compra.{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="split-form-layout" data-reveal-group>
+    <div class="split-form-copy" data-reveal-item>
+      <p class="eyebrow">Contacto directo</p>
+      <h1>Hablemos de tu pedido ideal</h1>
+      <p>Si buscas un regalo especial o necesitas orientación para una celebración, te ayudamos a elegir la propuesta más adecuada.</p>
+      <ul class="check-list">
+        <li data-reveal-item>Respuesta rápida en horario laboral</li>
+        <li data-reveal-item>Asesoría personalizada por tipo de evento</li>
+        <li data-reveal-item>Coordinación por correo y WhatsApp</li>
+      </ul>
+      {% if contact_email %}<p class="mt-3 mb-0"><strong>Correo:</strong> <a href="mailto:{{ contact_email }}">{{ contact_email }}</a></p>{% endif %}
+    </div>
+
+    <div class="form-shell" data-reveal-item>
+      {% if messages %}
+        {% for m in messages %}
+          <div class="alert alert-{{ m.tags|default:'info' }}">{{ m }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" class="form-grid" novalidate data-reveal-group>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="form-col-12 form-error-box">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-col-6" data-reveal-item>
+          <label for="{{ form.nombre.id_for_label }}">Nombre</label>
+          {{ form.nombre }}
+          {% if form.nombre.errors %}<p class="field-error">{{ form.nombre.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-6" data-reveal-item>
+          <label for="{{ form.email.id_for_label }}">Correo electrónico</label>
+          {{ form.email }}
+          {% if form.email.errors %}<p class="field-error">{{ form.email.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-12" data-reveal-item>
+          <label for="{{ form.mensaje.id_for_label }}">Mensaje</label>
+          {{ form.mensaje }}
+          {% if form.mensaje.errors %}<p class="field-error">{{ form.mensaje.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-12" data-reveal-item>
+          <button class="btn-main w-100" type="submit">Enviar mensaje</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+

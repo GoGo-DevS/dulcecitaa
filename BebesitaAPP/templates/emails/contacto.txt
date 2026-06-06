@@ -1,0 +1,7 @@
+Nuevo mensaje de contacto | {{ site_brand }}
+
+Nombre: {{ nombre }}
+Correo: {{ email }}
+
+Mensaje:
+{{ mensaje }}

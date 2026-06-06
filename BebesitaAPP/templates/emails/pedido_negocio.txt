@@ -1,0 +1,17 @@
+Nuevo pedido #{{ pedido.id }} | {{ site_brand }}
+
+Cliente: {{ pedido.nombre_cliente }}
+Correo: {{ pedido.email_cliente }}
+Teléfono: {{ pedido.telefono }}
+Método de entrega: {{ delivery_label }}
+Comuna/Sector: {{ pedido.comuna_sector }}
+Dirección: {{ pedido.direccion }}
+Fecha: {{ pedido.creado|date:"d/m/Y H:i" }}
+
+Detalle:
+{% for item in line_items %}- {{ item.nombre }} x {{ item.cantidad }} | unitario {{ item.precio_unitario }} | subtotal {{ item.subtotal }}
+{% endfor %}
+
+Subtotal: {{ subtotal_formatted }}
+Despacho: {{ shipping_formatted }}
+Total: {{ total_formatted }}

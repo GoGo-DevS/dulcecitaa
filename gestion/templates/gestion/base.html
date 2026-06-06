@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dulcecita · Gestión{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{% static 'img/loggo.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --rose-50: #fff8f7; --rose-100: #fef0ef; --rose-200: #f8deda;
+            --rose-300: #efc6c1; --rose-500: #d27b78; --rose-700: #a65354;
+            --ink-900: #2f1f22; --ink-700: #4f3e42; --ink-500: #6f5a60;
+            --cream: #fffdf9; --gold: #c9a26a;
+            --shadow-soft: 0 18px 45px rgba(72, 35, 40, 0.12);
+            --radius-md: 16px; --radius-sm: 10px;
+            --bs-primary: var(--rose-700);
+        }
+        body {
+            font-family: 'Manrope', sans-serif;
+            color: var(--ink-700);
+            background:
+                radial-gradient(circle at 0% 0%, #ffeae8 0, rgba(255,234,232,.45) 25%, transparent 50%),
+                radial-gradient(circle at 100% 10%, #ffe8e2 0, rgba(255,232,226,.5) 24%, transparent 45%),
+                var(--cream);
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        h1,h2,h3,h4,h5,h6,.font-display { font-family: 'Playfair Display', serif; color: var(--ink-900); }
+        .navbar-brand { font-family: 'Playfair Display', serif; font-weight: 700; color: var(--rose-700) !important; }
+        .brand-logo { height: 30px; width: 30px; object-fit: contain; }
+        .text-dc { color: var(--rose-700); }
+        .eyebrow { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color: var(--rose-700); }
+
+        .btn-dc { background: var(--rose-700); border-color: var(--rose-700); color: #fff; }
+        .btn-dc:hover, .btn-dc:focus { background: var(--ink-900); border-color: var(--ink-900); color: #fff; }
+        .btn-outline-dc { border-color: var(--rose-500); color: var(--rose-700); }
+        .btn-outline-dc:hover { background: var(--rose-500); color: #fff; }
+
+        .card { border: 1px solid var(--rose-200); box-shadow: var(--shadow-soft); border-radius: var(--radius-md); background: #fff; }
+        .card-header { background: var(--rose-50); border-bottom: 1px solid var(--rose-200); font-family: 'Playfair Display', serif; color: var(--ink-900); }
+        .badge.bg-secondary { background: var(--ink-500) !important; }
+
+        .surface-rose { background: linear-gradient(135deg, var(--rose-700), var(--rose-500)); color: #fff; border: none; }
+        .form-control, .form-select { border-color: var(--rose-200); border-radius: var(--radius-sm); }
+        .form-control:focus, .form-select:focus { border-color: var(--rose-500); box-shadow: 0 0 0 .2rem rgba(210,123,120,.18); }
+        .list-group-item-action:hover { background: var(--rose-50); }
+
+        .navbar.app-bar { background: rgba(255,253,249,.92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rose-200); }
+
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(255,253,249,.96); backdrop-filter: blur(8px);
+            border-top: 1px solid var(--rose-200); display: flex; justify-content: space-around;
+            padding: 8px 0; z-index: 1030;
+        }
+        .bottom-nav a { color: var(--ink-500); text-decoration: none; font-size: .72rem; text-align: center; flex: 1; font-weight: 600; }
+        .bottom-nav a.active { color: var(--rose-700); }
+        .bottom-nav i { display: block; font-size: 1.3rem; }
+    </style>
+</head>
+<body>
+    <nav class="navbar app-bar sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'gestion:dashboard' %}">
+                <img src="{% static 'img/loggo.png' %}" alt="Dulcecita" class="brand-logo">
+                <span>Dulcecita</span>
+            </a>
+        </div>
+    </nav>
+
+    <main class="container py-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <nav class="bottom-nav">
+        <a href="{% url 'gestion:dashboard' %}" class="{% block nav_inicio %}{% endblock %}">
+            <i class="bi bi-house-door"></i>Inicio
+        </a>
+        <a href="{% url 'gestion:pedidos' %}" class="{% block nav_pedidos %}{% endblock %}">
+            <i class="bi bi-receipt"></i>Pedidos
+        </a>
+        <a href="{% url 'gestion:clientes' %}" class="{% block nav_clientes %}{% endblock %}">
+            <i class="bi bi-people"></i>Clientes
+        </a>
+    </nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block email_title %}{{ site_brand }}{% endblock %}</title>
+</head>
+<body style="margin:0;padding:0;background-color:#fff9f8;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fff9f8;margin:0;padding:22px 0;">
+    <tr>
+      <td align="center" style="padding:0 12px;">
+        <table role="presentation" width="680" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:680px;background-color:#ffffff;border:1px solid #f0e3e1;border-radius:18px;">
+          <tr>
+            <td style="padding:26px 30px 18px;background-color:#fff1ef;border-bottom:1px solid #f0e3e1;">
+              <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:1;color:#4a2f34;font-weight:bold;">
+                {{ site_brand }}
+              </p>
+              <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:#9d6b72;">
+                Repostería artesanal premium
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:24px 30px 14px;">
+              <h1 style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:24px;line-height:1.25;color:#2f1f22;">
+                {% block heading %}Notificación{% endblock %}
+              </h1>
+              {% block lead %}{% endblock %}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:0 30px 22px;">
+              {% block content %}{% endblock %}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:18px 30px 24px;border-top:1px solid #f2e7e5;background-color:#fffdfc;">
+              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:#6f5a60;">
+                Gracias por confiar en <strong style="color:#4a2f34;">{{ site_brand }}</strong>.<br>
+                Repostería artesanal premium.
+              </p>
+              {% if website_url %}
+              <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#8a7278;">
+                Sitio web: <a href="{{ website_url }}" style="color:#a65354;text-decoration:none;">{{ website_url }}</a>
+              </p>
+              {% endif %}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<div class="product-detail-wrap">
+  <div class="product-detail-media">
+    {% if imagenes and imagenes|length > 0 %}
+    <div id="carouselProd" class="carousel slide detail-carousel">
+      <div class="carousel-inner">
+        <div class="carousel-item active">
+          <img src="{{ p.imagen.url }}" class="d-block w-100" alt="{{ p.nombre }}">
+        </div>
+        {% for img in imagenes %}
+        <div class="carousel-item">
+          <img src="{{ img.imagen.url }}" class="d-block w-100" alt="{{ p.nombre }}">
+        </div>
+        {% endfor %}
+      </div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#carouselProd" data-bs-slide="prev" aria-label="Anterior">
+        <span class="carousel-control-prev-icon"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#carouselProd" data-bs-slide="next" aria-label="Siguiente">
+        <span class="carousel-control-next-icon"></span>
+      </button>
+    </div>
+    {% else %}
+    <img src="{{ p.imagen.url }}" class="single-detail-image" alt="{{ p.nombre }}">
+    {% endif %}
+  </div>
+
+  <div class="product-detail-content">
+    <p class="eyebrow">Edición artesanal</p>
+    <h2>{{ p.nombre }}</h2>
+    <p class="detail-price">${{ p.precio }}</p>
+    <p class="detail-description">{{ p.descripcion|linebreaksbr }}</p>
+
+    <div class="detail-badges">
+      <span>Presentación premium</span>
+      <span>Elaborado a pedido</span>
+      <span>Ideal para regalo</span>
+    </div>
+
+    <div class="detail-actions">
+      <div class="product-ctl" data-id="{{ p.id }}">
+        <button type="button" class="btn-add-only" aria-label="Agregar" title="Agregar">Agregar al carrito</button>
+        <div class="qty-control d-none">
+          <button class="btn-qty btn-trash" title="Quitar del carrito" aria-label="Quitar">Eliminar</button>
+          <span class="qty">0</span>
+          <button class="btn-qty btn-plus" title="Agregar uno" aria-label="Agregar">+</button>
+        </div>
+      </div>
+      <a href="{% url 'agregar_al_carrito' p.id %}" class="btn-ghost">Agregar y ver carrito</a>
+    </div>
+  </div>
+</div>
+

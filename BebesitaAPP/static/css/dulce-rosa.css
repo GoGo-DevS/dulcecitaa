@@ -1,0 +1,221 @@
+/* ============================================================
+   Dulce Rosa — rediseño storefront estilo "dulcebarquillo" en rosa pastel
+   Se carga DESPUÉS de style.css y redefine cabecera + hero + grilla.
+   ============================================================ */
+@font-face {
+  font-family: 'Wisdom Merry';
+  src: url('../fonts/wisdom-merry/WisdomMerry.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Paleta Propuesta 1 */
+  --dr-pink-bg: #fff7fa;       /* fondo navbar */
+  --dr-pink-soft: #fde9f0;     /* rosa pastel suave */
+  --dr-pink: #f7c8d9;          /* corazón / acentos */
+  --dr-pink-deep: #d77c9e;     /* botón CTA */
+  --dr-wine: #9a5b72;          /* texto / logo */
+  --dr-ink: #5a4750;
+  --dr-cream: #ffffff;         /* fondo general */
+}
+
+body {
+  background:
+    radial-gradient(circle at 0% 0%, #fdeef4 0, rgba(253,238,244,.35) 20%, transparent 44%),
+    radial-gradient(circle at 100% 6%, #fdeef4 0, rgba(253,238,244,.3) 20%, transparent 40%),
+    var(--dr-cream) !important;
+}
+
+/* ---------- Barra superior (announcement) ---------- */
+.dr-topbar {
+  background: linear-gradient(90deg, var(--dr-pink), var(--dr-pink-soft));
+  color: var(--dr-wine);
+  text-align: center;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+}
+
+/* ---------- Navbar Propuesta 1 ---------- */
+.site-navbar.dr-nav {
+  background: var(--dr-pink-bg) !important;
+  border-bottom: 1px solid var(--dr-pink-soft);
+  box-shadow: 0 6px 24px rgba(154, 91, 114, .07);
+  padding-top: .4rem;
+  padding-bottom: .4rem;
+}
+/* Logo en una línea: corazón + dulcecitaa */
+.dr-brand { display: inline-flex; align-items: center; gap: .55rem; }
+.dr-heart {
+  color: var(--dr-pink);
+  font-size: 1.9rem;
+  line-height: 1;
+  filter: drop-shadow(0 3px 6px rgba(215, 124, 158, .25));
+}
+.dr-nav .brand-word {
+  font-family: 'Wisdom Merry', 'Dancing Script', cursive;
+  color: var(--dr-wine) !important;
+  font-size: 2.5rem;
+  line-height: 1;
+  letter-spacing: .01em;
+  text-transform: lowercase;
+  padding-top: .1rem;
+}
+.dr-nav .nav-link {
+  color: var(--dr-wine) !important;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.dr-nav .nav-link:hover { color: var(--dr-pink-deep) !important; }
+
+/* Botón CTA */
+.dr-pedido {
+  background: var(--dr-pink-deep);
+  color: #fff !important;
+  border-radius: 999px;
+  padding: .62rem 1.5rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-size: .8rem;
+  box-shadow: 0 10px 22px rgba(215, 124, 158, .38);
+  transition: transform .15s ease, background .2s ease;
+}
+.dr-pedido:hover { background: var(--dr-wine); color: #fff !important; transform: translateY(-1px); }
+
+/* Carrito con ícono + badge */
+.dr-cart {
+  position: relative;
+  color: var(--dr-wine);
+  font-size: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}
+.dr-cart:hover { color: var(--dr-pink-deep); }
+.dr-cart-badge {
+  position: absolute; top: -6px; right: -10px;
+  background: var(--dr-pink-deep); color: #fff;
+  font-family: 'Manrope', sans-serif; font-size: .68rem; font-weight: 700;
+  min-width: 18px; height: 18px; padding: 0 5px;
+  border-radius: 999px; display: inline-flex; align-items: center; justify-content: center;
+}
+@media (max-width: 992px) {
+  .dr-nav-actions { justify-content: space-between; }
+}
+
+/* ---------- Hero carrusel ---------- */
+.dr-hero { position: relative; }
+.dr-hero .carousel-item { height: 64vh; min-height: 380px; max-height: 620px; position: relative; overflow: hidden; background: var(--dr-pink-soft); }
+.dr-hero-bg { display: none; } /* fotos horizontales: se usa cover full-bleed */
+/* Foto expandida a todo el ancho */
+.dr-hero-photo {
+  position: relative; z-index: 1;
+  width: 100%; height: 100%; object-fit: cover; object-position: center;
+}
+.dr-hero .carousel-item::after {
+  content: ""; position: absolute; inset: 0; z-index: 2;
+  background: linear-gradient(90deg, rgba(74,58,64,.5) 0%, rgba(74,58,64,.18) 38%, transparent 62%);
+}
+
+.dr-hero-card {
+  position: absolute; left: 5%; bottom: 9%; z-index: 5;
+  background: rgba(74, 58, 64, .55);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 18px;
+  padding: 1.4rem 1.6rem;
+  max-width: 360px;
+  color: #fff;
+}
+.dr-hero-eyebrow {
+  font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--dr-pink); font-weight: 700; margin-bottom: .4rem;
+}
+.dr-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem; line-height: 1.15; color: #fff; margin: 0 0 .5rem;
+}
+.dr-hero-price { font-size: 1.25rem; font-weight: 700; margin-bottom: .9rem; }
+.dr-hero-btn {
+  display: inline-block; background: var(--dr-pink-deep); color: #fff;
+  border-radius: 999px; padding: .55rem 1.4rem; font-weight: 700;
+  letter-spacing: .04em; box-shadow: 0 10px 22px rgba(217,138,160,.4);
+}
+.dr-hero-btn:hover { background: #fff; color: var(--dr-wine); }
+.dr-hero .carousel-indicators [data-bs-target] { background-color: var(--dr-pink); }
+
+/* ---------- Sección productos (grilla edge-to-edge) ---------- */
+.dr-products { padding: 3.2rem 0 1rem; }
+.dr-products-title {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--dr-wine);
+  font-size: 1.45rem;
+  margin-bottom: .4rem;
+}
+.dr-products-sub {
+  text-align: center; color: var(--dr-ink); opacity: .7;
+  margin-bottom: 2rem; font-size: .95rem;
+}
+.dr-products-title::after {
+  content: ""; display: block; width: 64px; height: 3px; margin: .7rem auto 0;
+  background: var(--dr-pink-deep); border-radius: 3px;
+}
+
+.dr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 6px;
+}
+.dr-tile {
+  position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden;
+  background: var(--dr-pink-soft);
+}
+.dr-tile img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.dr-tile:hover img { transform: scale(1.06); }
+.dr-tile-overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 1rem;
+  background: linear-gradient(to top, rgba(74,58,64,.72), rgba(74,58,64,0) 55%);
+  opacity: 0; transition: opacity .3s ease;
+}
+.dr-tile:hover .dr-tile-overlay { opacity: 1; }
+.dr-tile-name { color: #fff; font-weight: 700; font-size: .98rem; line-height: 1.2; }
+.dr-tile-price { color: var(--dr-pink); font-weight: 700; font-size: .9rem; }
+
+.dr-products-cta { text-align: center; margin: 2.4rem 0 .5rem; }
+.dr-btn-wine {
+  display: inline-block; background: var(--dr-wine); color: #fff;
+  border-radius: 999px; padding: .7rem 2rem; font-weight: 700; letter-spacing: .05em;
+}
+.dr-btn-wine:hover { background: var(--dr-pink-deep); color: #fff; }
+
+/* ---------- Franja corporativa ---------- */
+.dr-corp {
+  margin: 3rem 0 0; padding: 3rem 0;
+  background: linear-gradient(135deg, var(--dr-pink-soft), var(--dr-pink));
+  text-align: center;
+}
+.dr-corp h2 { font-family: 'Playfair Display', serif; color: var(--dr-wine); }
+.dr-corp p { color: var(--dr-ink); max-width: 620px; margin: .6rem auto 1.4rem; }
+
+/* ---------- Footer pastel ---------- */
+.site-footer.dr-foot { background: #3b2d31; }
+.dr-foot .footer-brand, .dr-foot .footer-title { color: var(--dr-pink); }
+
+@media (max-width: 992px) {
+  .dr-hero .carousel-item { height: 52vh; min-height: 300px; }
+  .dr-hero-card { left: 4%; right: 4%; max-width: none; bottom: 6%; }
+  .dr-hero-title { font-size: 1.4rem; }
+  .dr-products-title { font-size: 1.2rem; letter-spacing: .18em; }
+}

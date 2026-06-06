@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+<body style="margin:0;padding:0;background:#fff8f7;font-family:Arial,Helvetica,sans-serif;color:#4f3e42;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff8f7;padding:20px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="680" cellpadding="0" cellspacing="0" style="max-width:680px;width:100%;background:#ffffff;border:1px solid #f2ddda;border-radius:16px;overflow:hidden;">
+          <tr>
+            <td style="background:#fef0ef;padding:20px 24px;border-bottom:1px solid #f2ddda;">
+              <p style="margin:0;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#a65354;">{{ site_brand }}</p>
+              <h1 style="margin:8px 0 0;font-size:24px;line-height:1.2;color:#2f1f22;">Nuevo pedido #{{ pedido.id }}</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:20px 24px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#fffaf9;border:1px solid #f2e4e2;border-radius:10px;">
+                <tr>
+                  <td style="padding:12px 14px;font-size:14px;">
+                    <p style="margin:0 0 6px;"><strong>Fecha:</strong> {{ pedido.creado|date:"d/m/Y H:i" }}</p>
+                    <p style="margin:0 0 6px;"><strong>Cliente:</strong> {{ pedido.nombre_cliente }}</p>
+                    <p style="margin:0 0 6px;"><strong>Correo:</strong> {{ pedido.email_cliente }}</p>
+                    <p style="margin:0 0 6px;"><strong>Telefono:</strong> {{ pedido.telefono }}</p>
+                    <p style="margin:0;"><strong>Direccion:</strong> {{ pedido.direccion }}</p>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;border-collapse:collapse;border:1px solid #f1dfdc;border-radius:10px;overflow:hidden;">
+                <tr style="background:#fff5f3;">
+                  <th align="left" style="padding:10px 12px;font-size:13px;color:#6f5a60;">Producto</th>
+                  <th align="center" style="padding:10px 12px;font-size:13px;color:#6f5a60;">Cant.</th>
+                  <th align="right" style="padding:10px 12px;font-size:13px;color:#6f5a60;">Unitario</th>
+                  <th align="right" style="padding:10px 12px;font-size:13px;color:#6f5a60;">Subtotal</th>
+                </tr>
+                {% for item in line_items %}
+                <tr>
+                  <td style="padding:10px 12px;border-top:1px solid #f6e9e6;font-size:14px;color:#2f1f22;">{{ item.nombre }}</td>
+                  <td align="center" style="padding:10px 12px;border-top:1px solid #f6e9e6;font-size:14px;">{{ item.cantidad }}</td>
+                  <td align="right" style="padding:10px 12px;border-top:1px solid #f6e9e6;font-size:14px;">{{ item.precio_unitario }}</td>
+                  <td align="right" style="padding:10px 12px;border-top:1px solid #f6e9e6;font-size:14px;"><strong>{{ item.subtotal }}</strong></td>
+                </tr>
+                {% endfor %}
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px;">
+                <tr>
+                  <td align="right" style="font-size:18px;color:#2f1f22;">
+                    Total: <strong>{{ total_formatted }}</strong>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

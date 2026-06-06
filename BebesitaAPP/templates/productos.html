@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Catálogo | {{ site_brand }}{% endblock %}
+{% block meta_description %}Explora el Catálogo de {{ site_brand }}: reposteria artesanal premium para regalar, celebrar y compartir.{% endblock %}
+
+{% block content %}
+<section class="page-hero container reveal-ready">
+  <p class="eyebrow">Catálogo boutique</p>
+  <h1>Nuestros productos</h1>
+  <p>Busca por nombre, filtra por categoría y elige tu favorito para agregar al carrito en segundos.</p>
+</section>
+
+<section class="container pb-5 catalog-experience">
+  <form method="get" class="catalog-filter-bar surface-card mb-4">
+    <div class="catalog-filter-main">
+      <label for="filtro-q" class="form-label">Buscar</label>
+      <input id="filtro-q" type="search" name="q" class="field-input" placeholder="Ej: brownie, caja, alfajor..." value="{{ filtro_q }}">
+    </div>
+    <div>
+      <label for="filtro-categoria" class="form-label">Categoría</label>
+      <select id="filtro-categoria" name="categoria" class="field-input">
+        <option value="">Todas</option>
+        {% for c in categorias %}
+        <option value="{{ c.slug }}" {% if filtro_categoria == c.slug %}selected{% endif %}>{{ c.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="catalog-filter-check">
+      <label class="d-flex align-items-center gap-2">
+        <input type="checkbox" name="destacados" value="1" {% if filtro_destacados %}checked{% endif %}>
+        <span>Solo destacados</span>
+      </label>
+    </div>
+    <div class="catalog-filter-actions">
+      <button type="submit" class="btn-main">Aplicar filtros</button>
+      <a href="{% url 'productos' %}" class="btn-ghost">Limpiar</a>
+    </div>
+  </form>
+
+  <div class="catalog-grid" data-catalog-grid>
+    {% for p in productos %}
+    <article class="catalog-card catalog-card-premium" data-catalog-card>
+      <div class="catalog-media">
+        <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" class="catalog-image">
+      </div>
+      <div class="catalog-body">
+        <div class="catalog-tags">
+          {% if p.categoria %}<span class="catalog-tag">{{ p.categoria.nombre }}</span>{% endif %}
+          {% if p.destacado %}<span class="catalog-tag">Destacado</span>{% endif %}
+          {% if not p.disponible %}<span class="catalog-tag catalog-tag-muted">No disponible</span>{% endif %}
+        </div>
+        <h3>{{ p.nombre }}</h3>
+        <p class="catalog-desc">{{ p.descripcion|truncatechars:120 }}</p>
+        <div class="catalog-row">
+          <span class="catalog-price">${{ p.precio }}</span>
+          <button type="button" class="btn-secondary btn-view catalog-cta" data-id="{{ p.id }}">Ver detalle</button>
+        </div>
+        <div class="catalog-actions">
+          <div class="product-ctl" data-id="{{ p.id }}">
+            <button type="button" class="btn-add-only catalog-cta" aria-label="Agregar" title="Agregar" {% if not p.disponible %}disabled{% endif %}>Agregar</button>
+            <div class="qty-control d-none">
+              <button class="btn-qty btn-trash" title="Quitar del carrito" aria-label="Quitar">Eliminar</button>
+              <span class="qty">0</span>
+              <button class="btn-qty btn-plus" title="Agregar uno" aria-label="Agregar">+</button>
+            </div>
+          </div>
+          {% if p.disponible %}
+          <a href="{% url 'agregar_al_carrito' p.id %}" class="btn-linkline">Agregar y abrir carrito</a>
+          {% else %}
+          <span class="btn-linkline text-muted">Temporalmente no disponible</span>
+          {% endif %}
+        </div>
+      </div>
+    </article>
+    {% empty %}
+    <div class="surface-card text-center py-5 reveal-ready">
+      <h3 class="h5 mb-2">Aún no hay productos publicados</h3>
+      <p class="mb-0">Vuelve pronto para ver nuestras nuevas colecciones.</p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

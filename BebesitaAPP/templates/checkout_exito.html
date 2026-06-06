@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Pedido confirmado | {{ site_brand }}{% endblock %}
+{% block meta_description %}Tu pedido en {{ site_brand }} fue confirmado correctamente. Revisa los siguientes pasos de contacto y entrega.{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  {% if messages %}
+    {% for m in messages %}
+      <div class="alert alert-{{ m.tags|default:'info' }} reveal-ready">{{ m }}</div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="success-card">
+    <p class="eyebrow">Pedido confirmado</p>
+    <h1>Gracias por elegir {{ site_brand }}</h1>
+    <p class="success-text">Recibimos tu pedido <strong>#{{ pedido_id }}</strong>. En breve coordinaremos contigo los detalles de {{ delivery_label|lower }}.</p>
+    <ul class="checkout-list text-start my-4">
+      <li><span>Método de entrega</span><strong>{{ delivery_label }}</strong></li>
+      <li><span>Comuna o sector</span><strong>{{ pedido.comuna_sector }}</strong></li>
+      <li><span>Costo de despacho</span><strong>{{ shipping_cost_formatted }}</strong></li>
+      <li><span>Total confirmado</span><strong>{{ total_formatted }}</strong></li>
+    </ul>
+    <div class="hero-actions justify-content-center">
+      <a href="{% url 'productos' %}" class="btn-main">Seguir comprando</a>
+      {% if whatsapp_order_url %}
+      <a href="{{ whatsapp_order_url }}" target="_blank" rel="noopener" class="btn-ghost">Coordinar por WhatsApp</a>
+      {% endif %}
+    </div>
+    <p class="cart-summary-note mb-0 mt-3">Siguiente paso: revisaremos tu pedido y te confirmaremos disponibilidad, horario y forma de entrega.</p>
+  </div>
+</section>
+{% endblock %}
+

@@ -1,0 +1,24 @@
+Confirmación de pedido #{{ pedido.id }} | {{ site_brand }}
+
+Hola {{ pedido.nombre_cliente }},
+
+Recibimos tu pedido y lo estamos preparando con cuidado.
+
+Resumen:
+{% for item in line_items %}- {{ item.nombre }} x {{ item.cantidad }} | {{ item.subtotal }}
+{% endfor %}
+Subtotal: {{ subtotal_formatted }}
+Despacho: {{ shipping_formatted }}
+Total: {{ total_formatted }}
+
+Datos de entrega:
+- Método: {{ delivery_label }}
+- Comuna/Sector: {{ pedido.comuna_sector }}
+- Dirección: {{ pedido.direccion }}
+- Teléfono: {{ pedido.telefono }}
+- Correo: {{ pedido.email_cliente }}
+
+Te contactaremos para coordinar la entrega.
+{% if contact_email %}
+Si necesitas ayuda, escríbenos a {{ contact_email }}.
+{% endif %}

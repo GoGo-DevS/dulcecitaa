@@ -1,0 +1,9 @@
+Nueva solicitud corporativa | {{ site_brand }}
+
+Nombre: {{ nombre }}
+Empresa: {{ empresa }}
+Correo: {{ email }}
+Teléfono: {{ telefono }}
+
+Necesidad:
+{{ mensaje }}

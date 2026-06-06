@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Corporativo | {{ site_brand }}{% endblock %}
+{% block meta_description %}Soluciones corporativas de {{ site_brand }} para eventos, regalos empresariales y coffee breaks premium.{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="page-hero mb-4 reveal-ready">
+    <p class="eyebrow">Línea corporativa</p>
+    <h1>Regalos y experiencias dulces para empresas</h1>
+    <p>Creamos propuestas para eventos, cajas de regalo, activaciones de marca y coffee breaks con presentación premium.</p>
+  </div>
+
+  <div class="occasion-grid mb-5" data-reveal-group>
+    <article class="surface-card" data-reveal-item>
+      <h3>Cajas de regalo</h3>
+      <p>Opciones para clientes, equipos y fechas especiales con identidad visual cuidada.</p>
+    </article>
+    <article class="surface-card" data-reveal-item>
+      <h3>Eventos internos</h3>
+      <p>Mesas dulces para aniversarios, lanzamientos y celebraciones corporativas.</p>
+    </article>
+    <article class="surface-card" data-reveal-item>
+      <h3>Coffee break premium</h3>
+      <p>Propuesta artesanal para reuniones clave y experiencias de hospitalidad.</p>
+    </article>
+  </div>
+
+  <div class="split-form-layout" data-reveal-group>
+    <div class="split-form-copy" data-reveal-item>
+      <h2 class="h3 mb-3">Solicita una propuesta personalizada</h2>
+      <p>Cuanto más contexto nos compartas, mejor afinaremos la propuesta para tu empresa.</p>
+      <ul class="check-list">
+        <li data-reveal-item>Atención para pedidos recurrentes o por volumen</li>
+        <li data-reveal-item>Ajustes de packaging según tipo de evento</li>
+        <li data-reveal-item>Respuesta comercial en menos de 24 horas hábiles</li>
+      </ul>
+      {% if contact_email %}<p class="mt-3 mb-0"><strong>Correo comercial:</strong> <a href="mailto:{{ contact_email }}">{{ contact_email }}</a></p>{% endif %}
+    </div>
+
+    <div class="form-shell" data-reveal-item>
+      {% if messages %}
+        {% for m in messages %}
+          <div class="alert alert-{{ m.tags|default:'info' }}">{{ m }}</div>
+        {% endfor %}
+      {% endif %}
+
+      <form method="post" class="form-grid" novalidate data-reveal-group>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="form-col-12 form-error-box">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-col-6" data-reveal-item>
+          <label for="{{ form.nombre.id_for_label }}">Tu nombre</label>
+          {{ form.nombre }}
+          {% if form.nombre.errors %}<p class="field-error">{{ form.nombre.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-6" data-reveal-item>
+          <label for="{{ form.empresa.id_for_label }}">Empresa</label>
+          {{ form.empresa }}
+          {% if form.empresa.errors %}<p class="field-error">{{ form.empresa.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-6" data-reveal-item>
+          <label for="{{ form.email.id_for_label }}">Correo electrónico</label>
+          {{ form.email }}
+          {% if form.email.errors %}<p class="field-error">{{ form.email.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-6" data-reveal-item>
+          <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+          {{ form.telefono }}
+          {% if form.telefono.errors %}<p class="field-error">{{ form.telefono.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-12" data-reveal-item>
+          <label for="{{ form.mensaje.id_for_label }}">Cuéntanos qué necesitas</label>
+          {{ form.mensaje }}
+          {% if form.mensaje.errors %}<p class="field-error">{{ form.mensaje.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-12" data-reveal-item>
+          <button type="submit" class="btn-main w-100">Enviar solicitud</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

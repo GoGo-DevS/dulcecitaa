@@ -1,0 +1,16 @@
+Nuevo pedido recibido en {{ site_brand }}
+
+Pedido: #{{ pedido.id }}
+Fecha: {{ pedido.creado|date:"d/m/Y H:i" }}
+
+Cliente:
+- Nombre: {{ pedido.nombre_cliente }}
+- Correo: {{ pedido.email_cliente }}
+- Telefono: {{ pedido.telefono }}
+- Direccion: {{ pedido.direccion }}
+
+Detalle:
+{% for item in line_items %}- {{ item.nombre }} x {{ item.cantidad }} | unitario {{ item.precio_unitario }} | subtotal {{ item.subtotal }}
+{% endfor %}
+
+Total: {{ total_formatted }}

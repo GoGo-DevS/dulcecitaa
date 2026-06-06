@@ -1,0 +1,93 @@
+{% extends "gestion/base.html" %}
+{% load humanize %}
+
+{% block title %}Inicio · Dulcecita{% endblock %}
+{% block nav_inicio %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="?mes={{ mes_prev }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-chevron-left"></i></a>
+    <h5 class="mb-0 text-center">{{ mes_nombre }} {{ y }}</h5>
+    <a href="?mes={{ mes_next }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-chevron-right"></i></a>
+</div>
+
+<!-- KPI estrella -->
+<div class="card surface-rose mb-3">
+    <div class="card-body text-center py-4">
+        <div class="text-uppercase small opacity-75">Utilidad del mes</div>
+        <div class="display-5 fw-bold">${{ utilidad|intcomma }}</div>
+        <div class="small opacity-75 mt-1">
+            Ventas ${{ ventas|intcomma }} &nbsp;·&nbsp; Costos ${{ costos|intcomma }}
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-3">
+    <div class="col-6">
+        <div class="card h-100"><div class="card-body text-center">
+            <div class="h4 mb-0 text-dc fw-bold">{{ pedidos_mes|length }}</div>
+            <div class="text-muted small">Pedidos del mes</div>
+        </div></div>
+    </div>
+    <div class="col-6">
+        <div class="card h-100"><div class="card-body text-center">
+            <div class="h4 mb-0 text-dc fw-bold">{{ total_clientes }}</div>
+            <div class="text-muted small">Clientes activos</div>
+        </div></div>
+    </div>
+</div>
+
+<div class="d-grid gap-2 mb-3">
+    <a href="{% url 'gestion:pedido_nuevo' %}" class="btn btn-dc"><i class="bi bi-plus-lg"></i> Nuevo pedido</a>
+</div>
+
+<!-- Por entregar -->
+<div class="card mb-3">
+    <div class="card-header bg-white fw-semibold"><i class="bi bi-truck text-dc"></i> Por entregar</div>
+    <div class="list-group list-group-flush">
+        {% for p in por_entregar %}
+            <a href="{% url 'gestion:pedido_detalle' p.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between">
+                <span>{{ p.cliente }}<br><small class="text-muted">{{ p.descripcion|default:"Pedido" }}</small></span>
+                <span class="text-end"><span class="badge bg-{{ p.badge }}">{{ p.get_estado_display }}</span><br>
+                    <small class="text-muted">{{ p.fecha_entrega|date:"d M" }}</small></span>
+            </a>
+        {% empty %}
+            <div class="list-group-item text-muted small">Nada pendiente por entregar.</div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Sin costear (margen ciego) -->
+{% if sin_costear %}
+<div class="card mb-3 border-warning">
+    <div class="card-header bg-warning-subtle fw-semibold"><i class="bi bi-exclamation-triangle text-warning"></i> Sin compras registradas</div>
+    <div class="list-group list-group-flush">
+        {% for p in sin_costear %}
+            <a href="{% url 'gestion:pedido_detalle' p.pk %}" class="list-group-item list-group-item-action">
+                {{ p.cliente }} — <small class="text-muted">registra la compra para ver el margen real</small>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Pedidos del mes -->
+<div class="card">
+    <div class="card-header bg-white fw-semibold"><i class="bi bi-receipt text-dc"></i> Pedidos de {{ mes_nombre }}</div>
+    <div class="list-group list-group-flush">
+        {% for p in pedidos_mes %}
+            <a href="{% url 'gestion:pedido_detalle' p.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <span>{{ p.cliente }}<br><small class="text-muted">${{ p.precio_total|intcomma }}</small></span>
+                <span class="text-end">
+                    <span class="fw-bold {% if p.utilidad >= 0 %}text-success{% else %}text-danger{% endif %}">
+                        {% if p.utilidad >= 0 %}+{% endif %}${{ p.utilidad|intcomma }}
+                    </span><br>
+                    <small class="text-muted">{{ p.margen_pct }}%</small>
+                </span>
+            </a>
+        {% empty %}
+            <div class="list-group-item text-muted small">Sin pedidos este mes.</div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

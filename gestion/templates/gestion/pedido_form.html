@@ -1,0 +1,45 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}{{ titulo }} · Dulcecita{% endblock %}
+{% block nav_pedidos %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-3">
+    <a href="{% url 'gestion:pedidos' %}" class="btn btn-sm btn-link text-muted ps-0"><i class="bi bi-arrow-left"></i> Volver</a>
+    <h5 class="mb-0 ms-1">{{ titulo }}</h5>
+</div>
+
+<div class="card"><div class="card-body">
+    <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Cliente *</label>
+            {{ form.cliente }}
+            {% if form.cliente.errors %}<div class="text-danger small">{{ form.cliente.errors|striptags }}</div>{% endif %}
+            <div class="form-text"><a href="{% url 'gestion:cliente_nuevo' %}">+ Crear nuevo cliente</a></div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            {{ form.descripcion }}
+        </div>
+        <div class="row">
+            <div class="col-6 mb-3">
+                <label class="form-label">Fecha pedido</label>
+                {{ form.fecha_pedido }}
+            </div>
+            <div class="col-6 mb-3">
+                <label class="form-label">Fecha entrega</label>
+                {{ form.fecha_entrega }}
+            </div>
+        </div>
+        <div class="mb-4">
+            <label class="form-label">Notas</label>
+            {{ form.notas }}
+        </div>
+        <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-dc"><i class="bi bi-check-lg"></i> Crear y agregar productos</button>
+            <a href="{% url 'gestion:pedidos' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+    </form>
+</div></div>
+{% endblock %}

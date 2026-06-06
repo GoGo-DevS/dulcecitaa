@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<body style="margin:0;padding:0;background:#fff8f7;font-family:Arial,Helvetica,sans-serif;color:#4f3e42;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff8f7;padding:20px 0;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="620" cellpadding="0" cellspacing="0" style="max-width:620px;width:100%;background:#ffffff;border:1px solid #f2ddda;border-radius:16px;overflow:hidden;">
+          <tr>
+            <td style="background:#fef0ef;padding:22px 26px;border-bottom:1px solid #f2ddda;">
+              <p style="margin:0;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#a65354;">{{ site_brand }}</p>
+              <h1 style="margin:8px 0 0;font-size:24px;line-height:1.2;color:#2f1f22;">Nuevo mensaje de contacto</h1>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:22px 26px;">
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;background:#fffaf9;border:1px solid #f2e4e2;border-radius:10px;">
+                <tr>
+                  <td style="padding:12px 14px;font-size:14px;">
+                    <p style="margin:0 0 6px;"><strong>Nombre:</strong> {{ nombre }}</p>
+                    <p style="margin:0;"><strong>Correo:</strong> <a href="mailto:{{ email }}" style="color:#a65354;">{{ email }}</a></p>
+                  </td>
+                </tr>
+              </table>
+
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;border-collapse:collapse;border:1px solid #f2e4e2;border-radius:10px;">
+                <tr>
+                  <td style="padding:14px 16px;font-size:14px;line-height:1.6;color:#2f1f22;">
+                    <strong>Mensaje</strong><br>
+                    {{ mensaje|linebreaksbr }}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

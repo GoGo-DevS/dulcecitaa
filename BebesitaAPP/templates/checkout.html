@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% block title %}Checkout | {{ site_brand }}{% endblock %}
+{% block meta_description %}Completa tus datos en {{ site_brand }} para confirmar tu pedido y coordinar la entrega.{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="section-head mb-4">
+    <p class="eyebrow">Paso final</p>
+    <h1>Confirma tu pedido</h1>
+  </div>
+
+  {% if messages %}
+    {% for m in messages %}
+      <div class="alert alert-{{ m.tags|default:'info' }}">{{ m }}</div>
+    {% endfor %}
+  {% endif %}
+
+  {% if productos %}
+  <div class="checkout-layout">
+    <aside class="checkout-summary">
+      <h2>Resumen final</h2>
+      <p class="checkout-subtext">Verifica productos, método de entrega y total antes de confirmar.</p>
+      <ul class="checkout-list">
+        {% for item in productos %}
+        <li>
+          <span>{{ item.producto.nombre }} x {{ item.cantidad }}</span>
+          <strong>${{ item.subtotal }}</strong>
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="checkout-total">
+        <span>Subtotal</span>
+        <strong>${{ subtotal }}</strong>
+      </div>
+      <div class="checkout-total">
+        <span>Despacho</span>
+        <strong>{% if shipping_cost %}${{ shipping_cost }}{% else %}Sin costo{% endif %}</strong>
+      </div>
+      <div class="checkout-total">
+        <span>Total a pagar</span>
+        <strong>${{ total }}</strong>
+      </div>
+      <p class="cart-summary-note mb-0">Después del pago coordinaremos contigo por WhatsApp o correo para concretar la entrega.</p>
+      <a href="{% url 'carrito' %}" class="btn-linkline">Editar carrito</a>
+    </aside>
+
+    <div class="checkout-form-card">
+      <h2>Datos para coordinación</h2>
+      <p class="checkout-subtext">Completa tu información para reservar y coordinar entrega sin demoras.</p>
+
+      <form method="post" class="form-grid" novalidate>
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+          <div class="form-col-12 form-error-box">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        <div class="form-col-6">
+          <label for="{{ form.nombre.id_for_label }}">Nombre</label>
+          {{ form.nombre }}
+          {% if form.nombre.errors %}<p class="field-error">{{ form.nombre.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-6">
+          <label for="{{ form.email.id_for_label }}">Correo electrónico</label>
+          {{ form.email }}
+          {% if form.email.errors %}<p class="field-error">{{ form.email.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-6">
+          <label for="{{ form.telefono.id_for_label }}">Teléfono</label>
+          {{ form.telefono }}
+          {% if form.telefono.errors %}<p class="field-error">{{ form.telefono.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-6">
+          <label for="{{ form.tipo_entrega.id_for_label }}">Método de entrega</label>
+          {{ form.tipo_entrega }}
+          {% if form.tipo_entrega.errors %}<p class="field-error">{{ form.tipo_entrega.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-12">
+          <label for="{{ form.comuna_sector.id_for_label }}">Comuna o sector</label>
+          {{ form.comuna_sector }}
+          {% if form.comuna_sector.errors %}<p class="field-error">{{ form.comuna_sector.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-12">
+          <label for="{{ form.direccion.id_for_label }}">Dirección o referencia</label>
+          {{ form.direccion }}
+          {% if form.direccion.errors %}<p class="field-error">{{ form.direccion.errors|striptags }}</p>{% endif %}
+          {% if pickup_point_label %}
+          <p class="cart-summary-note mb-0 mt-2"><strong>Retiro:</strong> {{ pickup_point_label }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-col-12">
+          <button type="submit" class="btn-main w-100">Confirmar y reservar pedido</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <h2>No hay productos en tu carrito</h2>
+    <p>Agrega al menos un producto para continuar al checkout.</p>
+    <a href="{% url 'productos' %}" class="btn-main">Ver catálogo</a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

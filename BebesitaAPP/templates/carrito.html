@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Carrito | {{ site_brand }}{% endblock %}
+{% block meta_description %}Revisa los productos de tu carrito en {{ site_brand }}, ajusta cantidades y finaliza tu compra con seguridad.{% endblock %}
+
+{% block content %}
+<section class="container py-5">
+  <div class="section-head mb-4">
+    <p class="eyebrow">Resumen de compra</p>
+    <h1>Tu carrito</h1>
+  </div>
+
+  {% if productos %}
+  <div class="cart-layout">
+    <div class="cart-list">
+      {% for item in productos %}
+      <article class="cart-item" data-id="{{ item.producto.id }}">
+        <div class="cart-item-main">
+          <div class="cart-item-media">
+            {% if item.producto.imagen %}
+            <img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}">
+            {% endif %}
+          </div>
+          <div class="cart-item-copy">
+            <h3>{{ item.producto.nombre }}</h3>
+            <p class="cart-item-note">Elaborado a pedido con presentación premium.</p>
+          </div>
+        </div>
+        <div class="cart-item-controls">
+          <div class="qty-control" data-id="{{ item.producto.id }}">
+            <button class="btn-qty btn-minus" title="Restar uno" aria-label="Restar">-</button>
+            <span class="qty">{{ item.cantidad }}</span>
+            <button class="btn-qty btn-plus" title="Sumar uno" aria-label="Sumar">+</button>
+          </div>
+          <span class="line-subtotal" data-id="{{ item.producto.id }}">${{ item.subtotal }}</span>
+          <a href="{% url 'quitar_carrito' item.producto.id %}" class="btn-linkline">Quitar</a>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <aside class="cart-summary">
+      <p class="cart-summary-label">Total estimado</p>
+      <p id="cart-total" class="cart-summary-total">${{ total }}</p>
+      <a href="{% url 'checkout' %}" class="btn-main w-100">Finalizar compra</a>
+      <a href="{% url 'productos' %}" class="btn-ghost w-100 mt-2">Seguir comprando</a>
+      <p class="cart-summary-note">Recibirás una confirmación por correo y luego coordinaremos la entrega.</p>
+    </aside>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <h2>Tu carrito está vacío</h2>
+    <p>Aún no agregas productos. Explora el catálogo y arma una selección deliciosa.</p>
+    <a href="{% url 'productos' %}" class="btn-main">Ir al catálogo</a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
