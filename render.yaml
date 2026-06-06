@@ -1,0 +1,27 @@
+databases:
+  - name: dulcecitaa-db
+    plan: free
+    databaseName: dulcecitaa
+    user: dulcecitaa
+
+services:
+  - type: web
+    name: dulcecitaa
+    runtime: python
+    plan: free
+    branch: main
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate --no-input"
+    startCommand: "gunicorn reposteria.wsgi:application --bind 0.0.0.0:$PORT"
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: dulcecitaa-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: WEB_CONCURRENCY
+        value: "4"

@@ -42,6 +42,15 @@ else:
 
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", default="127.0.0.1,localhost,192.168.1.4,192.168.1.5")
 
+# Render inyecta el hostname público del servicio
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com"]
+if RENDER_EXTERNAL_HOSTNAME:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
+
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -57,6 +66,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -94,6 +104,15 @@ DATABASES = {
     }
 }
 
+# En producción (Render) usar Postgres vía DATABASE_URL
+DATABASE_URL = os.getenv("DATABASE_URL")
+if DATABASE_URL:
+    import dj_database_url
+
+    DATABASES["default"] = dj_database_url.parse(
+        DATABASE_URL, conn_max_age=600, ssl_require=True
+    )
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -123,6 +142,12 @@ STATIC_URL = "/static/"
 GLOBAL_STATIC_DIR = BASE_DIR / "static"
 STATICFILES_DIRS = [GLOBAL_STATIC_DIR] if GLOBAL_STATIC_DIR.exists() else []
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+# WhiteNoise sirve y comprime los estáticos en producción
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
+}
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
