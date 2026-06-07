@@ -65,9 +65,9 @@ body { background: #fff !important; }
 .dr-brand { display: inline-flex; align-items: center; gap: .55rem; }
 .dr-brand { max-width: 78%; overflow: visible; display: inline-flex; align-items: center; }
 /* Logo en imagen (reemplaza el texto) */
-.dr-logo-img { height: 46px; width: auto; display: block; }
-.dr-logo-foot { height: 58px; width: auto; display: block; }
-@media (max-width: 992px) { .dr-logo-img { height: 40px; } }
+.dr-logo-img { height: 64px; width: auto; display: block; }
+.dr-logo-foot { height: 78px; width: auto; display: block; }
+@media (max-width: 992px) { .dr-logo-img { height: 54px; } }
 
 .dr-nav .brand-word {
   font-family: 'Wisdom Merry', 'Dancing Script', cursive;
