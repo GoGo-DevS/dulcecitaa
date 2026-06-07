@@ -21,11 +21,14 @@ urlpatterns = [
     path("clientes/", views.clientes_lista, name="clientes"),
     path("clientes/nuevo/", views.cliente_nuevo, name="cliente_nuevo"),
     path("clientes/<int:pk>/editar/", views.cliente_editar, name="cliente_editar"),
+    path("clientes/<int:pk>/eliminar/", views.cliente_eliminar, name="cliente_eliminar"),
 
     # Pedidos
     path("pedidos/", views.pedidos_lista, name="pedidos"),
     path("pedidos/nuevo/", views.pedido_nuevo, name="pedido_nuevo"),
     path("pedidos/<int:pk>/", views.pedido_detalle, name="pedido_detalle"),
+    path("pedidos/<int:pk>/editar/", views.pedido_editar, name="pedido_editar"),
+    path("pedidos/<int:pk>/nota/", views.pedido_nota, name="pedido_nota"),
     path("pedidos/<int:pk>/item/agregar/", views.pedido_item_agregar, name="pedido_item_agregar"),
     path("pedidos/<int:pk>/item/<int:item_pk>/eliminar/", views.pedido_item_eliminar, name="pedido_item_eliminar"),
     path("pedidos/<int:pk>/item/<int:item_pk>/componente/agregar/", views.componente_agregar, name="componente_agregar"),

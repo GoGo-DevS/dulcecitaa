@@ -4,8 +4,9 @@
 {% block nav_pedidos %}active{% endblock %}
 
 {% block content %}
+{% url 'gestion:pedidos' as default_volver %}
 <div class="d-flex align-items-center mb-3">
-    <a href="{% url 'gestion:pedidos' %}" class="btn btn-sm btn-link text-muted ps-0"><i class="bi bi-arrow-left"></i> Volver</a>
+    <a href="{{ volver_url|default:default_volver }}" class="btn btn-sm btn-link text-muted ps-0"><i class="bi bi-arrow-left"></i> Volver</a>
     <h5 class="mb-0 ms-1">{{ titulo }}</h5>
 </div>
 
@@ -37,8 +38,8 @@
             {{ form.notas }}
         </div>
         <div class="d-grid gap-2">
-            <button type="submit" class="btn btn-dc"><i class="bi bi-check-lg"></i> Crear y agregar productos</button>
-            <a href="{% url 'gestion:pedidos' %}" class="btn btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-dc"><i class="bi bi-check-lg"></i> {{ submit_label|default:"Crear y agregar productos" }}</button>
+            <a href="{{ volver_url|default:default_volver }}" class="btn btn-outline-secondary">Cancelar</a>
         </div>
     </form>
 </div></div>

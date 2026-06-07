@@ -3,7 +3,9 @@ from urllib.parse import quote
 
 from django.contrib import messages
 from django.db.models import Q
+from django.db.models.deletion import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.utils import timezone
 
 from BebesitaAPP.models import Producto
@@ -128,6 +130,23 @@ def cliente_editar(request, pk):
     )
 
 
+def cliente_eliminar(request, pk):
+    cliente = get_object_or_404(Cliente, pk=pk)
+    if request.method == "POST":
+        nombre = str(cliente)
+        try:
+            cliente.delete()
+            messages.info(request, f"Cliente «{nombre}» eliminado.")
+        except ProtectedError:
+            messages.error(
+                request,
+                "No se puede eliminar: el cliente tiene pedidos asociados. "
+                "Puedes marcarlo como inactivo en «Editar».",
+            )
+            return redirect("gestion:cliente_editar", pk=cliente.pk)
+    return redirect("gestion:clientes")
+
+
 # ----------------------------------------------------------------------------
 # Pedidos
 # ----------------------------------------------------------------------------
@@ -160,6 +179,39 @@ def pedido_nuevo(request):
         if not Cliente.objects.filter(activo=True).exists():
             messages.warning(request, "Primero crea un cliente.")
     return render(request, "gestion/pedido_form.html", {"form": form, "titulo": "Nuevo pedido"})
+
+
+def pedido_editar(request, pk):
+    """Modifica los datos del pedido: cliente, descripción, fechas y notas."""
+    pedido = get_object_or_404(Pedido, pk=pk)
+    # Permitir el cliente actual aunque esté inactivo
+    qs_clientes = Cliente.objects.filter(Q(activo=True) | Q(pk=pedido.cliente_id))
+    if request.method == "POST":
+        form = PedidoForm(request.POST, instance=pedido)
+        form.fields["cliente"].queryset = qs_clientes
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Pedido actualizado.")
+            return redirect("gestion:pedido_detalle", pk=pedido.pk)
+    else:
+        form = PedidoForm(instance=pedido)
+        form.fields["cliente"].queryset = qs_clientes
+    return render(request, "gestion/pedido_form.html", {
+        "form": form,
+        "titulo": f"Editar pedido #{pedido.id}",
+        "submit_label": "Guardar cambios",
+        "volver_url": reverse("gestion:pedido_detalle", kwargs={"pk": pedido.pk}),
+    })
+
+
+def pedido_nota(request, pk):
+    """Guarda la nota/observación del pedido (siempre disponible, arriba)."""
+    pedido = get_object_or_404(Pedido, pk=pk)
+    if request.method == "POST":
+        pedido.notas = request.POST.get("notas", "").strip()
+        pedido.save(update_fields=["notas"])
+        messages.success(request, "Nota guardada.")
+    return redirect("gestion:pedido_detalle", pk=pedido.pk)
 
 
 def pedido_detalle(request, pk):
