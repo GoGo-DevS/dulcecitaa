@@ -50,17 +50,17 @@ body {
 }
 /* Logo en una línea: corazón + dulcecitaa */
 .dr-brand { display: inline-flex; align-items: center; gap: .55rem; }
-.dr-brand { max-width: 74%; overflow: hidden; display: inline-flex; align-items: center; }
+.dr-brand { max-width: 78%; overflow: visible; display: inline-flex; align-items: center; }
 .dr-nav .brand-word {
-  font-family: 'Dancing Script', cursive;
-  font-weight: 700;
+  font-family: 'Wisdom Merry', 'Dancing Script', cursive;
+  font-weight: normal;
   color: #fff !important;
-  font-size: clamp(1.7rem, 7vw, 2.4rem);
-  line-height: 1.1;
+  font-size: clamp(1.7rem, 7vw, 2.45rem);
+  line-height: 1.35;            /* holgura vertical para que la 'l' no se corte */
   letter-spacing: .01em;
   text-transform: lowercase;
   white-space: nowrap;
-  padding: .1rem 0;
+  padding: .18rem 0 .28rem;     /* aire arriba/abajo para los trazos altos */
   text-shadow: 0 1px 3px rgba(154, 60, 100, .28);
 }
 .dr-nav .nav-link {
@@ -86,7 +86,14 @@ body {
   box-shadow: 0 8px 18px rgba(154, 60, 100, .18);
   transition: transform .15s ease, background .2s ease, color .2s ease;
 }
-.dr-pedido:hover { background: var(--dr-pink-deep); color: #fff !important; transform: translateY(-1px); }
+/* En hover se mantiene blanco con letra rosada (solo un leve realce). */
+.dr-pedido:hover,
+.dr-pedido:focus {
+  background: #fff;
+  color: var(--dr-pink-deep) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(154, 60, 100, .26);
+}
 
 /* Carrito con ícono + badge */
 .dr-cart {
