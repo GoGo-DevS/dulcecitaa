@@ -228,7 +228,28 @@ body {
   .dr-tile-overlay { opacity: 1; padding: .55rem; background: linear-gradient(to top, rgba(74,58,64,.78), rgba(74,58,64,0) 60%); }
   .dr-tile-name { font-size: .82rem; }
   .dr-tile-price { font-size: .8rem; }
-  /* acciones (CTA + carrito) cómodas en el menú colapsado */
-  .dr-nav-actions { justify-content: space-between; padding-top: .4rem; }
+  /* ---- Menú móvil prolijo ---- */
+  .dr-nav .navbar-collapse {
+    margin-top: .5rem;
+    border-top: 1px solid var(--dr-pink-soft);
+    padding-top: .25rem;
+  }
+  .dr-nav .navbar-nav { width: 100%; }
+  .dr-nav .navbar-nav .nav-item { width: 100%; }
+  .dr-nav .navbar-nav .nav-link {
+    display: block;
+    width: 100%;
+    padding: .85rem .25rem;
+    border-bottom: 1px solid var(--dr-pink-soft);
+  }
+  /* fila de acción: botón ancho + carrito a la derecha */
+  .dr-nav-actions {
+    width: 100%;
+    gap: 1rem;
+    align-items: center;
+    padding: .9rem 0 .3rem;
+  }
+  .dr-nav-actions .dr-pedido { flex: 1 1 auto; text-align: center; }
+  .dr-nav-actions .dr-cart { flex: 0 0 auto; font-size: 1.7rem; }
   .dr-corp { padding: 2.2rem 0; }
 }
