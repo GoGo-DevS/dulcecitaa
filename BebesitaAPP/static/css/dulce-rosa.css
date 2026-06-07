@@ -11,14 +11,14 @@
 }
 
 :root {
-  /* Paleta Propuesta 1 */
-  --dr-pink-bg: #fff7fa;       /* fondo navbar */
-  --dr-pink-soft: #fde9f0;     /* rosa pastel suave */
-  --dr-pink: #f7c8d9;          /* corazón / acentos */
-  --dr-pink-deep: #ee5ba1;     /* rosado vivo (pedido por la clienta) */
-  --dr-wine: #9a5b72;          /* texto / logo */
+  /* Paleta de la clienta */
+  --dr-pink-bg: #f6a7d6;       /* franja navbar (rosado) */
+  --dr-pink-soft: #e8c8dd;     /* rosa suave / bordes */
+  --dr-pink: #eaa9c7;          /* acento */
+  --dr-pink-deep: #d9569f;     /* rosado legible (botones/fills con texto blanco) */
+  --dr-wine: #b5527e;          /* texto rosado oscuro (legible sobre blanco) */
   --dr-ink: #5a4750;
-  --dr-cream: #ffffff;         /* fondo general */
+  --dr-cream: #fefcff;         /* fondo general */
 }
 
 body {
@@ -30,8 +30,8 @@ body {
 
 /* ---------- Barra superior (announcement) ---------- */
 .dr-topbar {
-  background: linear-gradient(90deg, var(--dr-pink), var(--dr-pink-soft));
-  color: var(--dr-wine);
+  background: var(--dr-pink);
+  color: #fff;
   text-align: center;
   font-size: .72rem;
   font-weight: 700;
@@ -51,48 +51,42 @@ body {
 /* Logo en una línea: corazón + dulcecitaa */
 .dr-brand { display: inline-flex; align-items: center; gap: .55rem; }
 .dr-brand { max-width: 74%; overflow: hidden; display: inline-flex; align-items: center; }
-.dr-heart {
-  color: var(--dr-pink-deep);
-  font-size: clamp(1.05rem, 4vw, 1.45rem);
-  line-height: 1;
-  flex: 0 0 auto;
-  margin-right: .15rem;
-}
 .dr-nav .brand-word {
-  font-family: 'Wisdom Merry', 'Dancing Script', cursive;
-  color: var(--dr-wine) !important;
-  /* un poco más chico para que la "l" no se sobrepase */
-  font-size: clamp(1.5rem, 6.5vw, 2.1rem);
-  line-height: 1.15;
+  font-family: 'Dancing Script', cursive;
+  font-weight: 700;
+  color: #fff !important;
+  font-size: clamp(1.7rem, 7vw, 2.4rem);
+  line-height: 1.1;
   letter-spacing: .01em;
   text-transform: lowercase;
   white-space: nowrap;
   padding: .1rem 0;
+  text-shadow: 0 1px 3px rgba(154, 60, 100, .28);
 }
 .dr-nav .nav-link {
-  color: var(--dr-wine) !important;
+  color: #fff !important;
   font-family: 'Manrope', system-ui, sans-serif;
   font-size: .8rem;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
 }
-.dr-nav .nav-link:hover { color: var(--dr-pink-deep) !important; }
+.dr-nav .nav-link:hover { color: rgba(255, 255, 255, .72) !important; }
 
-/* Botón CTA */
+/* Botón CTA: fondo blanco, letra rosada */
 .dr-pedido {
-  background: var(--dr-pink-deep);
-  color: #fff !important;
+  background: #fff;
+  color: var(--dr-pink-deep) !important;
   border-radius: 999px;
   padding: .62rem 1.5rem !important;
   font-weight: 800 !important;
   letter-spacing: .06em;
   text-transform: uppercase;
   font-size: .8rem;
-  box-shadow: 0 10px 22px rgba(238, 91, 161, .38);
-  transition: transform .15s ease, background .2s ease;
+  box-shadow: 0 8px 18px rgba(154, 60, 100, .18);
+  transition: transform .15s ease, background .2s ease, color .2s ease;
 }
-.dr-pedido:hover { background: var(--dr-wine); color: #fff !important; transform: translateY(-1px); }
+.dr-pedido:hover { background: var(--dr-pink-deep); color: #fff !important; transform: translateY(-1px); }
 
 /* Carrito con ícono + badge */
 .dr-cart {
@@ -114,14 +108,14 @@ body {
 
 /* ---------- Botón hamburguesa ---------- */
 .dr-nav .navbar-toggler {
-  border: 1px solid var(--dr-pink-soft);
+  border: 1px solid rgba(255, 255, 255, .6);
   border-radius: 12px;
   padding: .3rem .55rem;
   background: #fff;
 }
-.dr-nav .navbar-toggler:focus { box-shadow: 0 0 0 .2rem rgba(238, 91, 161, .2); }
+.dr-nav .navbar-toggler:focus { box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .35); }
 .dr-nav .navbar-toggler-icon {
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23ee5ba1' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.6' d='M5 8h20M5 15h20M5 22h20'/%3e%3c/svg%3e");
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23d9569f' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.6' d='M5 8h20M5 15h20M5 22h20'/%3e%3c/svg%3e");
 }
 
 /* ---------- Animación del menú: rápida y limpia ---------- */
@@ -267,7 +261,7 @@ body {
   /* ---- Menú móvil prolijo ---- */
   .dr-nav .navbar-collapse {
     margin-top: .5rem;
-    border-top: 1px solid var(--dr-pink-soft);
+    border-top: 1px solid rgba(255, 255, 255, .25);
     padding-top: .25rem;
   }
   .dr-nav .navbar-nav { width: 100%; }
@@ -276,7 +270,7 @@ body {
     display: block;
     width: 100%;
     padding: .85rem .25rem;
-    border-bottom: 1px solid var(--dr-pink-soft);
+    border-bottom: 1px solid rgba(255, 255, 255, .22);
   }
   /* fila de acción: botón ancho + carrito a la derecha */
   .dr-nav-actions {

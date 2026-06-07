@@ -170,7 +170,7 @@ EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "15"))
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "no-reply@dulcecitaa.local")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", DEFAULT_FROM_EMAIL)
 
-BRAND_NAME = os.getenv("BRAND_NAME", "Dulcecitaa")
+BRAND_NAME = os.getenv("BRAND_NAME", "Dulcecita")
 WEBSITE_URL = os.getenv("WEBSITE_URL", "")
 WHATSAPP_URL = os.getenv("WHATSAPP_URL", "")
 SHIPPING_COST = int(os.getenv("SHIPPING_COST", "2500"))
