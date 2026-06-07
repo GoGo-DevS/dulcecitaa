@@ -1,0 +1,31 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Costos por unidad · Dulcecita{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center mb-2">
+    <a href="{% url 'gestion:dashboard' %}" class="btn btn-sm btn-link text-muted ps-0"><i class="bi bi-arrow-left"></i> Inicio</a>
+</div>
+<h5 class="mb-1">Costos por unidad</h5>
+<p class="small text-muted">Cuánto te cuesta producir <strong>una unidad</strong> de cada producto (ej: 1 alfajor = $580). Se usa para estimar el costo de cada pedido según cuántas unidades produce.</p>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="card"><div class="list-group list-group-flush">
+        {% for fila in filas %}
+            <div class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                <span class="fw-semibold">{{ fila.p.nombre }}</span>
+                <div class="input-group" style="max-width:150px">
+                    <span class="input-group-text">$</span>
+                    <input type="number" min="0" name="costo_{{ fila.p.id }}" value="{{ fila.costo }}" class="form-control" placeholder="0">
+                </div>
+            </div>
+        {% empty %}
+            <div class="list-group-item text-muted">No hay productos en el catálogo.</div>
+        {% endfor %}
+    </div></div>
+    <div class="d-grid mt-3">
+        <button class="btn btn-dc"><i class="bi bi-check-lg"></i> Guardar costos</button>
+    </div>
+</form>
+{% endblock %}

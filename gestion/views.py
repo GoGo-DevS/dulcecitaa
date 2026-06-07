@@ -18,7 +18,7 @@ from .forms import (
     PedidoForm,
     PedidoItemForm,
 )
-from .models import Cliente, Componente, Compra, Pedido, PedidoItem
+from .models import Cliente, Componente, Compra, CostoProducto, Pedido, PedidoItem
 
 
 # ----------------------------------------------------------------------------
@@ -373,3 +373,87 @@ def compra_eliminar(request, pk, compra_pk):
         Compra.objects.filter(pk=compra_pk, pedido=pedido).delete()
         messages.info(request, "Compra eliminada.")
     return redirect("gestion:pedido_detalle", pk=pedido.pk)
+
+
+# ----------------------------------------------------------------------------
+# Costos por unidad (B)
+# ----------------------------------------------------------------------------
+def costos(request):
+    """Define el costo de producción por UNIDAD de cada producto."""
+    productos = list(Producto.objects.all().order_by("nombre"))
+    if request.method == "POST":
+        for p in productos:
+            val = request.POST.get(f"costo_{p.id}", "").strip()
+            costo = int(val) if val.isdigit() else 0
+            obj, _ = CostoProducto.objects.get_or_create(producto=p)
+            if obj.costo_unidad != costo:
+                obj.costo_unidad = costo
+                obj.save(update_fields=["costo_unidad"])
+        messages.success(request, "Costos por unidad guardados.")
+        return redirect("gestion:costos")
+
+    costos_map = {c.producto_id: c.costo_unidad for c in CostoProducto.objects.all()}
+    filas = [{"p": p, "costo": costos_map.get(p.id, 0)} for p in productos]
+    return render(request, "gestion/costos.html", {"filas": filas})
+
+
+# ----------------------------------------------------------------------------
+# Compra a granel repartida entre pedidos (C)
+# ----------------------------------------------------------------------------
+def compra_granel(request):
+    """Registra una compra grande y la reparte entre los pedidos elegidos,
+    proporcional a las unidades que produce cada uno (crea una Compra por pedido)."""
+    pedidos = (
+        Pedido.objects.exclude(estado=Pedido.CANCELADO)
+        .select_related("cliente")
+        .prefetch_related("items__componentes")
+        .order_by("-fecha_pedido", "-id")
+    )
+    if request.method == "POST":
+        ids = request.POST.getlist("pedidos")
+        seleccionados = [p for p in pedidos if str(p.pk) in ids]
+        try:
+            monto = int(request.POST.get("monto", "0"))
+        except ValueError:
+            monto = 0
+        detalle = request.POST.get("detalle", "").strip()
+        proveedor = request.POST.get("proveedor", "").strip()
+        fecha_str = request.POST.get("fecha", "")
+        try:
+            fecha = date.fromisoformat(fecha_str) if fecha_str else timezone.localdate()
+        except ValueError:
+            fecha = timezone.localdate()
+
+        if not seleccionados or monto <= 0:
+            messages.error(request, "Elige al menos un pedido y un monto válido.")
+            return redirect("gestion:compra_granel")
+
+        unidades = {p.pk: p.total_unidades for p in seleccionados}
+        total_u = sum(unidades.values())
+        n = len(seleccionados)
+
+        repartos = {}
+        acumulado = 0
+        for i, p in enumerate(seleccionados):
+            if i < n - 1:
+                if total_u > 0:
+                    parte = round(monto * unidades[p.pk] / total_u)
+                else:
+                    parte = monto // n
+                repartos[p.pk] = parte
+                acumulado += parte
+            else:
+                repartos[p.pk] = monto - acumulado  # el resto al último (cuadra el total)
+
+        for p in seleccionados:
+            Compra.objects.create(
+                pedido=p,
+                proveedor=proveedor,
+                detalle=f"Granel: {detalle}" if detalle else "Compra a granel",
+                monto=repartos[p.pk],
+                fecha=fecha,
+            )
+        messages.success(request, f"Compra a granel de ${monto:,} repartida en {n} pedidos.".replace(",", "."))
+        return redirect("gestion:pedidos")
+
+    return render(request, "gestion/compra_granel.html", {"pedidos": pedidos, "hoy": timezone.localdate()})

@@ -39,6 +39,10 @@
 
 <div class="d-grid gap-2 mb-3">
     <a href="{% url 'gestion:pedido_nuevo' %}" class="btn btn-dc"><i class="bi bi-plus-lg"></i> Nuevo pedido</a>
+    <div class="row g-2">
+        <div class="col-6"><a href="{% url 'gestion:compra_granel' %}" class="btn btn-outline-dc w-100"><i class="bi bi-cart-plus"></i> Compra a granel</a></div>
+        <div class="col-6"><a href="{% url 'gestion:costos' %}" class="btn btn-outline-dc w-100"><i class="bi bi-calculator"></i> Costos por unidad</a></div>
+    </div>
 </div>
 
 <!-- Por entregar -->

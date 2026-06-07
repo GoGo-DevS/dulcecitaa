@@ -88,9 +88,25 @@ class Pedido(models.Model):
         return self.compras.exists()
 
     @property
+    def costo_unidades(self):
+        """Costo estimado por las UNIDADES producidas, usando el costo por
+        unidad de cada producto (definido a mano en «Costos por unidad»)."""
+        total = 0
+        for caja in self.items.all():
+            for comp in caja.componentes.all():
+                cu = getattr(comp.producto, "gestion_costo", None)
+                if cu and cu.costo_unidad:
+                    total += cu.costo_unidad * comp.cantidad * caja.cantidad
+        return total
+
+    @property
     def costo_aplicado(self):
-        """Gasto real si ya compró; si no, el estimado."""
-        return self.costo_real if self.tiene_compras else self.costo_estimado
+        """Prioridad: gasto real (compras) > costo por unidad > estimado por caja."""
+        if self.tiene_compras:
+            return self.costo_real
+        if self.costo_unidades:
+            return self.costo_unidades
+        return self.costo_estimado
 
     @property
     def utilidad(self):
@@ -192,3 +208,21 @@ class Compra(models.Model):
 
     def __str__(self):
         return f"${self.monto:,} · {self.proveedor or self.detalle}"
+
+
+class CostoProducto(models.Model):
+    """Costo de producción por UNIDAD de un producto (ej: 1 alfajor = $580).
+    Lo define la dueña a mano; sirve para estimar el costo de cada pedido
+    según cuántas unidades produce."""
+    producto = models.OneToOneField(
+        Producto, on_delete=models.CASCADE, related_name="gestion_costo"
+    )
+    costo_unidad = models.PositiveIntegerField(default=0)  # CLP por unidad
+    creado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Costo por unidad"
+        verbose_name_plural = "Costos por unidad"
+
+    def __str__(self):
+        return f"{self.producto.nombre}: ${self.costo_unidad}"

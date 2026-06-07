@@ -40,4 +40,8 @@ urlpatterns = [
     # Compras
     path("pedidos/<int:pk>/compra/", views.compra_nueva, name="compra_nueva"),
     path("pedidos/<int:pk>/compra/<int:compra_pk>/eliminar/", views.compra_eliminar, name="compra_eliminar"),
+    path("compra-granel/", views.compra_granel, name="compra_granel"),
+
+    # Costos por unidad
+    path("costos/", views.costos, name="costos"),
 ]

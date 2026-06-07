@@ -76,7 +76,7 @@
                 <div class="fw-bold">${{ pedido.precio_total|intcomma }}</div>
             </div>
             <div class="col-4">
-                <div class="small opacity-75">Costo {% if pedido.tiene_compras %}real{% else %}estim.{% endif %}</div>
+                <div class="small opacity-75">Costo {% if pedido.tiene_compras %}real{% elif pedido.costo_unidades %}× unidad{% else %}estim.{% endif %}</div>
                 <div class="fw-bold">${{ pedido.costo_aplicado|intcomma }}</div>
             </div>
             <div class="col-4">
