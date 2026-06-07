@@ -19,7 +19,18 @@
   --dr-wine: #b5527e;          /* texto rosado oscuro (legible sobre blanco) */
   --dr-ink: #5a4750;
   --dr-cream: #fefcff;         /* fondo general */
+
+  /* Reemplaza el terracota del tema base por el rosado Dulcecita:
+     cascada a .btn-main, .btn-add-only, .eyebrow, .btn-linkline, etc. */
+  --rose-300: #f0b6d6;
+  --rose-500: #d9569f;
+  --rose-700: #d9569f;
 }
+
+/* Botones outline (Limpiar, Seguir comprando): borde y texto rosados */
+.btn-ghost { border-color: rgba(217, 86, 159, .4); color: var(--dr-pink-deep); }
+.btn-ghost:hover { background: rgba(217, 86, 159, .08); color: var(--dr-pink-deep); }
+.btn-secondary { border-color: rgba(217, 86, 159, .3); }
 
 body {
   background:
@@ -74,6 +85,11 @@ body {
 .dr-nav .nav-link:hover { color: rgba(255, 255, 255, .72) !important; }
 
 /* Botón CTA: fondo blanco, letra rosada */
+/* Mayor especificidad que ".dr-nav .nav-link {color:#fff}" para que NO quede
+   texto blanco sobre fondo blanco (el botón se veía vacío). */
+.dr-nav .nav-link.dr-pedido,
+.dr-nav .nav-link.dr-pedido:hover,
+.dr-nav .nav-link.dr-pedido:focus { color: var(--dr-pink-deep) !important; }
 .dr-pedido {
   background: #fff;
   color: var(--dr-pink-deep) !important;
@@ -187,7 +203,7 @@ body {
   border-radius: 999px; padding: .55rem 1.4rem; font-weight: 700;
   letter-spacing: .04em; box-shadow: 0 10px 22px rgba(217,138,160,.4);
 }
-.dr-hero-btn:hover { background: #fff; color: var(--dr-wine); }
+.dr-hero-btn:hover { background: #fff; color: var(--dr-pink-deep); }
 .dr-hero .carousel-indicators [data-bs-target] { background-color: var(--dr-pink); }
 
 /* ---------- Sección productos (grilla edge-to-edge) ---------- */
@@ -197,7 +213,7 @@ body {
   font-family: 'Playfair Display', serif;
   letter-spacing: .26em;
   text-transform: uppercase;
-  color: var(--dr-wine);
+  color: var(--dr-pink-deep);
   font-size: 1.45rem;
   margin-bottom: .4rem;
 }
@@ -233,10 +249,10 @@ body {
 
 .dr-products-cta { text-align: center; margin: 2.4rem 0 .5rem; }
 .dr-btn-wine {
-  display: inline-block; background: var(--dr-wine); color: #fff;
+  display: inline-block; background: var(--dr-pink-deep); color: #fff;
   border-radius: 999px; padding: .7rem 2rem; font-weight: 700; letter-spacing: .05em;
 }
-.dr-btn-wine:hover { background: var(--dr-pink-deep); color: #fff; }
+.dr-btn-wine:hover { background: #c2418a; color: #fff; }
 
 /* ---------- Franja corporativa ---------- */
 .dr-corp {
@@ -244,12 +260,25 @@ body {
   background: linear-gradient(135deg, var(--dr-pink-soft), var(--dr-pink));
   text-align: center;
 }
-.dr-corp h2 { font-family: 'Playfair Display', serif; color: var(--dr-wine); }
+.dr-corp h2 { font-family: 'Playfair Display', serif; color: var(--dr-pink-deep); }
 .dr-corp p { color: var(--dr-ink); max-width: 620px; margin: .6rem auto 1.4rem; }
 
-/* ---------- Footer pastel ---------- */
-.site-footer.dr-foot { background: #3b2d31; }
-.dr-foot .footer-brand, .dr-foot .footer-title { color: var(--dr-pink); }
+/* ---------- Footer rosado (mismo de la franja del navbar) ---------- */
+.site-footer.dr-foot { background: var(--dr-pink-bg); }
+.dr-foot,
+.dr-foot .footer-copy,
+.dr-foot .footer-link,
+.dr-foot .footer-title,
+.dr-foot .footer-legal { color: #fff; }
+.dr-foot .footer-link:hover { color: rgba(255, 255, 255, .78); }
+.dr-foot .footer-legal { border-top-color: rgba(255, 255, 255, .35); }
+/* "Dulcecita" del footer con la fuente del logo (no Playfair) */
+.dr-foot .footer-brand {
+  font-family: 'Wisdom Merry', 'Dancing Script', cursive;
+  font-weight: normal;
+  color: #fff;
+  font-size: 2rem;
+}
 
 @media (max-width: 992px) {
   .dr-hero .carousel-item { height: 52vh; min-height: 300px; }
@@ -289,4 +318,19 @@ body {
   .dr-nav-actions .dr-pedido { flex: 1 1 auto; text-align: center; }
   .dr-nav-actions .dr-cart { flex: 0 0 auto; font-size: 1.7rem; }
   .dr-corp { padding: 2.2rem 0; }
+
+  /* ---- Logo centrado en móvil (hamburguesa a la derecha) ---- */
+  .dr-nav .container { position: relative; justify-content: center; }
+  .dr-brand {
+    margin: 0 auto;
+    max-width: calc(100% - 7rem); /* deja espacio para el toggler */
+    justify-content: center;
+  }
+  .dr-nav .navbar-toggler {
+    position: absolute;
+    right: .25rem;
+    top: .55rem;        /* fijo: no se desvía al abrir el menú */
+    margin: 0;
+    z-index: 2;
+  }
 }
