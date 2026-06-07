@@ -79,9 +79,15 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "gestion.middleware.GestionLoginRequiredMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+# Acceso a la gestión privada (/panel/)
+LOGIN_URL = "gestion:login"
+LOGIN_REDIRECT_URL = "gestion:dashboard"
+LOGOUT_REDIRECT_URL = "gestion:login"
 
 ROOT_URLCONF = "reposteria.urls"
 

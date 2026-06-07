@@ -1,8 +1,25 @@
 from django import forms
+from django.contrib.auth.forms import AuthenticationForm
 
 from BebesitaAPP.models import Producto
 
 from .models import Cliente, Componente, Compra, Pedido, PedidoItem
+
+
+class GestionLoginForm(AuthenticationForm):
+    """Login de la gestión, con placeholders personalizados."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["username"].widget.attrs.update({
+            "class": "form-control form-control-lg",
+            "placeholder": "te amo",
+            "autofocus": True,
+        })
+        self.fields["password"].widget.attrs.update({
+            "class": "form-control form-control-lg",
+            "placeholder": "mi vida",
+        })
 
 
 class ClienteForm(forms.ModelForm):
