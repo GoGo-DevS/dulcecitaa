@@ -16,6 +16,7 @@ def site_config(request):
         "site_brand": getattr(settings, "BRAND_NAME", "Dulcecitaa"),
         "contact_email": getattr(settings, "CONTACT_EMAIL", ""),
         "whatsapp_url": getattr(settings, "WHATSAPP_URL", ""),
+        "instagram_url": getattr(settings, "INSTAGRAM_URL", ""),
         "business_hours": getattr(settings, "BUSINESS_HOURS", ""),
         "default_og_image_url": default_og_image_url,
     }

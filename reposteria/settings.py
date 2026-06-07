@@ -181,11 +181,14 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "15"))
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "no-reply@dulcecitaa.local")
-CONTACT_EMAIL = os.getenv("CONTACT_EMAIL", DEFAULT_FROM_EMAIL)
+# Correo de contacto público (se muestra en footer y formularios)
+CONTACT_EMAIL = os.getenv("CONTACT_EMAIL") or "contacto@dulcecita.cl"
 
 BRAND_NAME = os.getenv("BRAND_NAME", "Dulcecita")
 WEBSITE_URL = os.getenv("WEBSITE_URL", "")
-WHATSAPP_URL = os.getenv("WHATSAPP_URL", "")
+# Botones flotantes de redes
+WHATSAPP_URL = os.getenv("WHATSAPP_URL") or "https://wa.me/56961192192"
+INSTAGRAM_URL = os.getenv("INSTAGRAM_URL") or "https://instagram.com/dulcecitaa.cl"
 SHIPPING_COST = int(os.getenv("SHIPPING_COST", "2500"))
 PICKUP_POINT_LABEL = os.getenv("PICKUP_POINT_LABEL", "Retiro coordinado por WhatsApp")
 BUSINESS_HOURS = os.getenv("BUSINESS_HOURS", "Lunes a sabado de 09:00 a 19:00")
