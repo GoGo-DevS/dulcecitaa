@@ -23,6 +23,10 @@ services:
         fromDatabase:
           name: dulcecitaa-db
           property: connectionString
+      # Cloudinary: pega el valor en el dashboard de Render (Environment).
+      # NO se versiona aquí porque contiene el API secret.
+      - key: CLOUDINARY_URL
+        sync: false
       - key: PYTHON_VERSION
         value: "3.12.7"
       - key: WEB_CONCURRENCY

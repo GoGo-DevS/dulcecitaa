@@ -64,6 +64,14 @@ INSTALLED_APPS = [
     "gestion",
 ]
 
+# Cloudinary: almacenamiento permanente de imágenes subidas (admin/productos).
+# Solo se activa si existe CLOUDINARY_URL en el entorno; si no, usa el disco local.
+# Render borra el disco en cada deploy, por eso las fotos deben vivir en Cloudinary.
+CLOUDINARY_URL = os.getenv("CLOUDINARY_URL")
+USE_CLOUDINARY = bool(CLOUDINARY_URL)
+if USE_CLOUDINARY:
+    INSTALLED_APPS += ["cloudinary", "cloudinary_storage"]
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -149,6 +157,11 @@ STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
 }
+
+# Si hay Cloudinary, las imágenes subidas (MEDIA) se guardan ahí de forma permanente.
+# Los estáticos siguen en WhiteNoise. La librería cloudinary lee CLOUDINARY_URL sola.
+if USE_CLOUDINARY:
+    STORAGES["default"] = {"BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage"}
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
