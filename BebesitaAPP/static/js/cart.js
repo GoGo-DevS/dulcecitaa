@@ -31,6 +31,8 @@
     if (!badge) return;
     const current = Number.parseInt(badge.textContent || '0', 10);
     badge.textContent = n;
+    const fab = document.getElementById('cart-fab');
+    if (fab) fab.classList.toggle('is-empty', !Number(n));
     if (Number.isFinite(current) && current !== n) pulseCartCount();
   }
 
