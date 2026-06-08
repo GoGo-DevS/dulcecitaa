@@ -67,7 +67,7 @@
     <nav class="navbar app-bar sticky-top">
         <div class="container-fluid d-flex align-items-center">
             <a class="navbar-brand d-flex align-items-center" href="{% url 'gestion:dashboard' %}">
-                <img src="{% static 'img/logo-dulcecita.png' %}?v=2" alt="Dulcecita" class="brand-logo">
+                <img src="{% static 'img/logo-dulcecita.png' %}?v=3" alt="Dulcecita" class="brand-logo">
             </a>
             {% if user.is_authenticated %}
             <form method="post" action="{% url 'gestion:logout' %}" class="ms-auto m-0">
