@@ -58,8 +58,8 @@ body { background: #fff !important; }
   background: var(--dr-pink-bg) !important;
   border-bottom: 1px solid var(--dr-pink-soft);
   box-shadow: 0 6px 24px rgba(154, 91, 114, .07);
-  padding-top: .4rem;
-  padding-bottom: .4rem;
+  padding-top: .8rem;
+  padding-bottom: .8rem;
 }
 /* Logo en una línea: corazón + dulcecitaa */
 .dr-brand { display: inline-flex; align-items: center; gap: .55rem; }
@@ -84,12 +84,22 @@ body { background: #fff !important; }
 .dr-nav .nav-link {
   color: #fff !important;
   font-family: 'Manrope', system-ui, sans-serif;
-  font-size: .8rem;
+  font-size: 1rem;
   font-weight: 700;
   letter-spacing: .1em;
   text-transform: uppercase;
+  white-space: nowrap;   /* cada opción en una sola línea */
 }
 .dr-nav .nav-link:hover { color: rgba(255, 255, 255, .72) !important; }
+
+/* Menú en una sola fila; en pantallas medianas se achica un poco para no desbordar */
+.dr-nav .navbar-nav { column-gap: 1.5rem; }
+@media (min-width: 992px) and (max-width: 1299.98px) {
+  .dr-nav .nav-link { font-size: .85rem; letter-spacing: .05em; }
+  .dr-nav .navbar-nav { column-gap: .9rem; }
+  .dr-pedido { padding: .78rem 1.4rem !important; font-size: .82rem; }
+  .dr-logo-img { height: 76px; }
+}
 
 /* Botón CTA: fondo blanco, letra rosada */
 /* Mayor especificidad que ".dr-nav .nav-link {color:#fff}" para que NO quede
@@ -101,11 +111,11 @@ body { background: #fff !important; }
   background: #fff;
   color: var(--dr-pink-deep) !important;
   border-radius: 999px;
-  padding: .62rem 1.5rem !important;
+  padding: .9rem 2rem !important;
   font-weight: 800 !important;
   letter-spacing: .06em;
   text-transform: uppercase;
-  font-size: .8rem;
+  font-size: .95rem;
   box-shadow: 0 8px 18px rgba(154, 60, 100, .18);
   transition: transform .15s ease, background .2s ease, color .2s ease;
 }
