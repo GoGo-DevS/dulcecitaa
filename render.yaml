@@ -31,3 +31,20 @@ services:
         value: "3.12.7"
       - key: WEB_CONCURRENCY
         value: "4"
+      # ── Correo (SMTP) ──────────────────────────────────────────────
+      # Sin EMAIL_HOST_USER/PASSWORD los correos de pedido NO se envian.
+      # Pega los valores en el dashboard de Render (Environment).
+      - key: EMAIL_HOST
+        value: "smtp.gmail.com"
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USE_TLS
+        value: "True"
+      - key: EMAIL_HOST_USER          # tu correo Gmail completo
+        sync: false
+      - key: EMAIL_HOST_PASSWORD      # CLAVE DE APLICACION de Gmail (no la normal)
+        sync: false
+      - key: DEFAULT_FROM_EMAIL       # ej: Dulcecita <tucorreo@gmail.com>
+        sync: false
+      - key: CONTACT_EMAIL            # donde te llegan los pedidos
+        sync: false

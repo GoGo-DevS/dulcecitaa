@@ -3,45 +3,54 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light only">
   <title>{% block email_title %}{{ site_brand }}{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 </head>
-<body style="margin:0;padding:0;background-color:#fff9f8;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fff9f8;margin:0;padding:22px 0;">
+<body style="margin:0;padding:0;background-color:#fdf4f9;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fdf4f9;margin:0;padding:24px 0;">
     <tr>
       <td align="center" style="padding:0 12px;">
-        <table role="presentation" width="680" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:680px;background-color:#ffffff;border:1px solid #f0e3e1;border-radius:18px;">
+        <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:640px;background-color:#ffffff;border:1px solid #f4dcea;border-radius:20px;overflow:hidden;">
+          <!-- Top accent (como la barra superior del sitio) -->
+          <tr><td style="height:6px;background-color:#f6a7d6;font-size:0;line-height:0;">&nbsp;</td></tr>
+          <!-- Header / marca -->
           <tr>
-            <td style="padding:26px 30px 18px;background-color:#fff1ef;border-bottom:1px solid #f0e3e1;">
-              <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:30px;line-height:1;color:#4a2f34;font-weight:bold;">
+            <td style="padding:28px 32px 20px;background-color:#fdeef7;border-bottom:1px solid #f4dcea;">
+              <p style="margin:0;font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:32px;line-height:1;color:#4a2f34;font-weight:700;">
                 {{ site_brand }}
               </p>
-              <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.4;letter-spacing:.08em;text-transform:uppercase;color:#9d6b72;">
+              <p style="margin:9px 0 0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;line-height:1.4;letter-spacing:.18em;text-transform:uppercase;color:#c0397f;font-weight:700;">
                 Repostería artesanal premium
               </p>
             </td>
           </tr>
+          <!-- Titulo + lead -->
           <tr>
-            <td style="padding:24px 30px 14px;">
-              <h1 style="margin:0 0 8px;font-family:Arial,Helvetica,sans-serif;font-size:24px;line-height:1.25;color:#2f1f22;">
+            <td style="padding:26px 32px 14px;">
+              <h1 style="margin:0 0 8px;font-family:'Playfair Display',Georgia,'Times New Roman',serif;font-size:24px;line-height:1.25;color:#4a2f34;font-weight:700;">
                 {% block heading %}Notificación{% endblock %}
               </h1>
               {% block lead %}{% endblock %}
             </td>
           </tr>
+          <!-- Contenido -->
           <tr>
-            <td style="padding:0 30px 22px;">
+            <td style="padding:0 32px 24px;">
               {% block content %}{% endblock %}
             </td>
           </tr>
+          <!-- Footer -->
           <tr>
-            <td style="padding:18px 30px 24px;border-top:1px solid #f2e7e5;background-color:#fffdfc;">
-              <p style="margin:0;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:#6f5a60;">
-                Gracias por confiar en <strong style="color:#4a2f34;">{{ site_brand }}</strong>.<br>
-                Repostería artesanal premium.
+            <td style="padding:20px 32px 26px;border-top:1px solid #f4dcea;background-color:#fffafd;">
+              <p style="margin:0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:13px;line-height:1.6;color:#6f5a60;">
+                Gracias por confiar en <strong style="color:#b5527e;">{{ site_brand }}</strong>.<br>
+                Repostería artesanal premium · Hecho con cariño 🤍
               </p>
               {% if website_url %}
-              <p style="margin:10px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#8a7278;">
-                Sitio web: <a href="{{ website_url }}" style="color:#a65354;text-decoration:none;">{{ website_url }}</a>
+              <p style="margin:12px 0 0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:12px;line-height:1.5;color:#9d6b72;">
+                <a href="{{ website_url }}" style="color:#d9569f;text-decoration:none;font-weight:600;">{{ website_url }}</a>
               </p>
               {% endif %}
             </td>
