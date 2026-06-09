@@ -91,6 +91,7 @@ def send_checkout_emails(pedido, items):
     delivery_label = "Retiro en punto" if pedido.tipo_entrega == pedido.TIPO_ENTREGA_RETIRO else "Despacho a domicilio"
     context = {
         "site_brand": getattr(settings, "BRAND_NAME", "Dulcecitaa"),
+        "logo_url": getattr(settings, "EMAIL_LOGO_URL", ""),
         "pedido": pedido,
         "line_items": line_items,
         "subtotal_formatted": _format_money(subtotal),
@@ -127,6 +128,7 @@ def send_checkout_emails(pedido, items):
 def send_contact_email(data):
     context = {
         "site_brand": getattr(settings, "BRAND_NAME", "Dulcecitaa"),
+        "logo_url": getattr(settings, "EMAIL_LOGO_URL", ""),
         "nombre": data["nombre"],
         "email": data["email"],
         "mensaje": data["mensaje"],
@@ -147,6 +149,7 @@ def send_contact_email(data):
 def send_corporate_email(data):
     context = {
         "site_brand": getattr(settings, "BRAND_NAME", "Dulcecitaa"),
+        "logo_url": getattr(settings, "EMAIL_LOGO_URL", ""),
         "nombre": data["nombre"],
         "empresa": data["empresa"],
         "email": data["email"],
