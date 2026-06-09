@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
 from .email_utils import send_checkout_emails, send_contact_email, send_corporate_email
@@ -95,6 +96,7 @@ def _build_order_whatsapp_url(pedido):
     return urlunparse(parsed._replace(query=urlencode(query)))
 
 
+@ensure_csrf_cookie
 def home(request):
     destacados = Producto.objects.filter(visible=True, destacado=True).select_related("categoria")[:4]
     if not destacados:
@@ -125,6 +127,7 @@ def home(request):
     )
 
 
+@ensure_csrf_cookie
 def productos(request):
     productos_qs = Producto.objects.filter(visible=True).select_related("categoria")
     categorias = CategoriaProducto.objects.filter(activa=True)
@@ -209,6 +212,7 @@ def agregar_al_carrito(request, producto_id):
     return redirect("carrito")
 
 
+@ensure_csrf_cookie
 def mostrar_carrito(request):
     cart = _get_cart(request)
     productos, total = _build_cart_items(cart)
@@ -389,6 +393,7 @@ def eliminar_carrito_ajax(request, producto_id):
     )
 
 
+@ensure_csrf_cookie
 def producto_detalle(request, pk):
     producto = get_object_or_404(Producto, pk=pk)
     imagenes = getattr(producto, "imagenes", None)

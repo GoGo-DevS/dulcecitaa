@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from .models import CategoriaProducto, Pedido, Producto
@@ -63,6 +63,23 @@ class CarritoFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.request["PATH_INFO"], reverse("productos"))
         self.assertNotIn(str(self.producto.id), self.client.session.get("cart", {}))
+
+    def test_productos_entrega_cookie_csrf_para_ajax_carrito(self):
+        client = Client(enforce_csrf_checks=True)
+        response = client.get(reverse("productos"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("csrftoken", client.cookies)
+
+        csrf_token = client.cookies["csrftoken"].value
+        response = client.post(
+            reverse("agregar_carrito_ajax", args=[self.producto.id]),
+            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+            HTTP_X_CSRFTOKEN=csrf_token,
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()["ok"])
 
 
 class CatalogoFiltroTests(TestCase):
