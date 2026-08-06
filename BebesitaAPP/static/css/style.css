@@ -1,19 +1,46 @@
 :root {
-  --rose-50: #fff8f7;
-  --rose-100: #fef0ef;
-  --rose-200: #f8deda;
-  --rose-300: #efc6c1;
-  --rose-500: #d27b78;
-  --rose-700: #a65354;
+  /* ============================================================
+     Dulcecita — escala de color real (medida con formula WCAG,
+     no elegida a ojo). Un solo lugar de verdad para toda la web.
+     VINO = marca dominante: chrome, CTAs, texto con autoridad.
+       blanco/vino = 12.47:1, vino/crema = 11.57:1 (AA normal ambos).
+     ROSADO = acento decorativo puro (franjas, tags, bordes) — NUNCA
+       texto de cuerpo: rosado/crema = 1.71:1, no pasa AA.
+     ROSADO-DEEP = version con contraste real del acento (6.40:1
+       sobre blanco) para links/foco que necesiten tono rosado legible.
+     CREMA = fondo cálido en vez de blanco puro.
+     ============================================================ */
+  --vino: #6f0011;
+  --vino-900: #430009;
+  --rosado: #f6a7d6;
+  --rosado-soft: #e8c8dd;
+  --rosado-deep: #b1245e;
+  --crema: #fef6e1;
   --ink-900: #2f1f22;
   --ink-700: #4f3e42;
   --ink-500: #6f5a60;
-  --cream: #fffdf9;
-  --gold: #c9a26a;
   --shadow-soft: 0 18px 45px rgba(72, 35, 40, 0.12);
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 10px;
+
+  /* Alias legados: los selectores existentes (style.css antiguo +
+     seccion "Dulce Rosa" mas abajo) siguen usando estos nombres. */
+  --cream: var(--crema);
+  --rose-100: var(--rosado-soft);
+  --rose-300: var(--rosado);
+  --rose-500: var(--rosado-deep);
+  --rose-700: var(--vino);
+  --dr-vino: var(--vino);
+  --dr-vino-900: var(--vino-900);
+  --dr-crema: var(--crema);
+  --dr-pink-bg: var(--rosado);
+  --dr-pink-soft: var(--rosado-soft);
+  --dr-pink: var(--rosado);
+  --dr-rosado-deep: var(--rosado-deep);
+  --dr-pink-deep: var(--vino);
+  --dr-wine: var(--vino-900);
+  --dr-ink: var(--ink-700);
 }
 
 * {
@@ -29,9 +56,7 @@ body {
 body {
   font-family: 'Manrope', sans-serif;
   color: var(--ink-700);
-  background: radial-gradient(circle at 0% 0%, #ffeae8 0, rgba(255, 234, 232, 0.45) 25%, transparent 50%),
-    radial-gradient(circle at 100% 10%, #ffe8e2 0, rgba(255, 232, 226, 0.5) 24%, transparent 45%),
-    var(--cream);
+  background: var(--crema);
   min-height: 100vh;
 }
 
@@ -52,13 +77,6 @@ a {
   text-decoration: none;
 }
 
-.site-bg-decor {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(145deg, rgba(210, 123, 120, 0.08), transparent 45%);
-  z-index: -1;
-}
 
 .site-main {
   padding-bottom: 5rem;
@@ -82,7 +100,7 @@ a {
   padding: 0.9rem 0;
   background: rgba(255, 253, 249, 0.88);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(166, 83, 84, 0.1);
+  border-bottom: 1px solid rgba(111, 0, 17, 0.1);
 }
 
 .brand-lockup {
@@ -98,11 +116,6 @@ a {
   object-fit: cover;
 }
 
-.brand-word {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
-  color: var(--ink-900);
-}
 
 .nav-link {
   color: var(--ink-700);
@@ -114,7 +127,7 @@ a {
 .nav-link:hover,
 .nav-link:focus {
   color: var(--rose-700);
-  background: rgba(210, 123, 120, 0.12);
+  background: rgba(177, 36, 94, 0.12);
 }
 
 .cart-pill {
@@ -123,7 +136,7 @@ a {
   gap: 0.55rem;
   border-radius: 999px;
   padding: 0.55rem 0.95rem;
-  border: 1px solid rgba(166, 83, 84, 0.2);
+  border: 1px solid rgba(111, 0, 17, 0.2);
   color: var(--ink-900);
   font-weight: 700;
   background: #fff;
@@ -157,7 +170,7 @@ a {
   background: linear-gradient(135deg, var(--rose-700), var(--rose-500));
   color: #fff;
   padding: 0.8rem 1.5rem;
-  box-shadow: 0 10px 24px rgba(166, 83, 84, 0.28);
+  box-shadow: 0 10px 24px rgba(111, 0, 17, 0.28);
 }
 
 .btn-main:hover {
@@ -167,26 +180,26 @@ a {
 
 .btn-ghost {
   background: transparent;
-  border: 1px solid rgba(166, 83, 84, 0.35);
-  color: var(--ink-900);
+  border: 1px solid rgba(111, 0, 17, 0.35);
+  color: var(--vino);
   padding: 0.78rem 1.35rem;
 }
 
 .btn-ghost:hover {
-  color: var(--ink-900);
-  background: rgba(210, 123, 120, 0.08);
+  color: var(--vino);
+  background: rgba(111, 0, 17, 0.08);
 }
 
 .btn-secondary {
   background: #fff;
-  border: 1px solid rgba(166, 83, 84, 0.26);
+  border: 1px solid rgba(111, 0, 17, 0.26);
   color: var(--ink-900);
   padding: 0.56rem 1.05rem;
   font-size: 0.9rem;
 }
 
 .btn-secondary:hover {
-  background: rgba(210, 123, 120, 0.08);
+  background: rgba(177, 36, 94, 0.08);
 }
 
 .btn-linkline {
@@ -237,7 +250,7 @@ a {
 
 .hero-metrics li {
   background: #fff;
-  border: 1px solid rgba(166, 83, 84, 0.14);
+  border: 1px solid rgba(111, 0, 17, 0.14);
   border-radius: var(--radius-md);
   padding: 0.7rem;
 }
@@ -314,7 +327,7 @@ a {
   background: #fff;
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid rgba(166, 83, 84, 0.12);
+  border: 1px solid rgba(111, 0, 17, 0.12);
   box-shadow: 0 10px 24px rgba(72, 35, 40, 0.08);
 }
 
@@ -390,7 +403,7 @@ a {
 
 .check-list li {
   background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(166, 83, 84, 0.11);
+  border: 1px solid rgba(111, 0, 17, 0.11);
   border-radius: 999px;
   padding: 0.45rem 0.85rem;
 }
@@ -417,7 +430,7 @@ a {
 
 .surface-card {
   background: #fff;
-  border: 1px solid rgba(166, 83, 84, 0.12);
+  border: 1px solid rgba(111, 0, 17, 0.12);
   border-radius: var(--radius-md);
   padding: 1.3rem;
   box-shadow: 0 12px 26px rgba(72, 35, 40, 0.08);
@@ -466,7 +479,7 @@ a {
   display: grid;
   grid-template-columns: 220px 1fr;
   background: #fff;
-  border: 1px solid rgba(166, 83, 84, 0.12);
+  border: 1px solid rgba(111, 0, 17, 0.12);
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: 0 12px 24px rgba(72, 35, 40, 0.08);
@@ -521,7 +534,7 @@ a {
 
 .product-detail-wrap {
   background: #fff;
-  border: 1px solid rgba(166, 83, 84, 0.12);
+  border: 1px solid rgba(111, 0, 17, 0.12);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   overflow: hidden;
@@ -562,7 +575,7 @@ a {
 }
 
 .detail-badges span {
-  border: 1px solid rgba(166, 83, 84, 0.22);
+  border: 1px solid rgba(111, 0, 17, 0.22);
   border-radius: 999px;
   padding: 0.35rem 0.7rem;
   font-size: 0.83rem;
@@ -595,7 +608,7 @@ a {
 .cart-item {
   background: #fff;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(166, 83, 84, 0.12);
+  border: 1px solid rgba(111, 0, 17, 0.12);
   padding: 1rem;
   display: flex;
   align-items: center;
@@ -618,7 +631,7 @@ a {
   border-radius: 18px;
   overflow: hidden;
   background: linear-gradient(145deg, #fff4f1, #f8ece8);
-  border: 1px solid rgba(166, 83, 84, 0.12);
+  border: 1px solid rgba(111, 0, 17, 0.12);
   box-shadow: 0 12px 24px rgba(72, 35, 40, 0.08);
 }
 
@@ -659,7 +672,7 @@ a {
 .cart-summary {
   background: #fff;
   border-radius: var(--radius-md);
-  border: 1px solid rgba(166, 83, 84, 0.16);
+  border: 1px solid rgba(111, 0, 17, 0.16);
   padding: 1.2rem;
   position: sticky;
   top: 95px;
@@ -695,7 +708,7 @@ a {
 .checkout-form-card,
 .form-shell {
   background: #fff;
-  border: 1px solid rgba(166, 83, 84, 0.12);
+  border: 1px solid rgba(111, 0, 17, 0.12);
   border-radius: var(--radius-md);
   padding: 1.35rem;
   box-shadow: 0 12px 24px rgba(72, 35, 40, 0.07);
@@ -759,7 +772,7 @@ a {
 
 .field-input:focus {
   border-color: var(--rose-500);
-  box-shadow: 0 0 0 3px rgba(210, 123, 120, 0.16);
+  box-shadow: 0 0 0 3px rgba(177, 36, 94, 0.16);
 }
 
 .field-textarea {
@@ -798,7 +811,7 @@ a {
   padding: 2.6rem;
   border-radius: var(--radius-lg);
   background: #fff;
-  border: 1px solid rgba(166, 83, 84, 0.14);
+  border: 1px solid rgba(111, 0, 17, 0.14);
   box-shadow: var(--shadow-soft);
   text-align: center;
 }
@@ -813,7 +826,7 @@ a {
   margin: 0 auto;
   text-align: center;
   background: #fff;
-  border: 1px solid rgba(166, 83, 84, 0.13);
+  border: 1px solid rgba(111, 0, 17, 0.13);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   padding: 2.3rem;
@@ -895,7 +908,7 @@ a {
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  border: 1px solid rgba(166, 83, 84, 0.24);
+  border: 1px solid rgba(111, 0, 17, 0.24);
   border-radius: 999px;
   padding: 0.35rem 0.55rem;
   background: #fff;
@@ -933,7 +946,7 @@ a {
   color: #fff;
   font-weight: 700;
   padding: 0.55rem 1rem;
-  box-shadow: 0 8px 18px rgba(166, 83, 84, 0.28);
+  box-shadow: 0 8px 18px rgba(111, 0, 17, 0.28);
 }
 
 .btn-add-only:hover {
@@ -1069,11 +1082,11 @@ a {
 
 /* Polish responsive final */
 .navbar-toggler {
-  border: 1px solid rgba(166, 83, 84, 0.26);
+  border: 1px solid rgba(111, 0, 17, 0.26);
 }
 
 .navbar-toggler:focus {
-  box-shadow: 0 0 0 3px rgba(210, 123, 120, 0.18);
+  box-shadow: 0 0 0 3px rgba(177, 36, 94, 0.18);
 }
 
 .hero-metrics li span {
@@ -1093,7 +1106,7 @@ a {
   .navbar-collapse {
     margin-top: 0.8rem;
     padding-top: 0.6rem;
-    border-top: 1px solid rgba(166, 83, 84, 0.15);
+    border-top: 1px solid rgba(111, 0, 17, 0.15);
   }
 
   .nav-link {
@@ -1143,7 +1156,7 @@ a {
 .site-navbar.is-scrolled {
   background: rgba(255, 252, 249, 0.95);
   box-shadow: 0 10px 24px rgba(47, 31, 34, 0.08);
-  border-bottom-color: rgba(166, 83, 84, 0.18);
+  border-bottom-color: rgba(111, 0, 17, 0.18);
 }
 
 .reveal-item {
@@ -1253,7 +1266,7 @@ input[type="submit"].is-loading::after {
   border-radius: inherit;
   pointer-events: none;
   border: 1px solid transparent;
-  background: linear-gradient(125deg, rgba(210, 123, 120, 0.16), rgba(255, 255, 255, 0)) border-box;
+  background: linear-gradient(125deg, rgba(177, 36, 94, 0.16), rgba(255, 255, 255, 0)) border-box;
   -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -1265,7 +1278,7 @@ input[type="submit"].is-loading::after {
 .catalog-card-premium.is-hovered {
   transform: translateY(-4px);
   box-shadow: 0 18px 30px rgba(72, 35, 40, 0.12);
-  border-color: rgba(166, 83, 84, 0.26);
+  border-color: rgba(111, 0, 17, 0.26);
 }
 
 .catalog-card-premium:hover::after,
@@ -1304,8 +1317,8 @@ input[type="submit"].is-loading::after {
 
 .catalog-card-premium .qty-control:hover,
 .catalog-card-premium .qty-control:focus-within {
-  border-color: rgba(166, 83, 84, 0.38);
-  box-shadow: 0 0 0 2px rgba(210, 123, 120, 0.12);
+  border-color: rgba(111, 0, 17, 0.38);
+  box-shadow: 0 0 0 2px rgba(177, 36, 94, 0.12);
 }
 
 @media (max-width: 640px) {
@@ -1361,8 +1374,8 @@ input[type="submit"].is-loading::after {
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
-  border: 1px solid rgba(166, 83, 84, 0.2);
-  background: rgba(210, 123, 120, 0.1);
+  border: 1px solid rgba(111, 0, 17, 0.2);
+  background: rgba(177, 36, 94, 0.1);
   color: var(--ink-900);
   padding: 0.18rem 0.6rem;
 }
@@ -1387,3 +1400,389 @@ input[type="submit"].is-loading::after {
   }
 }
 
+
+
+/* ============================================================
+   Seccion "Dulce Rosa" — cabecera, hero, grilla de productos,
+   footer y componentes propios del rediseño 2026-08.
+   ============================================================ */
+
+/* ---------- Barra superior (announcement) ---------- */
+.dr-topbar {
+  background: var(--dr-vino);
+  color: #fff;
+  text-align: center;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+}
+
+/* ---------- Navbar Propuesta 1 ---------- */
+.site-navbar.dr-nav {
+  background: var(--dr-vino) !important;
+  border-bottom: 1px solid var(--dr-pink-soft);
+  box-shadow: 0 6px 24px rgba(154, 91, 114, .07);
+  padding-top: .55rem;
+  padding-bottom: .55rem;
+}
+/* Logo en imagen (reemplaza el texto) */
+.dr-logo-img { height: 190px; width: auto; display: block; }
+.dr-logo-foot { height: 210px; width: auto; display: block; }
+@media (max-width: 992px) { .dr-logo-img { height: 140px; } }
+
+.dr-nav .nav-link {
+  color: #fff !important;
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;   /* cada opción en una sola línea */
+}
+.dr-nav .nav-link:hover { color: rgba(255, 255, 255, .72) !important; }
+
+/* Menú en una sola fila; en pantallas medianas se achica un poco para no desbordar */
+.dr-nav .navbar-nav { column-gap: 1.5rem; }
+@media (min-width: 992px) and (max-width: 1299.98px) {
+  .dr-nav .nav-link { font-size: .85rem; letter-spacing: .05em; }
+  .dr-nav .navbar-nav { column-gap: .9rem; }
+  .dr-pedido { padding: .78rem 1.4rem !important; font-size: .82rem; }
+  .dr-logo-img { height: 150px; }
+}
+
+/* Botón CTA: fondo blanco, letra rosada */
+/* Mayor especificidad que ".dr-nav .nav-link {color:#fff}" para que NO quede
+   texto blanco sobre fondo blanco (el botón se veía vacío). */
+.dr-nav .nav-link.dr-pedido,
+.dr-nav .nav-link.dr-pedido:hover,
+.dr-nav .nav-link.dr-pedido:focus { color: var(--dr-pink-deep) !important; }
+.dr-pedido {
+  background: #fff;
+  color: var(--dr-pink-deep) !important;
+  border-radius: 999px;
+  padding: .9rem 2rem !important;
+  font-weight: 800 !important;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-size: .95rem;
+  box-shadow: 0 8px 18px rgba(154, 60, 100, .18);
+  transition: transform .15s ease, background .2s ease, color .2s ease;
+}
+/* En hover se mantiene blanco con letra rosada (solo un leve realce). */
+.dr-pedido:hover,
+.dr-pedido:focus {
+  background: #fff;
+  color: var(--dr-pink-deep) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(154, 60, 100, .26);
+}
+
+
+/* ---------- Botón hamburguesa ---------- */
+.dr-nav .navbar-toggler {
+  border: 1px solid rgba(255, 255, 255, .85);
+  border-radius: 12px;
+  padding: .3rem .55rem;
+  background: var(--dr-vino);   /* mismo tono que la barra */
+}
+.dr-nav .navbar-toggler:focus { box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .45); }
+.dr-nav .navbar-toggler-icon {
+  /* líneas blancas */
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23ffffff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2.6' d='M5 8h20M5 15h20M5 22h20'/%3e%3c/svg%3e");
+}
+
+/* ---------- Animación del menú: rápida y limpia ---------- */
+.dr-nav .navbar-collapse.collapsing { transition: height .2s ease; }
+
+/* ---------- Carrito flotante (abajo-centro) ---------- */
+.dr-cart-fab {
+  position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: .5rem;
+  background: var(--dr-vino); color: #fff !important;
+  padding: .62rem 1.2rem; border-radius: 999px;
+  box-shadow: 0 12px 28px rgba(67, 0, 9, .5);
+  z-index: 1045; font-weight: 700; font-size: .9rem; text-decoration: none;
+  transition: transform .28s cubic-bezier(.34,1.56,.64,1), opacity .25s ease;
+}
+.dr-cart-fab:hover { transform: translateX(-50%) translateY(-3px); }
+.dr-cart-fab i { font-size: 1.2rem; }
+.dr-cart-fab-count {
+  background: #fff; color: var(--dr-pink-deep); border-radius: 999px;
+  min-width: 20px; height: 20px; padding: 0 6px; font-size: .78rem; font-weight: 800;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.dr-cart-fab.is-empty { opacity: 0; transform: translateX(-50%) translateY(140%); pointer-events: none; }
+#cart-count.is-bump { animation: dr-fabpop .42s ease; }
+@keyframes dr-fabpop { 0%{transform:scale(1)} 45%{transform:scale(1.3)} 100%{transform:scale(1)} }
+
+/* ---------- Hero carrusel ---------- */
+.dr-hero { position: relative; }
+/* Las fotos reales son retrato (3:4), no panorámicas — forzarlas a cover en una
+   franja ancha y baja las recortaba brutal (se perdía el producto, quedaba
+   irreconocible). Tratamiento consistente: fondo = misma foto, borrosa y oscura,
+   rellena el ancho; primer plano = la foto COMPLETA, sin recortar, centrada. */
+.dr-hero .carousel-item { height: 64vh; min-height: 420px; max-height: 640px; position: relative; overflow: hidden; background: var(--dr-vino); }
+.dr-hero-bg {
+  position: absolute; inset: 0; z-index: 1;
+  background-size: cover; background-position: center;
+  filter: blur(32px) brightness(.6) saturate(1.1);
+  transform: scale(1.15); /* evita ver el borde nítido del blur */
+}
+.dr-hero-photo {
+  position: absolute; z-index: 2; inset: 0; margin: auto;
+  max-width: min(88%, 480px); max-height: 90%;
+  width: auto; height: auto; object-fit: contain;
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+}
+.dr-hero .carousel-item::after {
+  content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
+  background: linear-gradient(0deg, rgba(20,4,8,.55) 0%, transparent 28%);
+}
+
+.dr-hero-card {
+  position: absolute; left: 5%; bottom: 8%; z-index: 5;
+  background: rgba(74, 58, 64, .5);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 14px;
+  padding: .9rem 1.1rem;       /* más compacta */
+  max-width: 290px;
+  color: #fff;
+}
+.dr-hero-eyebrow {
+  font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--dr-pink); font-weight: 700; margin-bottom: .25rem;
+}
+.dr-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem; line-height: 1.1; color: #fff; margin: 0 0 .3rem;
+}
+.dr-hero-price { font-size: 1.05rem; font-weight: 700; margin-bottom: .6rem; }
+.dr-hero-btn {
+  display: inline-block; background: var(--dr-vino); color: #fff;
+  border-radius: 999px; padding: .55rem 1.4rem; font-weight: 700;
+  letter-spacing: .04em; box-shadow: 0 10px 22px rgba(67,0,9,.5);
+}
+.dr-hero-btn:hover { background: #fff; color: var(--dr-vino); }
+.dr-hero .carousel-indicators [data-bs-target] { background-color: var(--dr-pink); }
+
+/* ---------- Sello de marca sobre el hero (nuevo logo) ---------- */
+.dr-hero-sello {
+  position: absolute;
+  z-index: 6;
+  top: -28px;
+  right: 6%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 4px solid var(--dr-crema);
+  box-shadow: 0 14px 30px rgba(74, 6, 20, .35);
+  transform: rotate(8deg);
+  background: var(--dr-crema);
+}
+@media (max-width: 992px) {
+  .dr-hero-sello { width: 100px; height: 100px; top: -18px; right: 4%; border-width: 3px; }
+}
+
+/* ---------- Video: así trabajamos ---------- */
+/* El video es retrato (celular), no panorámico — se muestra completo y centrado
+   sobre fondo vino en vez de forzarlo a cover (quedaba gigante, recortado y
+   borroso por el zoom). Mismo tratamiento de "marco" que el hero. */
+.dr-work-video {
+  position: relative;
+  background: var(--dr-vino);
+  padding: 3rem 0;
+  display: flex;
+  justify-content: center;
+}
+.dr-work-video-el {
+  max-width: min(92%, 420px);
+  max-height: 72vh;
+  width: auto; height: auto;
+  object-fit: contain;
+  display: block;
+  border-radius: 18px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .4);
+}
+.dr-work-video-caption {
+  position: absolute; left: 50%; bottom: 1.6rem; z-index: 2;
+  transform: translateX(-50%);
+  background: rgba(254, 246, 225, .95);
+  color: var(--dr-vino);
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  padding: .6rem 1.2rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(0,0,0,.25);
+}
+@media (max-width: 992px) {
+  .dr-work-video { padding: 2rem 0 3.2rem; }
+  .dr-work-video-el { max-height: 55vh; }
+  .dr-work-video-caption { font-size: .8rem; padding: .5rem 1rem; bottom: 1.1rem; white-space: normal; text-align: center; max-width: 88%; }
+}
+
+/* ---------- Sección productos (grilla edge-to-edge) ---------- */
+.dr-products { padding: 3.2rem 0 1rem; }
+.dr-products-title {
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: var(--dr-vino);
+  font-size: 1.45rem;
+  margin-bottom: .4rem;
+}
+.dr-products-sub {
+  text-align: center; color: var(--dr-ink); opacity: .7;
+  margin-bottom: 2rem; font-size: .95rem;
+}
+.dr-products-title::after {
+  content: ""; display: block; width: 64px; height: 3px; margin: .7rem auto 0;
+  background: var(--dr-pink-bg); border-radius: 3px;
+}
+
+.dr-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 6px;
+}
+.dr-tile {
+  position: relative; display: block; aspect-ratio: 1 / 1; overflow: hidden;
+  background: var(--dr-pink-soft);
+}
+.dr-tile img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.dr-tile:hover img { transform: scale(1.06); }
+.dr-tile-overlay {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  justify-content: flex-end; padding: 1rem;
+  background: linear-gradient(to top, rgba(74,58,64,.72), rgba(74,58,64,0) 55%);
+  opacity: 0; transition: opacity .3s ease;
+}
+.dr-tile:hover .dr-tile-overlay { opacity: 1; }
+.dr-tile-name { color: #fff; font-weight: 700; font-size: .98rem; line-height: 1.2; }
+.dr-tile-price { color: var(--dr-pink); font-weight: 700; font-size: .9rem; }
+
+.dr-products-cta { text-align: center; margin: 2.4rem 0 .5rem; }
+.dr-btn-wine {
+  display: inline-block; background: var(--dr-pink-deep); color: #fff;
+  border-radius: 999px; padding: .7rem 2rem; font-weight: 700; letter-spacing: .05em;
+}
+.dr-btn-wine:hover { background: #c2418a; color: #fff; }
+
+/* ---------- Franja corporativa ---------- */
+.dr-corp {
+  margin: 2rem 0 0; padding: 3.4rem 0;
+  background: var(--dr-crema);
+  border-top: 1px solid rgba(111, 0, 17, .14);
+  text-align: center;
+}
+.dr-corp h2 { font-family: 'Playfair Display', serif; color: var(--dr-pink-deep); }
+.dr-corp p { color: var(--dr-ink); max-width: 620px; margin: .6rem auto 1.4rem; }
+
+/* ---------- Footer rosado (mismo de la franja del navbar) ---------- */
+.site-footer.dr-foot { background: var(--dr-vino); }
+.dr-foot,
+.dr-foot .footer-copy,
+.dr-foot .footer-link,
+.dr-foot .footer-title,
+.dr-foot .footer-legal { color: #fff; }
+.dr-foot .footer-link:hover { color: rgba(255, 255, 255, .78); }
+.dr-foot .footer-legal { border-top-color: rgba(255, 255, 255, .35); }
+/* "Navegación" y "Atención" con la misma fuente del navbar (Manrope) */
+.dr-foot .footer-title {
+  font-family: 'Manrope', system-ui, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  font-size: .8rem;
+  font-weight: 700;
+}
+
+/* ---------- Fotos decorativas para páginas internas ---------- */
+.dr-page-photo {
+  width: 100%; max-height: 300px; object-fit: cover; display: block;
+  border-radius: 16px; margin-top: 1.5rem;
+  border: 2px solid var(--dr-pink-bg);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .07);
+}
+.dr-card-photo {
+  width: 100%; height: 150px; object-fit: cover; display: block;
+  border-radius: 12px; margin-bottom: .9rem;
+}
+
+/* ---------- Botones flotantes de redes (abajo-derecha) ---------- */
+.dr-social-float {
+  position: fixed; right: 16px; bottom: 18px; z-index: 1046;
+  display: flex; flex-direction: column; gap: .6rem;
+}
+.dr-social-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--dr-pink-bg); color: #fff !important;
+  font-size: 1.45rem; text-decoration: none;
+  box-shadow: 0 8px 20px rgba(154, 60, 100, .28);
+  transition: transform .2s ease;
+}
+.dr-social-btn:hover { transform: translateY(-2px); color: #fff !important; }
+
+@media (max-width: 992px) {
+  .dr-hero .carousel-item { height: 52vh; min-height: 300px; }
+  .dr-hero-card { left: 4%; right: 4%; max-width: none; bottom: 6%; padding: 1.1rem 1.2rem; }
+  .dr-hero-title { font-size: 1.35rem; }
+  .dr-products { padding-top: 2.2rem; }
+  .dr-products-title { font-size: 1.15rem; letter-spacing: .16em; }
+  .dr-products-sub { font-size: .88rem; margin-bottom: 1.4rem; }
+  /* barra superior más compacta */
+  .dr-topbar { font-size: .6rem; letter-spacing: .08em; padding: 6px 10px; line-height: 1.3; }
+  /* grilla a 2 columnas en móvil */
+  .dr-grid { grid-template-columns: repeat(2, 1fr); gap: 5px; }
+  .dr-tile-overlay { opacity: 1; padding: .55rem; background: linear-gradient(to top, rgba(74,58,64,.78), rgba(74,58,64,0) 60%); }
+  .dr-tile-name { font-size: .82rem; }
+  .dr-tile-price { font-size: .8rem; }
+  /* Card de producto en móvil: imagen full-width cuadrada, sin huecos */
+  .catalog-card { grid-template-columns: 1fr !important; }
+  .catalog-card .catalog-media { aspect-ratio: 1 / 1; max-height: none; width: 100%; }
+  .catalog-card .catalog-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+  /* ---- Menú móvil prolijo ---- */
+  .dr-nav .navbar-collapse {
+    margin-top: .5rem;
+    border-top: 1px solid rgba(255, 255, 255, .25);
+    padding-top: .25rem;
+  }
+  .dr-nav .navbar-nav { width: 100%; }
+  .dr-nav .navbar-nav .nav-item { width: 100%; }
+  .dr-nav .navbar-nav .nav-link {
+    display: block;
+    width: 100%;
+    padding: .85rem .25rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .22);
+  }
+  /* fila de acción: botón ancho + carrito a la derecha */
+  .dr-nav-actions {
+    width: 100%;
+    gap: 1rem;
+    align-items: center;
+    padding: .9rem 0 .3rem;
+  }
+  .dr-nav-actions .dr-pedido { flex: 1 1 auto; text-align: center; }
+  .dr-corp { padding: 2.2rem 0; }
+
+  /* ---- Logo centrado en móvil (hamburguesa a la derecha) ---- */
+  .dr-nav .container { position: relative; justify-content: center; }
+  .dr-brand {
+    margin: 0 auto;
+    max-width: calc(100% - 7rem); /* deja espacio para el toggler */
+    justify-content: center;
+  }
+  .dr-nav .navbar-toggler {
+    position: absolute;
+    right: .25rem;
+    top: .55rem;        /* fijo: no se desvía al abrir el menú */
+    margin: 0;
+    z-index: 2;
+  }
+}

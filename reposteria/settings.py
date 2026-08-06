@@ -195,7 +195,7 @@ WEBSITE_URL = os.getenv("WEBSITE_URL", "")
 # Logo para los correos (URL absoluta publica; los clientes de email no leen estaticos relativos).
 # Usa el PNG (los clientes no soportan SVG). Se puede sobreescribir con EMAIL_LOGO_URL.
 EMAIL_LOGO_URL = os.getenv("EMAIL_LOGO_URL") or (
-    (WEBSITE_URL or "https://dulcecitaa.onrender.com").rstrip("/") + "/static/img/logo-dulcecita.png"
+    (WEBSITE_URL or "https://dulcecitaa.onrender.com").rstrip("/") + "/static/img/logo-dulcecita-mascota.jpg"
 )
 # Botones flotantes de redes
 WHATSAPP_URL = os.getenv("WHATSAPP_URL") or "https://wa.me/56961192192"
@@ -203,7 +203,7 @@ INSTAGRAM_URL = os.getenv("INSTAGRAM_URL") or "https://instagram.com/dulcecitaa.
 SHIPPING_COST = int(os.getenv("SHIPPING_COST", "2500"))
 PICKUP_POINT_LABEL = os.getenv("PICKUP_POINT_LABEL", "Retiro coordinado por WhatsApp")
 BUSINESS_HOURS = os.getenv("BUSINESS_HOURS", "Lunes a sabado de 09:00 a 19:00")
-DEFAULT_OG_IMAGE = os.getenv("DEFAULT_OG_IMAGE", "/static/img/hero/slide1.jpg")
+DEFAULT_OG_IMAGE = os.getenv("DEFAULT_OG_IMAGE", "/static/img/sello-dulcecita.jpg")
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
