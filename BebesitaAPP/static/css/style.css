@@ -1598,6 +1598,33 @@ input[type="submit"].is-loading::after {
   .dr-hero-sello { width: 82px; height: 82px; top: -14px; right: -8px; border-width: 3px; }
 }
 
+/* Desktop: las 3 fotos van lado a lado (una franja vertical sola se veía
+   muy vacía en pantalla ancha, feedback directo de la dueña) — se
+   desactiva el carrusel (flechas/puntos) y se muestran todas juntas.
+   Va DESPUÉS de las reglas base de .carousel-item (misma especificidad,
+   gana la que está más abajo en el archivo) para que sí las pise. */
+@media (min-width: 992px) {
+  .dr-hero-frame { width: 100%; max-width: 1150px; padding: 0 1.5rem; }
+  .dr-hero .carousel-indicators,
+  .dr-hero .carousel-control-prev,
+  .dr-hero .carousel-control-next { display: none; }
+  .dr-hero .carousel-inner {
+    display: flex;
+    gap: 1.2rem;
+  }
+  .dr-hero .carousel-item {
+    display: block !important;
+    position: relative !important;
+    opacity: 1 !important;
+    transform: none !important;
+    aspect-ratio: auto !important;
+    flex: none !important;
+    width: calc((100% - 2.4rem) / 3) !important;
+    height: 480px !important;
+    margin-right: 0 !important;
+  }
+}
+
 /* ---------- Video: así trabajamos ---------- */
 /* El video es retrato (celular), no panorámico — se muestra completo y centrado
    sobre fondo vino en vez de forzarlo a cover (quedaba gigante, recortado y
