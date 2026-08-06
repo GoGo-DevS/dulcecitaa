@@ -1526,38 +1526,40 @@ input[type="submit"].is-loading::after {
 @keyframes dr-fabpop { 0%{transform:scale(1)} 45%{transform:scale(1.3)} 100%{transform:scale(1)} }
 
 /* ---------- Hero carrusel ---------- */
-.dr-hero { position: relative; }
-/* Las fotos reales son retrato (3:4), no panorámicas — forzarlas a cover en una
-   franja ancha y baja las recortaba brutal (se perdía el producto, quedaba
-   irreconocible). Tratamiento consistente: fondo = misma foto, borrosa y oscura,
-   rellena el ancho; primer plano = la foto COMPLETA, sin recortar, centrada. */
-.dr-hero .carousel-item { height: 64vh; min-height: 420px; max-height: 640px; position: relative; overflow: hidden; background: var(--dr-vino); }
-.dr-hero-bg {
-  position: absolute; inset: 0; z-index: 1;
-  background-size: cover; background-position: center;
-  filter: blur(32px) brightness(.6) saturate(1.1);
-  transform: scale(1.15); /* evita ver el borde nítido del blur */
-}
-.dr-hero-photo {
-  position: absolute; z-index: 2; inset: 0; margin: auto;
-  max-width: min(88%, 480px); max-height: 90%;
-  width: auto; height: auto; object-fit: contain;
-  border-radius: 18px;
+/* Las fotos reales son retrato (3:4), no panorámicas. Antes se metían en una
+   franja ancha y baja (cover recortaba el producto; contain dejaba bordes
+   borrosos enormes a los lados — a la dueña no le gustó). Ahora el hero ES
+   una tarjeta vertical del mismo alto/ancho que la foto: la foto llena todo
+   el marco, sin recorte de producto y sin bordes borrosos. */
+.dr-hero { position: relative; background: var(--dr-vino); padding: 2.6rem 0 2.2rem; }
+.dr-hero-frame { position: relative; width: min(88vw, 440px); margin: 0 auto; }
+
+.dr-hero .carousel-item {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 20px;
   box-shadow: 0 24px 60px rgba(0, 0, 0, .45);
+  background: var(--dr-vino);
+}
+.dr-hero-bg { display: none; }
+.dr-hero-photo {
+  position: absolute; inset: 0; z-index: 2;
+  width: 100%; height: 100%;
+  object-fit: cover;
 }
 .dr-hero .carousel-item::after {
   content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
-  background: linear-gradient(0deg, rgba(20,4,8,.55) 0%, transparent 28%);
+  background: linear-gradient(0deg, rgba(20,4,8,.62) 0%, transparent 34%);
 }
 
 .dr-hero-card {
-  position: absolute; left: 5%; bottom: 8%; z-index: 5;
+  position: absolute; left: 5%; right: 5%; bottom: 6%; z-index: 5;
   background: rgba(74, 58, 64, .5);
   backdrop-filter: blur(6px);
   border: 1px solid rgba(255,255,255,.18);
   border-radius: 14px;
-  padding: .9rem 1.1rem;       /* más compacta */
-  max-width: 290px;
+  padding: .85rem 1rem;
   color: #fff;
 }
 .dr-hero-eyebrow {
@@ -1566,7 +1568,7 @@ input[type="submit"].is-loading::after {
 }
 .dr-hero-title {
   font-family: 'Playfair Display', serif;
-  font-size: 1.25rem; line-height: 1.1; color: #fff; margin: 0 0 .3rem;
+  font-size: 1.2rem; line-height: 1.15; color: #fff; margin: 0 0 .3rem;
 }
 .dr-hero-price { font-size: 1.05rem; font-weight: 700; margin-bottom: .6rem; }
 .dr-hero-btn {
@@ -1581,10 +1583,10 @@ input[type="submit"].is-loading::after {
 .dr-hero-sello {
   position: absolute;
   z-index: 6;
-  top: -28px;
-  right: 6%;
-  width: 150px;
-  height: 150px;
+  top: -22px;
+  right: -14px;
+  width: 108px;
+  height: 108px;
   object-fit: cover;
   border-radius: 50%;
   border: 4px solid var(--dr-crema);
@@ -1592,8 +1594,8 @@ input[type="submit"].is-loading::after {
   transform: rotate(8deg);
   background: var(--dr-crema);
 }
-@media (max-width: 992px) {
-  .dr-hero-sello { width: 100px; height: 100px; top: -18px; right: 4%; border-width: 3px; }
+@media (max-width: 480px) {
+  .dr-hero-sello { width: 82px; height: 82px; top: -14px; right: -8px; border-width: 3px; }
 }
 
 /* ---------- Video: así trabajamos ---------- */
@@ -1738,9 +1740,7 @@ input[type="submit"].is-loading::after {
 .dr-social-btn:hover { transform: translateY(-2px); color: #fff !important; }
 
 @media (max-width: 992px) {
-  .dr-hero .carousel-item { height: 52vh; min-height: 300px; }
-  .dr-hero-card { left: 4%; right: 4%; max-width: none; bottom: 6%; padding: 1.1rem 1.2rem; }
-  .dr-hero-title { font-size: 1.35rem; }
+  .dr-hero-frame { width: min(90vw, 380px); }
   .dr-products { padding-top: 2.2rem; }
   .dr-products-title { font-size: 1.15rem; letter-spacing: .16em; }
   .dr-products-sub { font-size: .88rem; margin-bottom: 1.4rem; }
