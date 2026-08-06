@@ -80,6 +80,10 @@ def _shipping_cost_for_delivery(delivery_type):
     return 0
 
 
+def _box_cost_for(cantidad_cajas):
+    return int(getattr(settings, "BOX_PRICE", 0)) * cantidad_cajas
+
+
 def _build_order_whatsapp_url(pedido):
     base_url = getattr(settings, "WHATSAPP_URL", "").strip()
     if not base_url:
@@ -231,17 +235,24 @@ def checkout(request):
         return redirect("carrito")
 
     current_delivery_type = CheckoutForm.TIPO_ENTREGA_RETIRO
+    current_cantidad_cajas = 1
     if request.method == "POST":
         current_delivery_type = request.POST.get("tipo_entrega") or CheckoutForm.TIPO_ENTREGA_RETIRO
+        try:
+            current_cantidad_cajas = max(1, int(request.POST.get("cantidad_cajas") or 1))
+        except ValueError:
+            current_cantidad_cajas = 1
     shipping_cost = _shipping_cost_for_delivery(current_delivery_type)
-    total = subtotal + shipping_cost
+    box_cost = _box_cost_for(current_cantidad_cajas)
+    total = subtotal + shipping_cost + box_cost
 
     if request.method == "POST":
         form = CheckoutForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             shipping_cost = _shipping_cost_for_delivery(data["tipo_entrega"])
-            total = subtotal + shipping_cost
+            box_cost = _box_cost_for(data["cantidad_cajas"])
+            total = subtotal + shipping_cost + box_cost
             pedido = Pedido.objects.create(
                 nombre_cliente=data["nombre"],
                 email_cliente=data["email"],
@@ -250,6 +261,9 @@ def checkout(request):
                 comuna_sector=data["comuna_sector"],
                 direccion=data["direccion"],
                 costo_despacho=shipping_cost,
+                cantidad_cajas=data["cantidad_cajas"],
+                costo_caja=box_cost,
+                comentario_ocasion=data["comentario_ocasion"],
                 total=total,
             )
 
@@ -278,6 +292,8 @@ def checkout(request):
             "productos": productos,
             "subtotal": subtotal,
             "shipping_cost": shipping_cost,
+            "box_cost": box_cost,
+            "box_price": getattr(settings, "BOX_PRICE", 0),
             "total": total,
             "pickup_point_label": getattr(settings, "PICKUP_POINT_LABEL", ""),
             "form": form,
@@ -293,6 +309,7 @@ def checkout_exito(request, pedido_id):
         "pedido": pedido,
         "delivery_label": delivery_label,
         "shipping_cost_formatted": _format_money(pedido.costo_despacho),
+        "box_cost_formatted": _format_money(pedido.costo_caja),
         "total_formatted": _format_money(pedido.total),
         "whatsapp_order_url": _build_order_whatsapp_url(pedido),
     }

@@ -96,6 +96,7 @@ def send_checkout_emails(pedido, items):
         "line_items": line_items,
         "subtotal_formatted": _format_money(subtotal),
         "shipping_formatted": _format_money(pedido.costo_despacho),
+        "box_formatted": _format_money(pedido.costo_caja),
         "total_formatted": _format_money(pedido.total),
         "delivery_label": delivery_label,
         "contact_email": getattr(settings, "CONTACT_EMAIL", ""),

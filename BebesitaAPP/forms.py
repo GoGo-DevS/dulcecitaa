@@ -50,6 +50,17 @@ class CheckoutForm(BaseStyledForm):
     tipo_entrega = forms.ChoiceField(label="Metodo de entrega", choices=TIPOS_ENTREGA)
     comuna_sector = forms.CharField(max_length=120, label="Comuna o sector")
     direccion = forms.CharField(label="Direccion", widget=forms.Textarea(attrs={"rows": 3}))
+    cantidad_cajas = forms.IntegerField(
+        label="Cuantas cajas quieres",
+        min_value=1,
+        initial=1,
+        help_text="Cada caja cuesta aparte. Arma tu mix de productos y elige cuantas cajas necesitas para repartirlos.",
+    )
+    comentario_ocasion = forms.CharField(
+        label="Para que ocasion es (cumpleanos, Dia del Nino, etc.)",
+        widget=forms.Textarea(attrs={"rows": 3}),
+        help_text="Cuentanos la ocasion para decorar la caja acorde.",
+    )
 
     def clean_telefono(self):
         telefono = self.cleaned_data["telefono"].strip()

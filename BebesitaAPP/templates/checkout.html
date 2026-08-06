@@ -37,6 +37,10 @@
         <strong>{% if shipping_cost %}${{ shipping_cost }}{% else %}Sin costo{% endif %}</strong>
       </div>
       <div class="checkout-total">
+        <span>Cajas (${{ box_price }} c/u)</span>
+        <strong>${{ box_cost }}</strong>
+      </div>
+      <div class="checkout-total">
         <span>Total a pagar</span>
         <strong>${{ total }}</strong>
       </div>
@@ -92,6 +96,20 @@
           {% if pickup_point_label %}
           <p class="cart-summary-note mb-0 mt-2"><strong>Retiro:</strong> {{ pickup_point_label }}</p>
           {% endif %}
+        </div>
+
+        <div class="form-col-6">
+          <label for="{{ form.cantidad_cajas.id_for_label }}">{{ form.cantidad_cajas.label }}</label>
+          {{ form.cantidad_cajas }}
+          {% if form.cantidad_cajas.help_text %}<p class="cart-summary-note mb-0 mt-1">{{ form.cantidad_cajas.help_text }}</p>{% endif %}
+          {% if form.cantidad_cajas.errors %}<p class="field-error">{{ form.cantidad_cajas.errors|striptags }}</p>{% endif %}
+        </div>
+
+        <div class="form-col-12">
+          <label for="{{ form.comentario_ocasion.id_for_label }}">{{ form.comentario_ocasion.label }}</label>
+          {{ form.comentario_ocasion }}
+          {% if form.comentario_ocasion.help_text %}<p class="cart-summary-note mb-0 mt-1">{{ form.comentario_ocasion.help_text }}</p>{% endif %}
+          {% if form.comentario_ocasion.errors %}<p class="field-error">{{ form.comentario_ocasion.errors|striptags }}</p>{% endif %}
         </div>
 
         <div class="form-col-12">

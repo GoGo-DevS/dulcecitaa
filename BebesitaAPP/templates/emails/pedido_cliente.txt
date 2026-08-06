@@ -9,6 +9,7 @@ Resumen:
 {% endfor %}
 Subtotal: {{ subtotal_formatted }}
 Despacho: {{ shipping_formatted }}
+Cajas ({{ pedido.cantidad_cajas }}): {{ box_formatted }}
 Total: {{ total_formatted }}
 
 Datos de entrega:
@@ -17,6 +18,8 @@ Datos de entrega:
 - Dirección: {{ pedido.direccion }}
 - Teléfono: {{ pedido.telefono }}
 - Correo: {{ pedido.email_cliente }}
+
+Ocasión: {{ pedido.comentario_ocasion }}
 
 Te contactaremos para coordinar la entrega.
 {% if contact_email %}

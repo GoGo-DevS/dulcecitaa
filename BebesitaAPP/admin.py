@@ -83,12 +83,14 @@ class PedidoAdmin(admin.ModelAdmin):
         "tipo_entrega",
         "comuna_sector",
         "costo_despacho",
+        "cantidad_cajas",
+        "costo_caja",
         "total",
         "creado",
     )
-    search_fields = ("nombre_cliente", "email_cliente", "telefono", "comuna_sector")
+    search_fields = ("nombre_cliente", "email_cliente", "telefono", "comuna_sector", "comentario_ocasion")
     list_filter = ("creado", "tipo_entrega")
-    readonly_fields = ("creado", "total", "costo_despacho")
+    readonly_fields = ("creado", "total", "costo_despacho", "costo_caja")
     ordering = ("-creado",)
     inlines = [PedidoItemInline]
 

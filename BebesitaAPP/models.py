@@ -62,6 +62,9 @@ class Pedido(models.Model):
     comuna_sector = models.CharField(max_length=120, default="")
     direccion = models.TextField()
     costo_despacho = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    cantidad_cajas = models.PositiveIntegerField(default=1)
+    costo_caja = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    comentario_ocasion = models.TextField(default="")
     creado = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 

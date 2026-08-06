@@ -18,6 +18,8 @@
       <li><span>Método de entrega</span><strong>{{ delivery_label }}</strong></li>
       <li><span>Comuna o sector</span><strong>{{ pedido.comuna_sector }}</strong></li>
       <li><span>Costo de despacho</span><strong>{{ shipping_cost_formatted }}</strong></li>
+      <li><span>Cajas ({{ pedido.cantidad_cajas }})</span><strong>{{ box_cost_formatted }}</strong></li>
+      <li><span>Ocasión</span><strong>{{ pedido.comentario_ocasion }}</strong></li>
       <li><span>Total confirmado</span><strong>{{ total_formatted }}</strong></li>
     </ul>
     <div class="hero-actions justify-content-center">

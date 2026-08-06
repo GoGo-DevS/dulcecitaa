@@ -8,6 +8,10 @@ Comuna/Sector: {{ pedido.comuna_sector }}
 Dirección: {{ pedido.direccion }}
 Fecha: {{ pedido.creado|date:"d/m/Y H:i" }}
 
+Cajas y ocasión (para decorar):
+- Cantidad de cajas: {{ pedido.cantidad_cajas }} ({{ box_formatted }})
+- Ocasión: {{ pedido.comentario_ocasion }}
+
 Detalle:
 {% for item in line_items %}- {{ item.nombre }} x {{ item.cantidad }} | unitario {{ item.precio_unitario }} | subtotal {{ item.subtotal }}
 {% endfor %}
