@@ -475,6 +475,14 @@ a {
   gap: 1.25rem;
 }
 
+/* Catálogo chico (ej: 3 productos): la última tarjeta sola en su fila
+   ocupa el ancho completo en vez de dejar un hueco al lado. */
+@media (min-width: 992px) {
+  .catalog-grid > *:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+}
+
 .catalog-card {
   display: grid;
   grid-template-columns: 220px 1fr;

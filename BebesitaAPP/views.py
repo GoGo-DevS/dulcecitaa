@@ -134,7 +134,7 @@ def home(request):
 @ensure_csrf_cookie
 def productos(request):
     productos_qs = Producto.objects.filter(visible=True).select_related("categoria")
-    categorias = CategoriaProducto.objects.filter(activa=True)
+    categorias = CategoriaProducto.objects.filter(activa=True, productos__visible=True).distinct()
 
     query = (request.GET.get("q") or "").strip()
     categoria_slug = (request.GET.get("categoria") or "").strip()
