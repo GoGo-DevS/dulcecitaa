@@ -26,7 +26,6 @@
             <div class="dr-hero-card">
               <p class="dr-hero-eyebrow">Destacado de la casa</p>
               <h2 class="dr-hero-title">{{ p.nombre }}</h2>
-              <div class="dr-hero-price">${{ p.precio|intcomma }}</div>
               <a href="{% url 'producto_detalle' p.id %}" class="dr-hero-btn">Pedir ahora</a>
             </div>
           </div>
