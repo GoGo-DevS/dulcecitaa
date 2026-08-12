@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "shell": "powershell",
+            "command": "& \"$env:USERPROFILE\\Desktop\\backup-gogodevs\\gogodevs-claude\\hook_sesion.ps1\"",
+            "timeout": 45,
+            "statusMessage": "Sincronizando memoria..."
+          }
+        ]
+      }
+    ]
+  }
+}
