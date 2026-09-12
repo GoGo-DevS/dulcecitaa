@@ -6,6 +6,11 @@
 <section class="page-hero container reveal-ready">
   <p class="eyebrow">Productos</p>
   <h1>Nuestros productos</h1>
+  {% comment %}
+    El minimo se dice ANTES de elegir, no al llegar al carrito: quien recien
+    descubre la regla despues de armar el pedido se va.
+  {% endcomment %}
+  <p class="sutil-minimo">Pedido mínimo de {{ minimo_unidades }} unidades por producto · despacho a todo Chile por Paket</p>
   <p>Busca por nombre, filtra por categoría y elige tu favorito para agregar al carrito en segundos.</p>
 </section>
 
