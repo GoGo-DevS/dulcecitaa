@@ -2100,3 +2100,41 @@ input[type="submit"].is-loading::after {
   .ig-encargos__caja { grid-template-columns: 1fr; gap: 1.6rem; }
   .ig-encargos__foto { padding-bottom: 2rem; padding-right: 2rem; }
 }
+
+/* ---------- Varios videos del obrador ---------- */
+.ig-videos {
+  display: flex;
+  gap: 1.1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.ig-video { margin: 0; width: min(280px, 78vw); }
+.ig-video video {
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  background: var(--lino);
+  display: block;
+}
+.ig-video figcaption {
+  text-align: center;
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--tinta-2);
+  margin-top: .6rem;
+}
+@media (max-width: 720px) {
+  /* En telefono se recorren de lado en vez de apilarse: dos videos
+     verticales uno debajo del otro son dos pantallas de scroll. */
+  .ig-videos {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    justify-content: flex-start;
+    scroll-snap-type: x mandatory;
+    padding-bottom: .5rem;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ig-video { flex: 0 0 auto; width: 68vw; scroll-snap-align: center; }
+}

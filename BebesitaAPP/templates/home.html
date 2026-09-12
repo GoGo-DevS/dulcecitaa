@@ -65,12 +65,35 @@
   </span>
 </section>
 
-<!-- VIDEO: así trabajamos -->
+<!-- VIDEOS: el obrador en movimiento -->
 <section class="dr-work-video">
-  <video class="dr-work-video-el" autoplay muted loop playsinline>
-    <source src="{% static 'video/obrador-dulcecita.mp4' %}" type="video/mp4">
-  </video>
-  <div class="dr-work-video-caption">Así se hace, a mano y con cariño</div>
+  <div class="container">
+    <div class="section-head section-head-center" data-reveal-item>
+      <h2>Así se hace, a mano y con cariño</h2>
+      <p>El obrador, sin filtros ni montajes.</p>
+    </div>
+    {% comment %}
+      Varios videos en fila. Van muted + playsinline porque sin eso el
+      navegador de un telefono NO los arranca solo, y quedarian tres
+      rectangulos negros. El poster evita ese negro mientras cargan.
+    {% endcomment %}
+    <div class="ig-videos" data-reveal-item>
+      <figure class="ig-video">
+        <video muted loop playsinline autoplay preload="metadata"
+               poster="{% static 'img/galeria/cuchuflis-relleno-manjar.jpg' %}">
+          <source src="{% static 'video/obrador-dulcecita.mp4' %}" type="video/mp4">
+        </video>
+        <figcaption>Alfajores de triple capa</figcaption>
+      </figure>
+      <figure class="ig-video">
+        <video muted loop playsinline autoplay preload="metadata"
+               poster="{% static 'img/galeria/cuchuflis-manjar-bandeja.jpg' %}">
+          <source src="{% static 'video/barquillos-dulcecita.mp4' %}" type="video/mp4">
+        </video>
+        <figcaption>Cuchuflís recién bañados</figcaption>
+      </figure>
+    </div>
+  </div>
 </section>
 
 <!-- ENCARGOS: el trabajo por caja, que es otra linea de venta -->
