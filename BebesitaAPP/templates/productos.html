@@ -1,5 +1,42 @@
 {% extends 'base.html' %}
-{% block title %}Catálogo | {{ site_brand }}{% endblock %}
+{% load static %}
+{% block title %}Catálogo | {{ site_brand }}
+{% comment %}
+  El catalogo son pocos productos: sin esto la pagina termina en una fila de
+  tarjetas y medio metro de blanco. Ademas la otra linea de venta (los
+  encargos) no aparecia por ningun lado en el catalogo.
+{% endcomment %}
+<section class="ig-encargos">
+  <div class="container">
+    <div class="ig-encargos__caja">
+      <div class="ig-encargos__foto" data-reveal-item>
+        <img src="{% static 'img/galeria/caja-diciochera.jpg' %}"
+             alt="Caja dieciochera con merenguitos, alfajores de maicena, alfajores mini, cachitos rellenos de manjar y chilenitos" loading="lazy">
+      </div>
+      <div data-reveal-item>
+        <p class="eyebrow">Encargos y regalos corporativos</p>
+        <h2 class="ig-encargos__titulo">¿Necesitas una caja armada?</h2>
+        <p class="ig-encargos__texto">
+          Fuera del catálogo armamos cajas a pedido para empresas, fechas
+          especiales y regalos: se define el surtido, la cantidad y la
+          presentación según el encargo.
+        </p>
+        <div class="ig-encargos__caso">
+          <p class="ig-encargos__caso-tit">Caja dieciochera · lo que llevó</p>
+          <ul class="ig-encargos__lista">
+            <li>Merenguitos rellenos de manjar</li>
+            <li>Alfajores de maicena</li>
+            <li>Alfajores mini</li>
+            <li>Cachitos rellenos de manjar</li>
+            <li>Chilenitos</li>
+          </ul>
+        </div>
+        <a href="{% url 'corporativo' %}" class="dr-btn-wine">Cotizar una caja</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
 {% block meta_description %}Explora el Catálogo de {{ site_brand }}: reposteria artesanal premium para regalar, celebrar y compartir.{% endblock %}
 
 {% block content %}
@@ -43,36 +80,34 @@
 
   <div class="catalog-grid" data-catalog-grid>
     {% for p in productos %}
-    <article class="catalog-card catalog-card-premium" data-catalog-card>
-      <div class="catalog-media">
-        <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" class="catalog-image">
-      </div>
-      <div class="catalog-body">
-        <div class="catalog-tags">
-          {% if p.categoria %}<span class="catalog-tag">{{ p.categoria.nombre }}</span>{% endif %}
-          {% if p.destacado %}<span class="catalog-tag">Destacado</span>{% endif %}
-          {% if not p.disponible %}<span class="catalog-tag catalog-tag-muted">No disponible</span>{% endif %}
-        </div>
-        <h3>{{ p.nombre }}</h3>
-        <p class="catalog-desc">{{ p.descripcion|truncatechars:120 }}</p>
-        <div class="catalog-row">
-          <span class="catalog-price">${{ p.precio }}</span>
-          <button type="button" class="btn-secondary btn-view catalog-cta" data-id="{{ p.id }}">Ver detalle</button>
-        </div>
-        <div class="catalog-actions">
-          <div class="product-ctl" data-id="{{ p.id }}">
-            <button type="button" class="btn-add-only catalog-cta" aria-label="Agregar" title="Agregar" {% if not p.disponible %}disabled{% endif %}>Agregar</button>
-            <div class="qty-control d-none">
-              <button class="btn-qty btn-trash" title="Quitar del carrito" aria-label="Quitar">Eliminar</button>
-              <span class="qty">0</span>
-              <button class="btn-qty btn-plus" title="Agregar uno" aria-label="Agregar">+</button>
-            </div>
+    {% comment %}
+      La tarjeta ENTERA abre el detalle, asi que no hace falta un boton "Ver
+      detalle" compitiendo con "Agregar". Va como <button> y no como <div>
+      clickeable para que se pueda llegar con el teclado.
+    {% endcomment %}
+    <article class="catalog-card" data-catalog-card>
+      <button type="button" class="catalog-card__abrir btn-view" data-id="{{ p.id }}"
+              aria-label="Ver detalle de {{ p.nombre }}">
+        <span class="catalog-media">
+          <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" class="catalog-image" loading="lazy">
+          {% if p.destacado %}<span class="catalog-tag catalog-tag--flota">Destacado</span>{% endif %}
+          {% if not p.disponible %}<span class="catalog-tag catalog-tag-muted catalog-tag--flota">No disponible</span>{% endif %}
+        </span>
+        <span class="catalog-card__pie">
+          <span class="catalog-card__nombre">{{ p.nombre }}</span>
+          <span class="catalog-price">${{ p.precio|floatformat:0 }}<small> c/u</small></span>
+        </span>
+      </button>
+      <div class="catalog-actions">
+        <div class="product-ctl" data-id="{{ p.id }}">
+          <button type="button" class="btn-add-only catalog-cta" {% if not p.disponible %}disabled{% endif %}>
+            Agregar {{ minimo_unidades }}
+          </button>
+          <div class="qty-control d-none">
+            <button class="btn-qty btn-trash" title="Quitar del carrito" aria-label="Quitar">Eliminar</button>
+            <span class="qty">0</span>
+            <button class="btn-qty btn-plus" title="Sumar una unidad" aria-label="Sumar una unidad">+</button>
           </div>
-          {% if p.disponible %}
-          <a href="{% url 'agregar_al_carrito' p.id %}" class="btn-linkline">Agregar y abrir carrito</a>
-          {% else %}
-          <span class="btn-linkline text-muted">Temporalmente no disponible</span>
-          {% endif %}
         </div>
       </div>
     </article>

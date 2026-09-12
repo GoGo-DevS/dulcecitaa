@@ -1,4 +1,7 @@
 (function () {
+  // El minimo lo publica el servidor en el <body>: el respaldo del contador
+  // no puede decir "1" cuando no se puede comprar menos de 10.
+  const MINIMO = parseInt(document.body.dataset.minimo || '1', 10) || 1;
   function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -47,7 +50,7 @@
     const addBtn = productCtl.querySelector('.btn-add-only');
     const pill = productCtl.querySelector('.qty-control');
     const qtyEl = productCtl.querySelector('.qty');
-    if (qtyEl) qtyEl.textContent = qty != null ? qty : '1';
+    if (qtyEl) qtyEl.textContent = qty != null ? qty : MINIMO;
     if (addBtn) addBtn.classList.add('d-none');
     if (pill) pill.classList.remove('d-none');
   }
@@ -134,7 +137,7 @@
         const data = await resp.json();
         if (data && data.ok) {
           setCartCount(data.cart_count || 0);
-          switchToQty(ctl, data.qty || 1);
+          switchToQty(ctl, data.qty || MINIMO);
           flashButton(addOnly);
           showToast('Agregado al carrito');
         } else {
