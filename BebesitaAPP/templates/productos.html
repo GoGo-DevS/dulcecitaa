@@ -99,6 +99,25 @@
         </span>
       </button>
       <div class="catalog-actions">
+        {% if p.variantes.all %}
+          {% comment %}
+            Cada cobertura es un producto propio: el selector cambia el id que
+            recibe el boton Agregar. Asi el carrito no necesita saber nada de
+            variantes y cada una conserva su precio y su foto.
+          {% endcomment %}
+          <label class="catalog-variante">
+            <span>Cobertura</span>
+            <select data-variante>
+              <option value="{{ p.id }}">{{ p.variante_nombre|default:"Opción 1" }}</option>
+              {% for v in p.variantes.all %}
+                <option value="{{ v.id }}">{{ v.variante_nombre }}</option>
+              {% endfor %}
+            </select>
+          </label>
+        {% endif %}
+        {% if p.unidades_por_pack > 1 %}
+          <p class="catalog-pack">Bolsita de {{ p.unidades_por_pack }} unidades</p>
+        {% endif %}
         <div class="product-ctl" data-id="{{ p.id }}">
           <button type="button" class="btn-add-only catalog-cta" {% if not p.disponible %}disabled{% endif %}>
             Agregar {{ minimo_unidades }}

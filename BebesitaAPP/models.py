@@ -28,6 +28,22 @@ class Producto(models.Model):
     orden = models.PositiveIntegerField(default=0)
     imagen = models.ImageField(upload_to='productos/')
 
+    # Variantes de un mismo producto (por ejemplo, la cobertura del alfajor).
+    # Cada variante es un Producto propio que apunta al principal: asi el
+    # carrito, el stock y el pedido siguen funcionando igual, sin tocar nada,
+    # y cada cobertura puede tener su precio y su foto.
+    variante_de = models.ForeignKey(
+        'self', on_delete=models.CASCADE, null=True, blank=True,
+        related_name='variantes', verbose_name='Es variante de',
+        help_text='Dejar vacío si es un producto normal.')
+    variante_nombre = models.CharField(
+        'Nombre de la variante', max_length=60, blank=True,
+        help_text='Lo que se lee en el selector. Ej: Chocolate blanco.')
+    # Cuando el producto se vende en pack, aca se dice de cuantas unidades.
+    unidades_por_pack = models.PositiveIntegerField(
+        'Unidades por paquete', default=1,
+        help_text='Ej: 4 si la bolsita trae 4. Se usa solo para explicarlo.')
+
     class Meta:
         ordering = ("orden", "nombre")
 

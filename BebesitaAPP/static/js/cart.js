@@ -127,6 +127,10 @@
 
     if (addOnly) {
       const ctl = addOnly.closest('.product-ctl');
+      // Si la tarjeta ofrece coberturas, se agrega la ELEGIDA, no la primera:
+      // cada cobertura es un producto distinto con su propio id.
+      const selector = addOnly.closest('.catalog-actions')?.querySelector('[data-variante]');
+      if (ctl && selector && selector.value) ctl.setAttribute('data-id', selector.value);
       const pid = ctl.getAttribute('data-id');
       try {
         setButtonBusy(addOnly, true);

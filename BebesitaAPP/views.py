@@ -130,7 +130,7 @@ def _build_order_whatsapp_url(pedido):
 
 @ensure_csrf_cookie
 def home(request):
-    destacados = Producto.objects.filter(visible=True, destacado=True).select_related("categoria")[:4]
+    destacados = Producto.objects.filter(visible=True, destacado=True, variante_de__isnull=True).select_related("categoria")[:4]
     if not destacados:
         destacados = Producto.objects.filter(visible=True).select_related("categoria")[:4]
 
@@ -161,7 +161,12 @@ def home(request):
 
 @ensure_csrf_cookie
 def productos(request):
-    productos_qs = Producto.objects.filter(visible=True).select_related("categoria")
+    # Las variantes (la cobertura del alfajor, por ejemplo) no se listan
+    # sueltas: se eligen dentro de la ficha de su producto principal. Si no,
+    # el mismo alfajor aparece dos veces en el catalogo.
+    productos_qs = (Producto.objects.filter(visible=True, variante_de__isnull=True)
+                    .select_related("categoria")
+                    .prefetch_related("variantes"))
     categorias = CategoriaProducto.objects.filter(activa=True, productos__visible=True).distinct()
 
     query = (request.GET.get("q") or "").strip()
@@ -441,3 +446,11 @@ def producto_detalle(request, pk):
         return render(request, "partials/producto_detalle.html", ctx)
     return render(request, "producto_detalle_page.html", ctx)
 
+
+def delivery(request):
+    """Despacho y retiro.
+
+    El menu tenia "Delivery y retiro" y "Contacto" apuntando los DOS a la
+    misma pagina: dos opciones distintas que llevaban al mismo lugar.
+    """
+    return render(request, 'delivery.html')

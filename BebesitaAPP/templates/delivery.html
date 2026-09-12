@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Delivery y retiro | {{ site_brand }}{% endblock %}
+{% block meta_description %}Cómo llega tu pedido de {{ site_brand }}: despacho a todo Chile por Paket y entrega coordinada en Santiago.{% endblock %}
+
+{% block content %}
+<section class="page-hero container reveal-ready">
+  <p class="eyebrow">Delivery y retiro</p>
+  <h1>Cómo llega tu pedido</h1>
+  <p class="sutil-minimo">Pedido mínimo de {{ minimo_unidades }} unidades por producto</p>
+</section>
+
+<section class="container pb-5">
+  <div class="entrega">
+
+    <article class="entrega__via" data-reveal-item>
+      <p class="entrega__eyebrow">A todo Chile</p>
+      <h2>Despacho por Paket</h2>
+      <p>
+        El pedido viaja por Paket a cualquier región del país. Una vez
+        despachado se entrega el seguimiento para que puedas verlo en camino.
+      </p>
+      <span class="entrega__chip">
+        <img src="{% static 'img/paket-logo.png' %}" alt="Paket">
+      </span>
+    </article>
+
+    <article class="entrega__via" data-reveal-item>
+      <p class="entrega__eyebrow">Santiago</p>
+      <h2>Entrega coordinada</h2>
+      <p>
+        Dentro de Santiago la entrega se coordina directo por WhatsApp: se
+        acuerda día, hora y punto antes de despachar.
+      </p>
+      {% if whatsapp_url %}
+        <a class="btn-main" href="{{ whatsapp_url }}" target="_blank" rel="noopener">Coordinar por WhatsApp</a>
+      {% endif %}
+    </article>
+
+  </div>
+
+  {% comment %}
+    Solo se dice lo que ya esta confirmado: el minimo, Paket y las 48 horas
+    que la propia cuenta de Instagram anuncia. Nada de plazos ni precios de
+    despacho inventados.
+  {% endcomment %}
+  <div class="entrega__nota" data-reveal-item>
+    <h3>Antes de pedir</h3>
+    <ul>
+      <li><b>48 horas de anticipación.</b> Todo se hace a mano y por encargo.</li>
+      <li><b>Desde {{ minimo_unidades }} unidades por producto.</b> La venta es por volumen.</li>
+      <li><b>¿Una caja armada?</b> Los surtidos para empresas y regalos se cotizan
+        en <a href="{% url 'corporativo' %}">venta corporativa</a>.</li>
+    </ul>
+  </div>
+</section>
+{% endblock %}

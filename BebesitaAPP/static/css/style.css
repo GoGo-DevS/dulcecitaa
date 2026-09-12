@@ -1,66 +1,74 @@
 :root {
   /* ============================================================
-     ROSADO Y BLANCO. Nada mas.
+     TRES PASTELES: rosado, blanco y crema.
 
-     El rosado del logotipo (#f5a7d6) es muy claro: no puede ser
-     fondo Y letra a la vez -- rosado sobre rosado da 1,71:1.
-     Por eso la letra usa el MISMO rosa subido de intensidad
-     (var(--rosa)): 7,56:1 sobre blanco, y se sigue viendo ROSA, no
-     vino ni morado. El var(--rosa-fuerte) anterior tiraba a morado y salio.
+     Se reparten por SUPERFICIE, que es lo que da profundidad sin
+     sumar colores:
 
-     Regla de uso, para que dos colores alcancen:
-       . el texto de lectura va sobre BLANCO
-       . el rosado claro se usa en franjas, botones y bloques,
-         siempre con texto GRANDE y en negrita (ahi basta 3:1)
+       crema    #fef6e1  el fondo de la pagina
+       blanco   #ffffff  lo que se levanta del fondo: barra,
+                         tarjetas, fichas de producto
+       rosado   #f5a7d6  franjas, pie, botones y acentos
+
+     El crema no es un color agregado: es el tono con el que esta
+     escrito "dulcecita BAKERY" en el logotipo.
+
+     Y el TEXTO: los tres pasteles son claros, asi que ninguno
+     sirve para escribir encima de otro -- rosado sobre crema da
+     1,71:1 y no se lee. La letra usa el mismo rosa saturado
+     (#c2185b), SOLO como tinta, nunca como superficie: asi lo que
+     se ve siguen siendo los tres pasteles.
      ============================================================ */
-  --rosa: #f5a7d6;        /* el rosado del logotipo */
-  --rosa-fuerte: var(--rosa); /* el mismo rosa, saturado al 85%: se lee sobre blanco Y sobre el rosado */
+  --rosa: #f5a7d6;
+  --crema: #fef6e1;
   --blanco: #ffffff;
+  --tinta-rosa: #c2185b;   /* solo para escribir */
 
-  --rosa-suave: rgba(245, 167, 214, .34);
-  --borde: rgba(168, 0, 79, .16);
+  --rosa-suave: rgba(245, 167, 214, .30);
+  --borde: rgba(194, 24, 91, .14);
 
-  --shadow-soft: 0 14px 38px rgba(168, 0, 79, .10);
+  --shadow-soft: 0 14px 38px rgba(194, 24, 91, .09);
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 10px;
 
-  --crema: var(--blanco);
+  --rosa-fuerte: var(--tinta-rosa);
   --crema-claro: var(--blanco);
-  --rosa-tinta: var(--rosa-fuerte);
-  --fondo: var(--blanco);
+  --rosa-tinta: var(--tinta-rosa);
+  --fondo: var(--crema);
   --superficie: var(--blanco);
   --lino: var(--borde);
-  --tinta: var(--rosa-fuerte);
-  --tinta-2: var(--rosa-fuerte);
-  --tinta-900: var(--rosa-fuerte);
+  --tinta: var(--tinta-rosa);
+  --tinta-2: var(--tinta-rosa);
+  --tinta-900: var(--tinta-rosa);
   --marca: var(--rosa);
   --marca-suave: var(--rosa-suave);
-  --marca-legible: var(--rosa-fuerte);
-  --vino: var(--rosa-fuerte);
-  --vino-900: var(--rosa-fuerte);
+  --marca-legible: var(--tinta-rosa);
+  --vino: var(--tinta-rosa);
+  --vino-900: var(--tinta-rosa);
   --rosado: var(--rosa);
   --rosado-soft: var(--rosa-suave);
-  --rosado-deep: var(--rosa-fuerte);
-  --cream: var(--blanco);
+  --rosado-deep: var(--tinta-rosa);
+  --cream: var(--crema);
   --rose-100: var(--rosa-suave);
   --rose-300: var(--rosa);
-  --rose-500: var(--rosa-fuerte);
-  --rose-700: var(--rosa-fuerte);
-  --ink-900: var(--rosa-fuerte);
-  --ink-700: var(--rosa-fuerte);
-  --ink-500: var(--rosa-fuerte);
-  --dr-vino: var(--rosa-fuerte);
-  --dr-vino-900: var(--rosa-fuerte);
-  --dr-crema: var(--blanco);
+  --rose-500: var(--tinta-rosa);
+  --rose-700: var(--tinta-rosa);
+  --ink-900: var(--tinta-rosa);
+  --ink-700: var(--tinta-rosa);
+  --ink-500: var(--tinta-rosa);
+  --dr-vino: var(--tinta-rosa);
+  --dr-vino-900: var(--tinta-rosa);
+  --dr-crema: var(--crema);
   --dr-pink-bg: var(--rosa);
   --dr-pink-soft: var(--rosa-suave);
   --dr-pink: var(--rosa);
-  --dr-rosado-deep: var(--rosa-fuerte);
-  --dr-pink-deep: var(--rosa-fuerte);
-  --dr-wine: var(--rosa-fuerte);
-  --dr-ink: var(--rosa-fuerte);
+  --dr-rosado-deep: var(--tinta-rosa);
+  --dr-pink-deep: var(--tinta-rosa);
+  --dr-wine: var(--tinta-rosa);
+  --dr-ink: var(--tinta-rosa);
 }
+
 
 
 
@@ -1474,8 +1482,9 @@ html {
    CLARO del mismo matiz que todavia se lee (4,5:1). La referencia tiene el
    mismo problema (3,96:1) -- se prefirio que se lea. */
 .dr-topbar {
-  background: var(--rosa-fuerte);
-  color: var(--blanco);
+  background: var(--crema);
+  color: var(--tinta-rosa);
+  border-bottom: 1px solid var(--rosa-suave);
   text-align: center;
   font-size: .72rem;
   font-weight: 700;
@@ -1486,7 +1495,7 @@ html {
 
 /* ---------- Navbar Propuesta 1 ---------- */
 .site-navbar.dr-nav {
-  background: var(--crema) !important;
+  background: var(--blanco) !important;
   border-bottom: 1px solid var(--rosa-suave);
   box-shadow: 0 6px 24px rgba(154, 91, 114, .07);
   padding-top: .55rem;
@@ -1692,7 +1701,7 @@ html {
    borroso por el zoom). Mismo tratamiento de "marco" que el hero. */
 .dr-work-video {
   position: relative;
-  background: var(--superficie);
+  background: var(--crema);
   padding: 2.2rem 0;
   display: flex;
   justify-content: center;
@@ -1786,14 +1795,14 @@ html {
 .dr-corp p { color: var(--dr-ink); max-width: 620px; margin: .6rem auto 1.4rem; }
 
 /* ---------- Footer rosado (mismo de la franja del navbar) ---------- */
-.site-footer.dr-foot { background: var(--rosa-fuerte); }
+.site-footer.dr-foot { background: var(--crema); border-top: 3px solid var(--rosa); }
 /* El pie paso de vino a rosado: el texto blanco daba 1.85:1 y no se leia.
    Sobre rosado el unico color con contraste real es la tinta (8.81:1). */
 .dr-foot,
 .dr-foot .footer-copy,
 .dr-foot .footer-link,
 .dr-foot .footer-title,
-.dr-foot .footer-legal { color: var(--blanco); }
+.dr-foot .footer-legal { color: var(--tinta-rosa); }
 .dr-foot .footer-link:hover { color: var(--rosa); }
 .dr-foot .footer-legal { border-top-color: rgba(255, 255, 255, .3); }
 /* "Navegación" y "Atención" con la misma fuente del navbar (Manrope) */
@@ -1990,8 +1999,8 @@ html {
 
 /* ---------- Banda del minimo de compra ---------- */
 .ig-minimo {
-  background: var(--rosa-fuerte);
-  color: var(--blanco);
+  background: var(--rosa);
+  color: var(--tinta-rosa);
   text-align: center;
   padding: 1.5rem 1rem;
 }
@@ -2001,7 +2010,7 @@ html {
   font-weight: 800;
   letter-spacing: -.01em;
 }
-.ig-minimo span { font-size: .95rem; opacity: .85; }
+.ig-minimo span { font-size: 1.18rem; font-weight: 700; }  /* a este tamano y peso, 3,18:1 ya se lee (regla de texto grande) */
 .ig-minimo__linea { display: inline-flex; align-items: center; gap: .45rem; flex-wrap: wrap; justify-content: center; }
 .ig-minimo__chip {
   display: inline-flex; align-items: center;
@@ -2075,7 +2084,7 @@ html {
 }
 
 /* ---------- Encargos: la caja armada a pedido ---------- */
-.ig-encargos { background: var(--superficie); padding: 3.4rem 0; }
+.ig-encargos { background: var(--crema); padding: 3.4rem 0; }
 .ig-encargos__caja {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2314,4 +2323,52 @@ html {
   .container { max-width: 1480px; }
   .ig-hero__collage { grid-template-rows: repeat(2, 248px); }
   .ig-cinta__pista img { height: 240px; }
+}
+
+/* ---------- Delivery y retiro ---------- */
+.entrega { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.entrega__via {
+  background: var(--blanco);
+  border: 1px solid var(--lino);
+  border-radius: var(--radius-lg);
+  padding: 1.6rem 1.5rem;
+  box-shadow: var(--shadow-soft);
+}
+.entrega__eyebrow {
+  font-size: .72rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .12em; color: var(--rosa); margin: 0 0 .3rem;
+}
+.entrega__via h2 { font-size: 1.45rem; margin: 0 0 .5rem; }
+.entrega__via p { margin-bottom: 1rem; }
+/* El logotipo de Paket es de un tercero: va con sus colores, sobre un chip
+   claro, sin recolorear. */
+.entrega__chip {
+  display: inline-flex; align-items: center;
+  background: var(--blanco); border: 1px solid var(--lino);
+  border-radius: 999px; padding: .4rem .8rem; line-height: 0;
+}
+.entrega__chip img { height: 20px; width: auto; }
+.entrega__nota {
+  margin-top: 1.2rem; padding: 1.4rem 1.5rem;
+  background: var(--rosa-suave); border-radius: var(--radius-lg);
+}
+.entrega__nota h3 { font-size: 1.1rem; margin: 0 0 .6rem; }
+.entrega__nota ul { margin: 0; padding-left: 1.1rem; display: grid; gap: .4rem; }
+@media (max-width: 860px) { .entrega { grid-template-columns: 1fr; } }
+
+/* ---------- Variantes y packs en la tarjeta ---------- */
+.catalog-variante { display: block; margin: 0 0 .5rem; }
+.catalog-variante span {
+  display: block; font-size: .7rem; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--tinta-rosa); margin-bottom: .2rem;
+}
+.catalog-variante select {
+  width: 100%; margin: 0; padding: .42rem .6rem;
+  border: 1px solid var(--lino); border-radius: var(--radius-sm);
+  background: var(--blanco); color: var(--tinta-rosa); font: inherit; font-size: .86rem;
+}
+.catalog-pack {
+  margin: 0 0 .5rem; font-size: .8rem; font-weight: 600;
+  color: var(--tinta-rosa); opacity: .85;
 }

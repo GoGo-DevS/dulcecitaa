@@ -12,6 +12,7 @@ urlpatterns = [
     path('productos/', views.productos, name='productos'),
     path('corporativo/', views.corporativo, name='corporativo'),
     path('contacto/', views.contacto, name='contacto'),
+    path('delivery/', views.delivery, name='delivery'),
 
     # Carrito (por sesion)
     path('carrito/', views.mostrar_carrito, name='carrito'),
