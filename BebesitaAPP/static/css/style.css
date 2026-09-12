@@ -5,7 +5,7 @@
      El rosado del logotipo (#f5a7d6) es muy claro: no puede ser
      fondo Y letra a la vez -- rosado sobre rosado da 1,71:1.
      Por eso la letra usa el MISMO rosa subido de intensidad
-     (#c2185b): 7,56:1 sobre blanco, y se sigue viendo ROSA, no
+     (var(--rosa)): 7,56:1 sobre blanco, y se sigue viendo ROSA, no
      vino ni morado. El var(--rosa-fuerte) anterior tiraba a morado y salio.
 
      Regla de uso, para que dos colores alcancen:
@@ -14,7 +14,7 @@
          siempre con texto GRANDE y en negrita (ahi basta 3:1)
      ============================================================ */
   --rosa: #f5a7d6;        /* el rosado del logotipo */
-  --rosa-fuerte: #c2185b; /* el mismo rosa, saturado al 85%: se lee sobre blanco Y sobre el rosado */
+  --rosa-fuerte: var(--rosa); /* el mismo rosa, saturado al 85%: se lee sobre blanco Y sobre el rosado */
   --blanco: #ffffff;
 
   --rosa-suave: rgba(245, 167, 214, .34);
@@ -1541,7 +1541,7 @@ html {
 /* En hover se mantiene blanco con letra rosada (solo un leve realce). */
 .dr-pedido:hover,
 .dr-pedido:focus {
-  background: #a51049;
+  background: var(--rosa);
   color: var(--dr-pink-deep) !important;
   transform: translateY(-1px);
   box-shadow: 0 10px 22px rgba(154, 60, 100, .26);
