@@ -2045,3 +2045,58 @@ input[type="submit"].is-loading::after {
   font-weight: 600;
   margin: .3rem 0 0;
 }
+
+/* ---------- Encargos: la caja armada a pedido ---------- */
+.ig-encargos { background: var(--superficie); padding: 3.4rem 0; }
+.ig-encargos__caja {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2.6rem;
+  align-items: center;
+}
+/* Dos fotos superpuestas: la segunda asomando da la idea de que hay MAS de un
+   encargo, que es justo lo que se quiere contar. */
+.ig-encargos__foto { position: relative; padding-bottom: 2.6rem; padding-right: 2.6rem; }
+.ig-encargos__foto img {
+  width: 100%; height: auto; display: block;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+}
+.ig-encargos__foto2 {
+  position: absolute; right: 0; bottom: 0;
+  width: 42% !important;
+  border: 5px solid var(--superficie);
+  border-radius: var(--radius-md) !important;
+}
+.ig-encargos__titulo {
+  font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+  font-weight: 800; letter-spacing: -.025em;
+  color: var(--tinta); margin: .1rem 0 .6rem;
+  text-wrap: balance;
+}
+.ig-encargos__texto { color: var(--tinta-2); max-width: 46ch; margin-bottom: 1.2rem; }
+.ig-encargos__caso {
+  background: var(--fondo);
+  border: 1px solid var(--lino);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.3rem;
+}
+.ig-encargos__caso-tit {
+  font-size: .74rem; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .1em; color: var(--marca-legible); margin: 0 0 .5rem;
+}
+.ig-encargos__lista { margin: 0; padding: 0; list-style: none; display: grid; gap: .3rem; }
+.ig-encargos__lista li {
+  position: relative; padding-left: 1.1rem;
+  font-size: .93rem; color: var(--tinta);
+}
+.ig-encargos__lista li::before {
+  content: ''; position: absolute; left: 0; top: .55em;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--marca);
+}
+
+@media (max-width: 860px) {
+  .ig-encargos__caja { grid-template-columns: 1fr; gap: 1.6rem; }
+  .ig-encargos__foto { padding-bottom: 2rem; padding-right: 2rem; }
+}

@@ -73,6 +73,44 @@
   <div class="dr-work-video-caption">Así se hace, a mano y con cariño</div>
 </section>
 
+<!-- ENCARGOS: el trabajo por caja, que es otra linea de venta -->
+<section class="ig-encargos">
+  <div class="container">
+    <div class="ig-encargos__caja">
+      <div class="ig-encargos__foto" data-reveal-item>
+        <img src="{% static 'img/galeria/caja-diciochera.jpg' %}"
+             alt="Caja dieciochera con merenguitos, alfajores de maicena, alfajores mini, cachitos rellenos de manjar y chilenitos" loading="lazy">
+        <img class="ig-encargos__foto2" src="{% static 'img/galeria/caja-surtida.jpg' %}"
+             alt="Caja blanca con alfajores surtidos" loading="lazy">
+      </div>
+      <div data-reveal-item>
+        <p class="eyebrow">Encargos y regalos corporativos</p>
+        <h2 class="ig-encargos__titulo">Cajas armadas para la ocasión</h2>
+        <p class="ig-encargos__texto">
+          Además del catálogo, Dulcecita arma cajas a pedido para empresas,
+          fechas especiales y regalos. Se define el surtido, la cantidad y la
+          presentación según el encargo.
+        </p>
+        {% comment %}
+          Un encargo REAL contado con lo que llevaba adentro: es lo que hace
+          creible la linea corporativa. Los cinco items los confirmo Diego.
+        {% endcomment %}
+        <div class="ig-encargos__caso">
+          <p class="ig-encargos__caso-tit">Caja dieciochera · lo que llevó</p>
+          <ul class="ig-encargos__lista">
+            <li>Merenguitos rellenos de manjar</li>
+            <li>Alfajores de maicena</li>
+            <li>Alfajores mini</li>
+            <li>Cachitos rellenos de manjar</li>
+            <li>Chilenitos</li>
+          </ul>
+        </div>
+        <a href="{% url 'corporativo' %}" class="dr-btn-wine">Cotizar una caja</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- GALERIA -->
 <section class="section-soft">
   <div class="container">
@@ -85,12 +123,10 @@
       <figure><img src="{% static 'img/galeria/alfajores-hilo-blanco.jpg' %}" alt="Bandeja de alfajores con hilo de chocolate blanco" loading="lazy"><figcaption>Alfajores con hilo blanco</figcaption></figure>
       <figure><img src="{% static 'img/galeria/cuchuflis-en-mano.jpg' %}" alt="Mano sosteniendo seis cuchuflís rellenos" loading="lazy"><figcaption>Relleno hasta el borde</figcaption></figure>
       <figure><img src="{% static 'img/galeria/cuchuflis-canasto.jpg' %}" alt="Cuchuflís envueltos con cordel en un canasto" loading="lazy"><figcaption>Envueltos uno a uno</figcaption></figure>
-      <figure><img src="{% static 'img/galeria/caja-surtida.jpg' %}" alt="Caja blanca con cuatro alfajores surtidos" loading="lazy"><figcaption>Caja surtida</figcaption></figure>
       <figure><img src="{% static 'img/galeria/alfajores-leche.jpg' %}" alt="Alfajores bañados en chocolate de leche" loading="lazy"><figcaption>Bañados de leche</figcaption></figure>
       <figure><img src="{% static 'img/galeria/cuchuflis-mitad-chocolate.jpg' %}" alt="Cuchuflís bañados hasta la mitad en chocolate" loading="lazy"><figcaption>Bañados a media caña</figcaption></figure>
       <figure><img src="{% static 'img/galeria/merenguitos-manjar.jpg' %}" alt="Merenguitos blancos rellenos de manjar" loading="lazy"><figcaption>Merenguitos rellenos</figcaption></figure>
       <figure><img src="{% static 'img/galeria/palmeritas-chocolate.jpg' %}" alt="Palmeritas bañadas en chocolate en bandeja" loading="lazy"><figcaption>Palmeritas bañadas</figcaption></figure>
-      <figure><img src="{% static 'img/galeria/caja-diciochera.jpg' %}" alt="Caja surtida con alfajores, palmeritas, cachitos y merenguitos" loading="lazy"><figcaption>Caja surtida</figcaption></figure>
       <figure><img src="{% static 'img/galeria/cuchuflis-manjar-bandeja.jpg' %}" alt="Bandeja de cuchuflís rellenos de manjar" loading="lazy"><figcaption>Bandeja recién rellenada</figcaption></figure>
       <figure><img src="{% static 'img/galeria/cuchuflis-banados.jpg' %}" alt="Cuchuflís bañados en chocolate recién hechos" loading="lazy"><figcaption>Recién bañados</figcaption></figure>
     </div>
