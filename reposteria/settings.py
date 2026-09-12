@@ -42,6 +42,20 @@ else:
 
 ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", default="127.0.0.1,localhost,192.168.1.4,192.168.1.5")
 
+# --- Acceso desde el celular en la misma red (solo en desarrollo) ---
+# Las IPs de esta maquina se detectan solas: escribirlas a mano obliga a
+# corregir el archivo cada vez que el router entrega otra, y el sintoma es un
+# 400 que no dice que la culpa es de ALLOWED_HOSTS.
+if DEBUG:
+    import socket
+    _nombre = socket.gethostname()
+    _ips = {socket.gethostbyname(_nombre)}
+    try:
+        _ips |= {d[4][0] for d in socket.getaddrinfo(_nombre, None, socket.AF_INET)}
+    except OSError:
+        pass
+    ALLOWED_HOSTS = list(dict.fromkeys(list(ALLOWED_HOSTS) + sorted(_ips)))
+
 # Render inyecta el hostname público del servicio
 RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
