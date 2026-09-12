@@ -1431,6 +1431,25 @@ input[type="submit"].is-loading::after {
 
 
 
+html {
+  scroll-behavior: smooth;
+  /* La cabecera va pegada arriba: sin esto, saltar a un ancla deja el
+     destino DEBAJO de la barra. La altura la mide el JS, porque cambia
+     cuando el aviso se parte en dos lineas o cuando la barra se compacta. */
+  scroll-padding-top: var(--alto-cabecera, 110px);
+}
+
+/* La cabecera se compacta al bajar: devuelve pantalla al contenido y da
+   la señal de que la pagina se movio. */
+.dr-cabecera { transition: box-shadow .25s ease; }
+.dr-cabecera.encogida { box-shadow: 0 6px 22px rgba(44, 29, 19, .10); }
+.dr-cabecera.encogida .dr-topbar {
+  padding-top: 3px; padding-bottom: 3px; font-size: .66rem;
+}
+.dr-cabecera .dr-topbar,
+.dr-cabecera .dr-logo-img { transition: all .25s ease; }
+.dr-cabecera.encogida .dr-logo-img { height: 46px; }
+
 /* ============================================================
    Seccion "Dulce Rosa" — cabecera, hero, grilla de productos,
    footer y componentes propios del rediseño 2026-08.

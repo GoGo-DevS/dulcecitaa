@@ -109,6 +109,38 @@
     });
   }
 
+  function initCabecera() {
+    const cabecera = document.querySelector('.dr-cabecera');
+    if (!cabecera) return;
+
+    // La altura NO se puede escribir a mano en el CSS: cambia cuando el aviso
+    // se parte en dos lineas en un telefono y cuando la barra se compacta.
+    // Se mide y se publica como variable para que scroll-padding-top la use.
+    const medir = () => {
+      document.documentElement.style.setProperty(
+        '--alto-cabecera', cabecera.offsetHeight + 'px');
+    };
+    medir();
+    window.addEventListener('resize', medir);
+    if ('ResizeObserver' in window) new ResizeObserver(medir).observe(cabecera);
+
+    if (reduceMotion) return;
+
+    // Se escucha con passive y se trabaja dentro de requestAnimationFrame: un
+    // listener de scroll que mide en cada evento traba el desplazamiento.
+    let pendiente = false;
+    const alBajar = () => {
+      if (pendiente) return;
+      pendiente = true;
+      window.requestAnimationFrame(() => {
+        cabecera.classList.toggle('encogida', window.scrollY > 120);
+        medir();
+        pendiente = false;
+      });
+    };
+    window.addEventListener('scroll', alBajar, { passive: true });
+  }
+
   function initSmoothAnchors() {
     document.addEventListener('click', (event) => {
       const link = event.target.closest('a[href^="#"]');
@@ -162,6 +194,7 @@
   initCatalogEnhancements();
   initRevealGroups();
   initReveal();
+  initCabecera();
   initSmoothAnchors();
   initFormsLoading();
   initModalPolish();
