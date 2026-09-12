@@ -8,51 +8,52 @@
 
 {% block content %}
 
-<!-- HERO carrusel -->
-<section class="dr-hero">
- <div class="dr-hero-frame">
-  <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="4500">
-    {% if hero_items %}
-      <div class="carousel-indicators">
-        {% for p in hero_items %}
-          <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active" aria-current="true"{% endif %} aria-label="Slide {{ forloop.counter }}"></button>
-        {% endfor %}
-      </div>
-      <div class="carousel-inner">
-        {% for p in hero_items %}
-          <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <div class="dr-hero-bg" style="background-image:url('{{ p.imagen.url }}')"></div>
-            <img class="dr-hero-photo" src="{{ p.imagen.url }}" alt="{{ p.nombre }}">
-            <div class="dr-hero-card">
-              <p class="dr-hero-eyebrow">Destacado de la casa</p>
-              <h2 class="dr-hero-title">{{ p.nombre }}</h2>
-              <a href="{% url 'producto_detalle' p.id %}" class="dr-hero-btn">Pedir ahora</a>
-            </div>
-          </div>
-        {% endfor %}
-      </div>
-    {% else %}
-      <div class="carousel-inner">
-        <div class="carousel-item active">
-          <div class="dr-hero-bg" style="background-image:url('{% static 'img/hero/slide1.jpg' %}')"></div>
-          <img class="dr-hero-photo" src="{% static 'img/hero/slide1.jpg' %}" alt="{{ site_brand }}">
-          <div class="dr-hero-card">
-            <p class="dr-hero-eyebrow">Hecho a mano</p>
-            <h2 class="dr-hero-title">Dulces que se sienten como un regalo</h2>
-            <a href="{% url 'productos' %}" class="dr-hero-btn">Ver catálogo</a>
-          </div>
+<!-- HERO de marca: el claim es la bio real del Instagram -->
+<section class="ig-hero">
+  <div class="container">
+    <div class="ig-hero__caja">
+      <div data-reveal-item>
+        <img class="ig-hero__logo" src="{% static 'img/logo-dulcecita-rosado.png' %}?v=2" alt="{{ site_brand }} Bakery">
+        <h1 class="ig-hero__claim">La felicidad <em>en cajita</em></h1>
+        <p class="ig-hero__bajada">
+          Cuchuflís rellenos de manjar, alfajores bañados y cajas surtidas.
+          Todo hecho a mano, en Santiago, con despacho a todo Chile.
+        </p>
+        <div class="ig-hero__acciones">
+          <a href="{% url 'productos' %}" class="dr-btn-wine">Ver todo el catálogo</a>
+          <a href="{{ whatsapp_url }}" class="btn-ghost" target="_blank" rel="noopener">Pedir por WhatsApp</a>
         </div>
       </div>
-    {% endif %}
-    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
-      <span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Anterior</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next">
-      <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Siguiente</span>
-    </button>
+      <div class="ig-hero__collage" data-reveal-item>
+        <img src="{% static 'img/galeria/cuchuflis-relleno-manjar.jpg' %}" alt="Cuchuflís rellenos de manjar recién armados">
+        <img src="{% static 'img/galeria/alfajores-hilo-blanco.jpg' %}" alt="Alfajores bañados en chocolate con hilo de chocolate blanco">
+        <img src="{% static 'img/galeria/caja-surtida.jpg' %}" alt="Caja surtida con alfajores de distintas coberturas">
+      </div>
+    </div>
   </div>
-  <img src="{% static 'img/sello-dulcecita.jpg' %}" alt="{{ site_brand }} Bakery" class="dr-hero-sello">
- </div>
+</section>
+
+{% comment %}
+  La cinta lleva la MISMA lista dos veces a proposito: la animacion se
+  corre exactamente la mitad, asi el bucle cierra en un punto identico y
+  no se ve el salto. Si se saca la segunda vuelta, aparece un corte seco.
+{% endcomment %}
+<section class="ig-cinta" aria-hidden="true">
+  <div class="ig-cinta__pista">
+    {% for i in "12" %}
+      <img src="{% static 'img/galeria/cuchuflis-en-mano.jpg' %}" alt="">
+      <img src="{% static 'img/galeria/cuchuflis-manjar-bandeja.jpg' %}" alt="">
+      <img src="{% static 'img/galeria/alfajores-leche.jpg' %}" alt="">
+      <img src="{% static 'img/galeria/cuchuflis-canasto.jpg' %}" alt="">
+      <img src="{% static 'img/galeria/cuchuflis-mitad-chocolate.jpg' %}" alt="">
+      <img src="{% static 'img/galeria/cuchuflis-banados.jpg' %}" alt="">
+    {% endfor %}
+  </div>
+</section>
+
+<section class="ig-minimo">
+  <b>Pedidos desde 10 unidades por producto</b>
+  <span>Despacho a todo Chile por Paket · Santiago con entrega coordinada</span>
 </section>
 
 <!-- VIDEO: así trabajamos -->
@@ -61,6 +62,26 @@
     <source src="{% static 'video/trabajo-dulcecita.mp4' %}" type="video/mp4">
   </video>
   <div class="dr-work-video-caption">Así se hace, a mano y con cariño</div>
+</section>
+
+<!-- GALERIA -->
+<section class="section-soft">
+  <div class="container">
+    <div class="section-head section-head-center" data-reveal-item>
+      <h2>Recién salido del obrador</h2>
+      <p>Fotos reales de la producción, no de catálogo.</p>
+    </div>
+    <div class="ig-mosaico" data-reveal-item>
+      <figure><img src="{% static 'img/galeria/cuchuflis-relleno-manjar.jpg' %}" alt="Cuchuflís rellenos de manjar vistos de frente" loading="lazy"><figcaption>Cuchuflís rellenos de manjar</figcaption></figure>
+      <figure><img src="{% static 'img/galeria/alfajores-hilo-blanco.jpg' %}" alt="Bandeja de alfajores con hilo de chocolate blanco" loading="lazy"><figcaption>Alfajores con hilo blanco</figcaption></figure>
+      <figure><img src="{% static 'img/galeria/cuchuflis-en-mano.jpg' %}" alt="Mano sosteniendo seis cuchuflís rellenos" loading="lazy"><figcaption>Relleno hasta el borde</figcaption></figure>
+      <figure><img src="{% static 'img/galeria/cuchuflis-canasto.jpg' %}" alt="Cuchuflís envueltos con cordel en un canasto" loading="lazy"><figcaption>Envueltos uno a uno</figcaption></figure>
+      <figure><img src="{% static 'img/galeria/caja-surtida.jpg' %}" alt="Caja blanca con cuatro alfajores surtidos" loading="lazy"><figcaption>Caja surtida</figcaption></figure>
+      <figure><img src="{% static 'img/galeria/alfajores-leche.jpg' %}" alt="Alfajores bañados en chocolate de leche" loading="lazy"><figcaption>Bañados de leche</figcaption></figure>
+      <figure><img src="{% static 'img/galeria/cuchuflis-mitad-chocolate.jpg' %}" alt="Cuchuflís bañados hasta la mitad en chocolate" loading="lazy"><figcaption>Bañados a media caña</figcaption></figure>
+      <figure><img src="{% static 'img/galeria/cuchuflis-banados.jpg' %}" alt="Cuchuflís bañados en chocolate recién hechos" loading="lazy"><figcaption>Recién bañados</figcaption></figure>
+    </div>
+  </div>
 </section>
 
 <!-- NUESTROS PRODUCTOS -->

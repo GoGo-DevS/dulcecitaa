@@ -1649,13 +1649,13 @@ input[type="submit"].is-loading::after {
 .dr-work-video {
   position: relative;
   background: var(--superficie);
-  padding: 3rem 0;
+  padding: 2.2rem 0;
   display: flex;
   justify-content: center;
 }
 .dr-work-video-el {
-  max-width: min(92%, 420px);
-  max-height: 72vh;
+  max-width: min(92%, 300px);
+  max-height: 52vh;
   width: auto; height: auto;
   object-fit: contain;
   display: block;
@@ -1839,4 +1839,172 @@ input[type="submit"].is-loading::after {
     margin: 0;
     z-index: 2;
   }
+}
+
+/* ============================================================
+   Identidad Instagram — hero, cinta viva, mosaico y minimo de
+   compra. Todo el movimiento de aca respeta prefers-reduced-
+   motion: quien pide menos animacion recibe la pagina QUIETA,
+   no una version rota.
+   ============================================================ */
+
+/* ---------- Hero de marca ---------- */
+.ig-hero {
+  position: relative;
+  background: var(--fondo);
+  padding: 3.2rem 0 2.4rem;
+  overflow: hidden;
+}
+/* Dos manchas rosadas muy suaves: dan color al blanco sin ensuciar
+   las fotos, que son lo unico que tiene que gritar. */
+.ig-hero::before,
+.ig-hero::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(70px);
+  opacity: .55;
+  pointer-events: none;
+}
+.ig-hero::before { width: 460px; height: 460px; background: var(--marca); top: -190px; left: -130px; }
+.ig-hero::after  { width: 380px; height: 380px; background: var(--crema); bottom: -170px; right: -110px; }
+
+.ig-hero__caja {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 2.6rem;
+  align-items: center;
+}
+.ig-hero__logo { width: min(330px, 72%); height: auto; display: block; margin-bottom: 1.1rem; }
+.ig-hero__claim {
+  font-family: 'Manrope', system-ui, sans-serif;
+  font-size: clamp(2rem, 4.4vw, 3.1rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -.03em;
+  color: var(--tinta);
+  margin: 0 0 .7rem;
+  text-wrap: balance;
+}
+.ig-hero__claim em { font-style: normal; color: var(--marca-legible); }
+.ig-hero__bajada {
+  font-size: 1.02rem;
+  color: var(--tinta-2);
+  max-width: 42ch;
+  margin: 0 0 1.5rem;
+}
+.ig-hero__acciones { display: flex; flex-wrap: wrap; gap: .7rem; }
+
+/* Collage: tres fotos que respiran, cada una con su propio ritmo.
+   Sin esto el hero es una foto sola y se ve vacio. */
+.ig-hero__collage {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(2, 158px);
+  gap: .85rem;
+}
+.ig-hero__collage img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  animation: flotar 7s ease-in-out infinite;
+}
+.ig-hero__collage img:nth-child(1) { grid-row: span 2; height: 100%; animation-delay: -1.4s; }
+.ig-hero__collage img:nth-child(3) { animation-delay: -3.1s; }
+@keyframes flotar {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-11px) rotate(-.7deg); }
+}
+
+/* ---------- Cinta de fotos en movimiento ---------- */
+.ig-cinta { background: var(--marca); padding: 1.1rem 0; overflow: hidden; }
+.ig-cinta__pista {
+  display: flex;
+  gap: 1rem;
+  width: max-content;
+  animation: desfilar 38s linear infinite;
+}
+.ig-cinta:hover .ig-cinta__pista { animation-play-state: paused; }
+.ig-cinta__pista img {
+  height: 168px; width: auto;
+  border-radius: var(--radius-sm);
+  box-shadow: 0 8px 20px rgba(44, 29, 19, .16);
+}
+/* La pista lleva la lista DOS veces y se corre exactamente la mitad:
+   asi el salto del bucle cae en un punto identico y no se ve el corte. */
+@keyframes desfilar {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* ---------- Banda del minimo de compra ---------- */
+.ig-minimo {
+  background: var(--tinta);
+  color: var(--crema);
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+.ig-minimo b {
+  display: block;
+  font-size: clamp(1.15rem, 2.6vw, 1.6rem);
+  font-weight: 800;
+  letter-spacing: -.01em;
+}
+.ig-minimo span { font-size: .95rem; opacity: .85; }
+
+/* ---------- Mosaico ---------- */
+.ig-mosaico {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(232px, 1fr));
+  gap: 1rem;
+}
+.ig-mosaico figure {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  aspect-ratio: 4 / 5;
+  box-shadow: var(--shadow-soft);
+}
+.ig-mosaico img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .55s cubic-bezier(.2, .7, .3, 1);
+}
+.ig-mosaico figure:hover img { transform: scale(1.07); }
+.ig-mosaico figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 1.5rem .9rem .8rem;
+  color: #fff;
+  font-weight: 700;
+  font-size: .92rem;
+  /* El degradado no es adorno: sin el, el texto blanco cae sobre
+     zonas claras de la foto y deja de leerse. */
+  background: linear-gradient(to top, rgba(28, 18, 11, .82), rgba(28, 18, 11, 0));
+  transform: translateY(6px);
+  opacity: 0;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.ig-mosaico figure:hover figcaption,
+.ig-mosaico figure:focus-within figcaption { opacity: 1; transform: translateY(0); }
+
+@media (max-width: 860px) {
+  .ig-hero__caja { grid-template-columns: 1fr; gap: 1.8rem; }
+  .ig-hero__collage { grid-template-rows: repeat(2, 124px); }
+  .ig-cinta__pista img { height: 118px; }
+  /* En un telefono, minmax(232px) deja UNA columna: ocho fotos a pantalla
+     completa, una tras otra. Dos columnas dejan la galeria recorrible. */
+  .ig-mosaico { grid-template-columns: repeat(2, 1fr); gap: .6rem; }
+}
+
+/* El que pide menos movimiento recibe la pagina COMPLETA y quieta.
+   Nada de esconder contenido: se anula el desplazamiento inicial. */
+@media (prefers-reduced-motion: reduce) {
+  .ig-hero__collage img,
+  .ig-cinta__pista { animation: none !important; }
+  .ig-mosaico figure:hover img { transform: none; }
 }
