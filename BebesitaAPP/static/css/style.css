@@ -1,47 +1,61 @@
 :root {
   /* ============================================================
-     Dulcecita — escala de color real (medida con formula WCAG,
-     no elegida a ojo). Un solo lugar de verdad para toda la web.
-     VINO = marca dominante: chrome, CTAs, texto con autoridad.
-       blanco/vino = 12.47:1, vino/crema = 11.57:1 (AA normal ambos).
-     ROSADO = acento decorativo puro (franjas, tags, bordes) — NUNCA
-       texto de cuerpo: rosado/crema = 1.71:1, no pasa AA.
-     ROSADO-DEEP = version con contraste real del acento (6.40:1
-       sobre blanco) para links/foco que necesiten tono rosado legible.
-     CREMA = fondo cálido en vez de blanco puro.
+     Dulcecita — paleta MEDIDA del Instagram (11-09-2026), no
+     elegida a ojo: avatar #f5a7d6, fotos de producto #2c1d13,
+     textil #e1ddd4, letra del logo #fef6e1.
+     El feed es BLANCO con la comida mandando. No hay vino ni
+     fondo crema en ninguna pieza real de la marca hoy.
+     Contrastes calculados con la formula WCAG:
+       tinta/blanco  16.25:1   tinta/rosado 8.81:1  (AA ambos)
+       rosado/blanco  1.85:1 -> superficie, NUNCA texto
+       blanco/rosado  1.85:1 -> por eso los botones rosados
+                                llevan letra TINTA, no blanca
      ============================================================ */
-  --vino: #6f0011;
-  --vino-900: #430009;
-  --rosado: #f6a7d6;
-  --rosado-soft: #e8c8dd;
-  --rosado-deep: #b1245e;
+  --fondo: #ffffff;
+  --superficie: #faf7f4;
+  --lino: #e1ddd4;
+  --tinta: #2c1d13;
+  --tinta-2: #5a4436;
+  --tinta-900: #1b110b;
+  --marca: #f5a7d6;
+  --marca-suave: #fbdcef;
+  /* Mismo matiz del avatar, oscurecido por su propio canal hasta
+     pasar AA (4.61:1): para links y foco que deban verse rosados. */
+  --marca-legible: #a95b8a;
   --crema: #fef6e1;
-  --ink-900: #2f1f22;
-  --ink-700: #4f3e42;
-  --ink-500: #6f5a60;
-  --shadow-soft: 0 18px 45px rgba(72, 35, 40, 0.12);
+
+  --shadow-soft: 0 18px 45px rgba(44, 29, 19, 0.10);
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 10px;
 
-  /* Alias legados: los selectores existentes (style.css antiguo +
-     seccion "Dulce Rosa" mas abajo) siguen usando estos nombres. */
+  /* Alias legados: cada uno apunta al ROL que de verdad cumple en
+     los selectores, no al color que tenia antes. */
+  --vino: var(--tinta);
+  --vino-900: var(--tinta-900);
+  --rosado: var(--marca);
+  --rosado-soft: var(--marca-suave);
+  --rosado-deep: var(--marca-legible);
   --cream: var(--crema);
-  --rose-100: var(--rosado-soft);
-  --rose-300: var(--rosado);
-  --rose-500: var(--rosado-deep);
-  --rose-700: var(--vino);
-  --dr-vino: var(--vino);
-  --dr-vino-900: var(--vino-900);
+  --rose-100: var(--marca-suave);
+  --rose-300: var(--marca);
+  --rose-500: var(--marca-legible);
+  --rose-700: var(--tinta);
+  --ink-900: var(--tinta);
+  --ink-700: var(--tinta-2);
+  --ink-500: #7a6455;
+  --dr-vino: var(--tinta);
+  --dr-vino-900: var(--tinta-900);
   --dr-crema: var(--crema);
-  --dr-pink-bg: var(--rosado);
-  --dr-pink-soft: var(--rosado-soft);
-  --dr-pink: var(--rosado);
-  --dr-rosado-deep: var(--rosado-deep);
-  --dr-pink-deep: var(--vino);
-  --dr-wine: var(--vino-900);
-  --dr-ink: var(--ink-700);
+  --dr-pink-bg: var(--marca);
+  --dr-pink-soft: var(--marca-suave);
+  --dr-pink: var(--marca);
+  --dr-rosado-deep: var(--marca-legible);
+  --dr-pink-deep: var(--marca-legible);
+  --dr-wine: var(--tinta-900);
+  --dr-ink: var(--tinta-2);
 }
+
 
 * {
   box-sizing: border-box;
@@ -56,7 +70,7 @@ body {
 body {
   font-family: 'Manrope', sans-serif;
   color: var(--ink-700);
-  background: var(--crema);
+  background: var(--fondo);
   min-height: 100vh;
 }
 
@@ -167,8 +181,8 @@ a {
 }
 
 .btn-main {
-  background: linear-gradient(135deg, var(--rose-700), var(--rose-500));
-  color: #fff;
+  background: var(--marca);
+  color: var(--tinta);
   padding: 0.8rem 1.5rem;
   box-shadow: 0 10px 24px rgba(111, 0, 17, 0.28);
 }
@@ -950,8 +964,8 @@ a {
 .btn-add-only {
   border: none;
   border-radius: 999px;
-  background: linear-gradient(135deg, var(--rose-700), var(--rose-500));
-  color: #fff;
+  background: var(--marca);
+  color: var(--tinta);
   font-weight: 700;
   padding: 0.55rem 1rem;
   box-shadow: 0 8px 18px rgba(111, 0, 17, 0.28);
@@ -1417,8 +1431,8 @@ input[type="submit"].is-loading::after {
 
 /* ---------- Barra superior (announcement) ---------- */
 .dr-topbar {
-  background: var(--dr-vino);
-  color: #fff;
+  background: var(--marca);
+  color: var(--tinta);
   text-align: center;
   font-size: .72rem;
   font-weight: 700;
@@ -1429,19 +1443,22 @@ input[type="submit"].is-loading::after {
 
 /* ---------- Navbar Propuesta 1 ---------- */
 .site-navbar.dr-nav {
-  background: var(--dr-vino) !important;
-  border-bottom: 1px solid var(--dr-pink-soft);
+  background: var(--fondo) !important;
+  border-bottom: 1px solid var(--lino);
   box-shadow: 0 6px 24px rgba(154, 91, 114, .07);
   padding-top: .55rem;
   padding-bottom: .55rem;
 }
 /* Logo en imagen (reemplaza el texto) */
-.dr-logo-img { height: 190px; width: auto; display: block; }
-.dr-logo-foot { height: 210px; width: auto; display: block; }
-@media (max-width: 992px) { .dr-logo-img { height: 140px; } }
+/* El logo nuevo es un wordmark apaisado y SIN aire alrededor. El archivo
+   viejo era un JPEG cuadrado con mucho margen pintado, por eso necesitaba
+   190px de alto para leerse: el mismo valor aca seria enorme. */
+.dr-logo-img { height: 62px; width: auto; display: block; }
+.dr-logo-foot { height: 76px; width: auto; display: block; }
+@media (max-width: 992px) { .dr-logo-img { height: 48px; } }
 
 .dr-nav .nav-link {
-  color: #fff !important;
+  color: var(--tinta) !important;
   font-family: 'Manrope', system-ui, sans-serif;
   font-size: 1rem;
   font-weight: 700;
@@ -1449,7 +1466,7 @@ input[type="submit"].is-loading::after {
   text-transform: uppercase;
   white-space: nowrap;   /* cada opción en una sola línea */
 }
-.dr-nav .nav-link:hover { color: rgba(255, 255, 255, .72) !important; }
+.dr-nav .nav-link:hover { color: var(--marca-legible) !important; }
 
 /* Menú en una sola fila; en pantallas medianas se achica un poco para no desbordar */
 .dr-nav .navbar-nav { column-gap: 1.5rem; }
@@ -1457,7 +1474,7 @@ input[type="submit"].is-loading::after {
   .dr-nav .nav-link { font-size: .85rem; letter-spacing: .05em; }
   .dr-nav .navbar-nav { column-gap: .9rem; }
   .dr-pedido { padding: .78rem 1.4rem !important; font-size: .82rem; }
-  .dr-logo-img { height: 150px; }
+  .dr-logo-img { height: 52px; }
 }
 
 /* Botón CTA: fondo blanco, letra rosada */
@@ -1465,10 +1482,10 @@ input[type="submit"].is-loading::after {
    texto blanco sobre fondo blanco (el botón se veía vacío). */
 .dr-nav .nav-link.dr-pedido,
 .dr-nav .nav-link.dr-pedido:hover,
-.dr-nav .nav-link.dr-pedido:focus { color: var(--dr-pink-deep) !important; }
+.dr-nav .nav-link.dr-pedido:focus { color: var(--tinta) !important; }
 .dr-pedido {
-  background: #fff;
-  color: var(--dr-pink-deep) !important;
+  background: var(--marca);
+  color: var(--tinta) !important;
   border-radius: 999px;
   padding: .9rem 2rem !important;
   font-weight: 800 !important;
@@ -1481,7 +1498,7 @@ input[type="submit"].is-loading::after {
 /* En hover se mantiene blanco con letra rosada (solo un leve realce). */
 .dr-pedido:hover,
 .dr-pedido:focus {
-  background: #fff;
+  background: var(--marca-suave);
   color: var(--dr-pink-deep) !important;
   transform: translateY(-1px);
   box-shadow: 0 10px 22px rgba(154, 60, 100, .26);
@@ -1493,7 +1510,7 @@ input[type="submit"].is-loading::after {
   border: 1px solid rgba(255, 255, 255, .85);
   border-radius: 12px;
   padding: .3rem .55rem;
-  background: var(--dr-vino);   /* mismo tono que la barra */
+  background: var(--fondo);   /* mismo tono que la barra */
 }
 .dr-nav .navbar-toggler:focus { box-shadow: 0 0 0 .2rem rgba(255, 255, 255, .45); }
 .dr-nav .navbar-toggler-icon {
@@ -1508,7 +1525,7 @@ input[type="submit"].is-loading::after {
 .dr-cart-fab {
   position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
   display: inline-flex; align-items: center; gap: .5rem;
-  background: var(--dr-vino); color: #fff !important;
+  background: var(--marca); color: var(--tinta) !important;
   padding: .62rem 1.2rem; border-radius: 999px;
   box-shadow: 0 12px 28px rgba(67, 0, 9, .5);
   z-index: 1045; font-weight: 700; font-size: .9rem; text-decoration: none;
@@ -1531,7 +1548,7 @@ input[type="submit"].is-loading::after {
    borrosos enormes a los lados — a la dueña no le gustó). Ahora el hero ES
    una tarjeta vertical del mismo alto/ancho que la foto: la foto llena todo
    el marco, sin recorte de producto y sin bordes borrosos. */
-.dr-hero { position: relative; background: var(--dr-vino); padding: 2.6rem 0 2.2rem; }
+.dr-hero { position: relative; background: var(--fondo); padding: 2.6rem 0 2.2rem; }
 .dr-hero-frame { position: relative; width: min(88vw, 440px); margin: 0 auto; }
 
 .dr-hero .carousel-item {
@@ -1572,7 +1589,7 @@ input[type="submit"].is-loading::after {
 }
 .dr-hero-price { font-size: 1.05rem; font-weight: 700; margin-bottom: .6rem; }
 .dr-hero-btn {
-  display: inline-block; background: var(--dr-vino); color: #fff;
+  display: inline-block; background: var(--marca); color: var(--tinta);
   border-radius: 999px; padding: .55rem 1.4rem; font-weight: 700;
   letter-spacing: .04em; box-shadow: 0 10px 22px rgba(67,0,9,.5);
 }
@@ -1592,7 +1609,7 @@ input[type="submit"].is-loading::after {
   border: 4px solid var(--dr-crema);
   box-shadow: 0 14px 30px rgba(74, 6, 20, .35);
   transform: rotate(8deg);
-  background: var(--dr-crema);
+  background: var(--superficie);
 }
 @media (max-width: 480px) {
   .dr-hero-sello { width: 82px; height: 82px; top: -14px; right: -8px; border-width: 3px; }
@@ -1631,7 +1648,7 @@ input[type="submit"].is-loading::after {
    borroso por el zoom). Mismo tratamiento de "marco" que el hero. */
 .dr-work-video {
   position: relative;
-  background: var(--dr-vino);
+  background: var(--superficie);
   padding: 3rem 0;
   display: flex;
   justify-content: center;
@@ -1706,7 +1723,7 @@ input[type="submit"].is-loading::after {
 
 .dr-products-cta { text-align: center; margin: 2.4rem 0 .5rem; }
 .dr-btn-wine {
-  display: inline-block; background: var(--dr-pink-deep); color: #fff;
+  display: inline-block; background: var(--marca); color: var(--tinta);
   border-radius: 999px; padding: .7rem 2rem; font-weight: 700; letter-spacing: .05em;
 }
 .dr-btn-wine:hover { background: #c2418a; color: #fff; }
@@ -1714,7 +1731,7 @@ input[type="submit"].is-loading::after {
 /* ---------- Franja corporativa ---------- */
 .dr-corp {
   margin: 2rem 0 0; padding: 3.4rem 0;
-  background: var(--dr-crema);
+  background: var(--superficie);
   border-top: 1px solid rgba(111, 0, 17, .14);
   text-align: center;
 }
@@ -1722,14 +1739,16 @@ input[type="submit"].is-loading::after {
 .dr-corp p { color: var(--dr-ink); max-width: 620px; margin: .6rem auto 1.4rem; }
 
 /* ---------- Footer rosado (mismo de la franja del navbar) ---------- */
-.site-footer.dr-foot { background: var(--dr-vino); }
+.site-footer.dr-foot { background: var(--marca); }
+/* El pie paso de vino a rosado: el texto blanco daba 1.85:1 y no se leia.
+   Sobre rosado el unico color con contraste real es la tinta (8.81:1). */
 .dr-foot,
 .dr-foot .footer-copy,
 .dr-foot .footer-link,
 .dr-foot .footer-title,
-.dr-foot .footer-legal { color: #fff; }
-.dr-foot .footer-link:hover { color: rgba(255, 255, 255, .78); }
-.dr-foot .footer-legal { border-top-color: rgba(255, 255, 255, .35); }
+.dr-foot .footer-legal { color: var(--tinta); }
+.dr-foot .footer-link:hover { color: var(--tinta-900); }
+.dr-foot .footer-legal { border-top-color: rgba(44, 29, 19, .22); }
 /* "Navegación" y "Atención" con la misma fuente del navbar (Manrope) */
 .dr-foot .footer-title {
   font-family: 'Manrope', system-ui, sans-serif;
