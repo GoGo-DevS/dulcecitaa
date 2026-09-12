@@ -1,60 +1,74 @@
 :root {
   /* ============================================================
-     Dulcecita — paleta MEDIDA del Instagram (11-09-2026), no
-     elegida a ojo: avatar #f5a7d6, fotos de producto #2c1d13,
-     textil #e1ddd4, letra del logo #fef6e1.
-     El feed es BLANCO con la comida mandando. No hay vino ni
-     fondo crema en ninguna pieza real de la marca hoy.
-     Contrastes calculados con la formula WCAG:
-       tinta/blanco  16.25:1   tinta/rosado 8.81:1  (AA ambos)
-       rosado/blanco  1.85:1 -> superficie, NUNCA texto
-       blanco/rosado  1.85:1 -> por eso los botones rosados
-                                llevan letra TINTA, no blanca
-     ============================================================ */
-  --fondo: #ffffff;
-  --superficie: #faf7f4;
-  --lino: #e1ddd4;
-  --tinta: #2c1d13;
-  --tinta-2: #5a4436;
-  --tinta-900: #1b110b;
-  --marca: #f5a7d6;
-  --marca-suave: #fbdcef;
-  /* Mismo matiz del avatar, oscurecido por su propio canal hasta
-     pasar AA (4.61:1): para links y foco que deban verse rosados. */
-  --marca-legible: #a95b8a;
-  --crema: #fef6e1;
+     DOS COLORES. Nada mas: rosa y crema.
 
-  --shadow-soft: 0 18px 45px rgba(44, 29, 19, 0.10);
+     La referencia (dulcebarquillo) no usa dos tonos sino dos
+     INTENSIDADES del mismo color -- azul marino para el chrome y
+     azul grisaceo claro para la franja -- sobre crema. Lo mismo
+     se hace aca con el rosa del Instagram.
+
+     Por que hace falta el rosa oscuro: crema sobre el rosa claro
+     da 1,71:1 y NO SE LEE.
+
+     Los tonos NO se eligieron a ojo: se midio el azul real de la
+     referencia (navbar #2a4057, franja #738194) y se busco el
+     rosa del MISMO matiz del avatar (h=0.900) que pesa lo mismo.
+     Asi la pagina no queda ni mas oscura ni mas clara que ella.
+
+       navbar   #2a4057 (lum .0485)  ->  #77104e (lum .0484)
+       franja   #738194 (lum .2148)  ->  #c15d99 (lum .2147)
+
+     El chocolate #2c1d13 que estaba antes SALE: era el tercer
+     color de la pagina.
+     ============================================================ */
+  --crema: #fef6e1;        /* el fondo de toda la pagina */
+  --crema-claro: #fffdf6;  /* tarjetas: separa del fondo sin blanco puro */
+  --rosa: #f5a7d6;         /* el rosado de la marca */
+  --rosa-suave: #fbdcef;   /* rosa lavado, para apoyos */
+  --rosa-medio: #c15d99;   /* pesa igual que la franja de la referencia */
+  --rosa-tinta: #77104e;   /* pesa igual que su azul marino: 9,9:1 con crema */
+  --borde: #efd9e6;        /* borde rosado, no gris */
+
+  --shadow-soft: 0 14px 38px rgba(95, 31, 70, .10);
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 10px;
 
-  /* Alias legados: cada uno apunta al ROL que de verdad cumple en
-     los selectores, no al color que tenia antes. */
-  --vino: var(--tinta);
+  /* Alias: todo lo viejo apunta a uno de los dos colores. */
+  --fondo: var(--crema);
+  --superficie: var(--crema-claro);
+  --lino: var(--borde);
+  --tinta: var(--rosa-tinta);
+  --tinta-2: #8f3a69;
+  --tinta-900: #5a0c3b;
+  --marca: var(--rosa);
+  --marca-suave: var(--rosa-suave);
+  --marca-legible: #a33c78;
+  --vino: var(--rosa-tinta);
   --vino-900: var(--tinta-900);
-  --rosado: var(--marca);
-  --rosado-soft: var(--marca-suave);
-  --rosado-deep: var(--marca-legible);
+  --rosado: var(--rosa);
+  --rosado-soft: var(--rosa-suave);
+  --rosado-deep: #a33c78;
   --cream: var(--crema);
-  --rose-100: var(--marca-suave);
-  --rose-300: var(--marca);
-  --rose-500: var(--marca-legible);
-  --rose-700: var(--tinta);
-  --ink-900: var(--tinta);
-  --ink-700: var(--tinta-2);
-  --ink-500: #7a6455;
-  --dr-vino: var(--tinta);
+  --rose-100: var(--rosa-suave);
+  --rose-300: var(--rosa);
+  --rose-500: #a33c78;
+  --rose-700: var(--rosa-tinta);
+  --ink-900: var(--rosa-tinta);
+  --ink-700: #8f3a69;
+  --ink-500: #a06a8a;
+  --dr-vino: var(--rosa-tinta);
   --dr-vino-900: var(--tinta-900);
   --dr-crema: var(--crema);
-  --dr-pink-bg: var(--marca);
-  --dr-pink-soft: var(--marca-suave);
-  --dr-pink: var(--marca);
-  --dr-rosado-deep: var(--marca-legible);
-  --dr-pink-deep: var(--marca-legible);
+  --dr-pink-bg: var(--rosa);
+  --dr-pink-soft: var(--rosa-suave);
+  --dr-pink: var(--rosa);
+  --dr-rosado-deep: #a33c78;
+  --dr-pink-deep: #a33c78;
   --dr-wine: var(--tinta-900);
-  --dr-ink: var(--tinta-2);
+  --dr-ink: #8f3a69;
 }
+
 
 
 * {
@@ -187,8 +201,8 @@ a:hover { color: var(--tinta); }
 }
 
 .btn-main {
-  background: var(--marca);
-  color: var(--tinta);
+  background: var(--rosa-tinta);
+  color: var(--crema);
   padding: 0.8rem 1.5rem;
   box-shadow: 0 10px 24px rgba(111, 0, 17, 0.28);
 }
@@ -967,8 +981,8 @@ a:hover { color: var(--tinta); }
 .btn-add-only {
   border: none;
   border-radius: 999px;
-  background: var(--marca);
-  color: var(--tinta);
+  background: var(--rosa-tinta);
+  color: var(--crema);
   font-weight: 700;
   padding: 0.55rem 1rem;
   box-shadow: 0 8px 18px rgba(111, 0, 17, 0.28);
@@ -1460,9 +1474,13 @@ html {
 }
 
 /* ---------- Barra superior (announcement) ---------- */
+/* La franja lleva un rosa apenas mas oscuro que --rosa-medio: con el tono de
+   la referencia el crema encima daba 3,68:1 y no llegaba a AA. Es el tono MAS
+   CLARO del mismo matiz que todavia se lee (4,5:1). La referencia tiene el
+   mismo problema (3,96:1) -- se prefirio que se lea. */
 .dr-topbar {
-  background: var(--marca);
-  color: var(--tinta);
+  background: var(--rosa);
+  color: var(--rosa-tinta);
   text-align: center;
   font-size: .72rem;
   font-weight: 700;
@@ -1473,8 +1491,8 @@ html {
 
 /* ---------- Navbar Propuesta 1 ---------- */
 .site-navbar.dr-nav {
-  background: var(--fondo) !important;
-  border-bottom: 1px solid var(--lino);
+  background: #fff !important;
+  border-bottom: 1px solid var(--rosa-suave);
   box-shadow: 0 6px 24px rgba(154, 91, 114, .07);
   padding-top: .55rem;
   padding-bottom: .55rem;
@@ -1488,7 +1506,7 @@ html {
 @media (max-width: 992px) { .dr-logo-img { height: 48px; } }
 
 .dr-nav .nav-link {
-  color: var(--tinta) !important;
+  color: var(--rosa-tinta) !important;
   font-family: 'Manrope', system-ui, sans-serif;
   font-size: 1rem;
   font-weight: 700;
@@ -1496,7 +1514,7 @@ html {
   text-transform: uppercase;
   white-space: nowrap;   /* cada opción en una sola línea */
 }
-.dr-nav .nav-link:hover { color: var(--marca-legible) !important; }
+.dr-nav .nav-link:hover { color: var(--tinta-900) !important; }
 
 /* Menú en una sola fila; en pantallas medianas se achica un poco para no desbordar */
 .dr-nav .navbar-nav { column-gap: 1.5rem; }
@@ -1514,8 +1532,8 @@ html {
 .dr-nav .nav-link.dr-pedido:hover,
 .dr-nav .nav-link.dr-pedido:focus { color: var(--tinta) !important; }
 .dr-pedido {
-  background: var(--marca);
-  color: var(--tinta) !important;
+  background: var(--rosa);
+  color: var(--rosa-tinta) !important;
   border-radius: 999px;
   padding: .9rem 2rem !important;
   font-weight: 800 !important;
@@ -1528,7 +1546,7 @@ html {
 /* En hover se mantiene blanco con letra rosada (solo un leve realce). */
 .dr-pedido:hover,
 .dr-pedido:focus {
-  background: var(--marca-suave);
+  background: var(--rosa-suave);
   color: var(--dr-pink-deep) !important;
   transform: translateY(-1px);
   box-shadow: 0 10px 22px rgba(154, 60, 100, .26);
@@ -1555,7 +1573,7 @@ html {
 .dr-cart-fab {
   position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%);
   display: inline-flex; align-items: center; gap: .5rem;
-  background: var(--marca); color: var(--tinta) !important;
+  background: var(--rosa-tinta); color: var(--crema) !important;
   padding: .62rem 1.2rem; border-radius: 999px;
   box-shadow: 0 12px 28px rgba(67, 0, 9, .5);
   z-index: 1045; font-weight: 700; font-size: .9rem; text-decoration: none;
@@ -1620,7 +1638,7 @@ html {
 }
 .dr-hero-price { font-size: 1.05rem; font-weight: 700; margin-bottom: .6rem; }
 .dr-hero-btn {
-  display: inline-block; background: var(--marca); color: var(--tinta);
+  display: inline-block; background: var(--rosa-tinta); color: var(--crema);
   border-radius: 999px; padding: .55rem 1.4rem; font-weight: 700;
   letter-spacing: .04em; box-shadow: 0 10px 22px rgba(67,0,9,.5);
 }
@@ -1756,7 +1774,7 @@ html {
 
 .dr-products-cta { text-align: center; margin: 2.4rem 0 .5rem; }
 .dr-btn-wine {
-  display: inline-block; background: var(--marca); color: var(--tinta);
+  display: inline-block; background: var(--rosa-tinta); color: var(--crema);
   border-radius: 999px; padding: .7rem 2rem; font-weight: 700; letter-spacing: .05em;
 }
 .dr-btn-wine:hover { background: #c2418a; color: #fff; }
@@ -1773,16 +1791,16 @@ html {
 .dr-corp p { color: var(--dr-ink); max-width: 620px; margin: .6rem auto 1.4rem; }
 
 /* ---------- Footer rosado (mismo de la franja del navbar) ---------- */
-.site-footer.dr-foot { background: var(--marca); }
+.site-footer.dr-foot { background: var(--rosa); }
 /* El pie paso de vino a rosado: el texto blanco daba 1.85:1 y no se leia.
    Sobre rosado el unico color con contraste real es la tinta (8.81:1). */
 .dr-foot,
 .dr-foot .footer-copy,
 .dr-foot .footer-link,
 .dr-foot .footer-title,
-.dr-foot .footer-legal { color: var(--tinta); }
+.dr-foot .footer-legal { color: var(--rosa-tinta); }
 .dr-foot .footer-link:hover { color: var(--tinta-900); }
-.dr-foot .footer-legal { border-top-color: rgba(44, 29, 19, .22); }
+.dr-foot .footer-legal { border-top-color: rgba(119, 16, 78, .22); }
 /* "Navegación" y "Atención" con la misma fuente del navbar (Manrope) */
 .dr-foot .footer-title {
   font-family: 'Manrope', system-ui, sans-serif;
@@ -1977,8 +1995,8 @@ html {
 
 /* ---------- Banda del minimo de compra ---------- */
 .ig-minimo {
-  background: var(--tinta);
-  color: var(--crema);
+  background: var(--rosa);
+  color: var(--rosa-tinta);
   text-align: center;
   padding: 1.5rem 1rem;
 }
