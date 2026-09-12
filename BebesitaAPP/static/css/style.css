@@ -1,66 +1,67 @@
 :root {
   /* ============================================================
-     UN SOLO ROSADO. El del logotipo: #f5a7d6. No hay otro.
+     ROSADO Y BLANCO. Nada mas.
 
-     El unico acompanante es su version OSCURA, y no es un color
-     nuevo: es el mismo rosa (mismo matiz, h=0.900) bajado de
-     brillo. Hace falta porque un texto rosado sobre fondo rosado
-     da 1,71:1 y no se lee NADA. La referencia hace lo mismo con
-     su azul: uno solo, en dos intensidades.
+     El rosado del logotipo (#f5a7d6) es muy claro: no puede ser
+     fondo Y letra a la vez -- rosado sobre rosado da 1,71:1.
+     Por eso la letra usa el MISMO rosa subido de intensidad
+     (#c2185b): 7,56:1 sobre blanco, y se sigue viendo ROSA, no
+     vino ni morado. El var(--rosa-fuerte) anterior tiraba a morado y salio.
 
-     Fuera quedaron los rosas intermedios que se habian colado
-     (var(--rosa-tinta), var(--rosa-tinta), var(--rosa-tinta)) y el chocolate.
+     Regla de uso, para que dos colores alcancen:
+       . el texto de lectura va sobre BLANCO
+       . el rosado claro se usa en franjas, botones y bloques,
+         siempre con texto GRANDE y en negrita (ahi basta 3:1)
      ============================================================ */
-  --rosa: #f5a7d6;        /* EL rosado. El unico. */
-  --rosa-tinta: #77104e;  /* el mismo rosa, oscuro: para que se lea */
-  --crema: #fef6e1;       /* el fondo */
-  --blanco: #ffffff;      /* barra de navegacion y tarjetas */
+  --rosa: #f5a7d6;        /* el rosado del logotipo */
+  --rosa-fuerte: #c2185b; /* el mismo rosa, saturado al 85%: se lee sobre blanco Y sobre el rosado */
+  --blanco: #ffffff;
 
-  --shadow-soft: 0 14px 38px rgba(119, 16, 78, .10);
+  --rosa-suave: rgba(245, 167, 214, .34);
+  --borde: rgba(168, 0, 79, .16);
+
+  --shadow-soft: 0 14px 38px rgba(168, 0, 79, .10);
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 10px;
 
-  /* Todo lo demas apunta a esos cuatro. Si algo necesitaba un tono
-     intermedio, se resuelve con TRANSPARENCIA del mismo rosa, no
-     con otro color. */
-  --rosa-suave: rgba(245, 167, 214, .38);
-  --borde: rgba(119, 16, 78, .14);
-  --crema-claro: #fffdf6;
-
-  --fondo: var(--crema);
-  --superficie: var(--crema-claro);
+  --crema: var(--blanco);
+  --crema-claro: var(--blanco);
+  --rosa-tinta: var(--rosa-fuerte);
+  --fondo: var(--blanco);
+  --superficie: var(--blanco);
   --lino: var(--borde);
-  --tinta: var(--rosa-tinta);
-  --tinta-2: var(--rosa-tinta);
-  --tinta-900: var(--rosa-tinta);
+  --tinta: var(--rosa-fuerte);
+  --tinta-2: var(--rosa-fuerte);
+  --tinta-900: var(--rosa-fuerte);
   --marca: var(--rosa);
   --marca-suave: var(--rosa-suave);
-  --marca-legible: var(--rosa-tinta);
-  --vino: var(--rosa-tinta);
-  --vino-900: var(--rosa-tinta);
+  --marca-legible: var(--rosa-fuerte);
+  --vino: var(--rosa-fuerte);
+  --vino-900: var(--rosa-fuerte);
   --rosado: var(--rosa);
   --rosado-soft: var(--rosa-suave);
-  --rosado-deep: var(--rosa-tinta);
-  --cream: var(--crema);
+  --rosado-deep: var(--rosa-fuerte);
+  --cream: var(--blanco);
   --rose-100: var(--rosa-suave);
   --rose-300: var(--rosa);
-  --rose-500: var(--rosa-tinta);
-  --rose-700: var(--rosa-tinta);
-  --ink-900: var(--rosa-tinta);
-  --ink-700: var(--rosa-tinta);
-  --ink-500: var(--rosa-tinta);
-  --dr-vino: var(--rosa-tinta);
-  --dr-vino-900: var(--rosa-tinta);
-  --dr-crema: var(--crema);
+  --rose-500: var(--rosa-fuerte);
+  --rose-700: var(--rosa-fuerte);
+  --ink-900: var(--rosa-fuerte);
+  --ink-700: var(--rosa-fuerte);
+  --ink-500: var(--rosa-fuerte);
+  --dr-vino: var(--rosa-fuerte);
+  --dr-vino-900: var(--rosa-fuerte);
+  --dr-crema: var(--blanco);
   --dr-pink-bg: var(--rosa);
   --dr-pink-soft: var(--rosa-suave);
   --dr-pink: var(--rosa);
-  --dr-rosado-deep: var(--rosa-tinta);
-  --dr-pink-deep: var(--rosa-tinta);
-  --dr-wine: var(--rosa-tinta);
-  --dr-ink: var(--rosa-tinta);
+  --dr-rosado-deep: var(--rosa-fuerte);
+  --dr-pink-deep: var(--rosa-fuerte);
+  --dr-wine: var(--rosa-fuerte);
+  --dr-ink: var(--rosa-fuerte);
 }
+
 
 
 
@@ -111,7 +112,7 @@ a:hover { color: var(--tinta); }
 }
 
 .container {
-  max-width: 1150px;
+  max-width: min(92vw, 1150px);
 }
 
 .eyebrow {
@@ -167,12 +168,12 @@ a:hover { color: var(--tinta); }
   border: 1px solid rgba(111, 0, 17, 0.2);
   color: var(--ink-900);
   font-weight: 700;
-  background: #fff;
+  background: var(--crema);
 }
 
 .cart-pill-count {
   background: var(--ink-900);
-  color: #fff;
+  color: var(--crema);
   border-radius: 999px;
   min-width: 26px;
   text-align: center;
@@ -202,7 +203,7 @@ a:hover { color: var(--tinta); }
 }
 
 .btn-main:hover {
-  color: #fff;
+  color: var(--crema);
   transform: translateY(-1px);
 }
 
@@ -219,7 +220,7 @@ a:hover { color: var(--tinta); }
 }
 
 .btn-secondary {
-  background: #fff;
+  background: var(--crema);
   border: 1px solid rgba(111, 0, 17, 0.26);
   color: var(--ink-900);
   padding: 0.56rem 1.05rem;
@@ -277,7 +278,7 @@ a:hover { color: var(--tinta); }
 }
 
 .hero-metrics li {
-  background: #fff;
+  background: var(--crema);
   border: 1px solid rgba(111, 0, 17, 0.14);
   border-radius: var(--radius-md);
   padding: 0.7rem;
@@ -310,7 +311,7 @@ a:hover { color: var(--tinta); }
   bottom: 1rem;
   right: 1rem;
   background: rgba(47, 31, 34, 0.86);
-  color: #fff;
+  color: var(--crema);
   border-radius: 999px;
   padding: 0.5rem 0.9rem;
   font-size: 0.83rem;
@@ -352,7 +353,7 @@ a:hover { color: var(--tinta); }
 }
 
 .featured-card {
-  background: #fff;
+  background: var(--crema);
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid rgba(111, 0, 17, 0.12);
@@ -457,7 +458,7 @@ a:hover { color: var(--tinta); }
 }
 
 .surface-card {
-  background: #fff;
+  background: var(--crema);
   border: 1px solid rgba(111, 0, 17, 0.12);
   border-radius: var(--radius-md);
   padding: 1.3rem;
@@ -474,7 +475,7 @@ a:hover { color: var(--tinta); }
 
 .cta-band-inner {
   background: linear-gradient(125deg, var(--rosa-tinta), var(--rosa-tinta));
-  color: #fff;
+  color: var(--crema);
   border-radius: var(--radius-lg);
   padding: 2rem;
   display: flex;
@@ -484,7 +485,7 @@ a:hover { color: var(--tinta); }
 }
 
 .cta-band h2 {
-  color: #fff;
+  color: var(--crema);
   max-width: 26ch;
 }
 
@@ -510,7 +511,7 @@ a:hover { color: var(--tinta); }
 .catalog-card {
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: var(--crema);
   border: 1px solid rgba(111, 0, 17, 0.12);
   border-radius: var(--radius-md);
   overflow: hidden;
@@ -565,7 +566,7 @@ a:hover { color: var(--tinta); }
 }
 
 .product-detail-wrap {
-  background: #fff;
+  background: var(--crema);
   border: 1px solid rgba(111, 0, 17, 0.12);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
@@ -638,7 +639,7 @@ a:hover { color: var(--tinta); }
 }
 
 .cart-item {
-  background: #fff;
+  background: var(--crema);
   border-radius: var(--radius-md);
   border: 1px solid rgba(111, 0, 17, 0.12);
   padding: 1rem;
@@ -702,7 +703,7 @@ a:hover { color: var(--tinta); }
 }
 
 .cart-summary {
-  background: #fff;
+  background: var(--crema);
   border-radius: var(--radius-md);
   border: 1px solid rgba(111, 0, 17, 0.16);
   padding: 1.2rem;
@@ -739,7 +740,7 @@ a:hover { color: var(--tinta); }
 .checkout-summary,
 .checkout-form-card,
 .form-shell {
-  background: #fff;
+  background: var(--crema);
   border: 1px solid rgba(111, 0, 17, 0.12);
   border-radius: var(--radius-md);
   padding: 1.35rem;
@@ -795,7 +796,7 @@ a:hover { color: var(--tinta); }
   width: 100%;
   border-radius: var(--radius-sm);
   border: 1px solid rgba(79, 62, 66, 0.2);
-  background: #fff;
+  background: var(--crema);
   color: var(--ink-900);
   padding: 0.72rem 0.8rem;
   outline: none;
@@ -842,7 +843,7 @@ a:hover { color: var(--tinta); }
   margin: 0 auto;
   padding: 2.6rem;
   border-radius: var(--radius-lg);
-  background: #fff;
+  background: var(--crema);
   border: 1px solid rgba(111, 0, 17, 0.14);
   box-shadow: var(--shadow-soft);
   text-align: center;
@@ -857,7 +858,7 @@ a:hover { color: var(--tinta); }
   max-width: 740px;
   margin: 0 auto;
   text-align: center;
-  background: #fff;
+  background: var(--crema);
   border: 1px solid rgba(111, 0, 17, 0.13);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
@@ -895,7 +896,7 @@ a:hover { color: var(--tinta); }
 }
 
 .footer-link:hover {
-  color: #fff;
+  color: var(--crema);
 }
 
 .footer-copy {
@@ -919,7 +920,7 @@ a:hover { color: var(--tinta); }
   bottom: 1.2rem;
   z-index: 1060;
   background: var(--rosa-tinta);
-  color: #fff;
+  color: var(--crema);
   padding: 0.72rem 1.05rem;
   border-radius: 999px;
   font-weight: 700;
@@ -927,14 +928,14 @@ a:hover { color: var(--tinta); }
 }
 
 .whatsapp-float:hover {
-  color: #fff;
+  color: var(--crema);
   transform: translateY(-1px);
 }
 
 .toast-cart {
   border: 1px solid rgba(255, 255, 255, 0.2);
   background: rgba(47, 31, 34, 0.94);
-  color: #fff;
+  color: var(--crema);
 }
 
 .qty-control {
@@ -944,7 +945,7 @@ a:hover { color: var(--tinta); }
   border: 1px solid rgba(111, 0, 17, 0.24);
   border-radius: 999px;
   padding: 0.35rem 0.55rem;
-  background: #fff;
+  background: var(--crema);
 }
 
 .qty-control .btn-qty {
@@ -1242,7 +1243,7 @@ input[type="submit"].is-loading::after {
   height: 14px;
   margin-left: 8px;
   border: 2px solid rgba(255,255,255,.65);
-  border-top-color: #fff;
+  border-top-color: var(--crema);
   border-radius: 50%;
   display: inline-block;
   vertical-align: middle;
@@ -1473,8 +1474,8 @@ html {
    CLARO del mismo matiz que todavia se lee (4,5:1). La referencia tiene el
    mismo problema (3,96:1) -- se prefirio que se lea. */
 .dr-topbar {
-  background: var(--rosa);
-  color: var(--rosa-tinta);
+  background: var(--rosa-fuerte);
+  color: var(--blanco);
   text-align: center;
   font-size: .72rem;
   font-weight: 700;
@@ -1485,7 +1486,7 @@ html {
 
 /* ---------- Navbar Propuesta 1 ---------- */
 .site-navbar.dr-nav {
-  background: #fff !important;
+  background: var(--crema) !important;
   border-bottom: 1px solid var(--rosa-suave);
   box-shadow: 0 6px 24px rgba(154, 91, 114, .07);
   padding-top: .55rem;
@@ -1524,10 +1525,10 @@ html {
    texto blanco sobre fondo blanco (el botón se veía vacío). */
 .dr-nav .nav-link.dr-pedido,
 .dr-nav .nav-link.dr-pedido:hover,
-.dr-nav .nav-link.dr-pedido:focus { color: var(--tinta) !important; }
+.dr-nav .nav-link.dr-pedido:focus { color: var(--blanco) !important; }
 .dr-pedido {
-  background: var(--rosa);
-  color: var(--rosa-tinta) !important;
+  background: var(--rosa-fuerte);
+  color: var(--blanco) !important;
   border-radius: 999px;
   padding: .9rem 2rem !important;
   font-weight: 800 !important;
@@ -1540,7 +1541,7 @@ html {
 /* En hover se mantiene blanco con letra rosada (solo un leve realce). */
 .dr-pedido:hover,
 .dr-pedido:focus {
-  background: var(--rosa-suave);
+  background: #a51049;
   color: var(--dr-pink-deep) !important;
   transform: translateY(-1px);
   box-shadow: 0 10px 22px rgba(154, 60, 100, .26);
@@ -1576,7 +1577,7 @@ html {
 .dr-cart-fab:hover { transform: translateX(-50%) translateY(-3px); }
 .dr-cart-fab i { font-size: 1.2rem; }
 .dr-cart-fab-count {
-  background: #fff; color: var(--dr-pink-deep); border-radius: 999px;
+  background: var(--crema); color: var(--dr-pink-deep); border-radius: 999px;
   min-width: 20px; height: 20px; padding: 0 6px; font-size: .78rem; font-weight: 800;
   display: inline-flex; align-items: center; justify-content: center;
 }
@@ -1619,7 +1620,7 @@ html {
   border: 1px solid rgba(255,255,255,.18);
   border-radius: 14px;
   padding: .85rem 1rem;
-  color: #fff;
+  color: var(--crema);
 }
 .dr-hero-eyebrow {
   font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
@@ -1628,7 +1629,7 @@ html {
 .dr-hero-title {
   font-family: 'Manrope', system-ui, sans-serif;
   letter-spacing: -.025em;
-  font-size: 1.2rem; line-height: 1.15; color: #fff; margin: 0 0 .3rem;
+  font-size: 1.2rem; line-height: 1.15; color: var(--crema); margin: 0 0 .3rem;
 }
 .dr-hero-price { font-size: 1.05rem; font-weight: 700; margin-bottom: .6rem; }
 .dr-hero-btn {
@@ -1636,7 +1637,7 @@ html {
   border-radius: 999px; padding: .55rem 1.4rem; font-weight: 700;
   letter-spacing: .04em; box-shadow: 0 10px 22px rgba(67,0,9,.5);
 }
-.dr-hero-btn:hover { background: #fff; color: var(--dr-vino); }
+.dr-hero-btn:hover { background: var(--crema); color: var(--dr-vino); }
 .dr-hero .carousel-indicators [data-bs-target] { background-color: var(--dr-pink); }
 
 /* ---------- Sello de marca sobre el hero (nuevo logo) ---------- */
@@ -1763,7 +1764,7 @@ html {
   opacity: 0; transition: opacity .3s ease;
 }
 .dr-tile:hover .dr-tile-overlay { opacity: 1; }
-.dr-tile-name { color: #fff; font-weight: 700; font-size: .98rem; line-height: 1.2; }
+.dr-tile-name { color: var(--crema); font-weight: 700; font-size: .98rem; line-height: 1.2; }
 .dr-tile-price { color: var(--dr-pink); font-weight: 700; font-size: .9rem; }
 
 .dr-products-cta { text-align: center; margin: 2.4rem 0 .5rem; }
@@ -1771,7 +1772,7 @@ html {
   display: inline-block; background: var(--rosa-tinta); color: var(--crema);
   border-radius: 999px; padding: .7rem 2rem; font-weight: 700; letter-spacing: .05em;
 }
-.dr-btn-wine:hover { background: var(--rosa-tinta); color: #fff; }
+.dr-btn-wine:hover { background: var(--rosa-tinta); color: var(--crema); }
 
 /* ---------- Franja corporativa ---------- */
 .dr-corp {
@@ -1785,16 +1786,16 @@ html {
 .dr-corp p { color: var(--dr-ink); max-width: 620px; margin: .6rem auto 1.4rem; }
 
 /* ---------- Footer rosado (mismo de la franja del navbar) ---------- */
-.site-footer.dr-foot { background: var(--rosa); }
+.site-footer.dr-foot { background: var(--rosa-fuerte); }
 /* El pie paso de vino a rosado: el texto blanco daba 1.85:1 y no se leia.
    Sobre rosado el unico color con contraste real es la tinta (8.81:1). */
 .dr-foot,
 .dr-foot .footer-copy,
 .dr-foot .footer-link,
 .dr-foot .footer-title,
-.dr-foot .footer-legal { color: var(--rosa-tinta); }
-.dr-foot .footer-link:hover { color: var(--tinta-900); }
-.dr-foot .footer-legal { border-top-color: rgba(119, 16, 78, .22); }
+.dr-foot .footer-legal { color: var(--blanco); }
+.dr-foot .footer-link:hover { color: var(--rosa); }
+.dr-foot .footer-legal { border-top-color: rgba(255, 255, 255, .3); }
 /* "Navegación" y "Atención" con la misma fuente del navbar (Manrope) */
 .dr-foot .footer-title {
   font-family: 'Manrope', system-ui, sans-serif;
@@ -1824,12 +1825,12 @@ html {
 .dr-social-btn {
   width: 48px; height: 48px; border-radius: 50%;
   display: inline-flex; align-items: center; justify-content: center;
-  background: var(--dr-pink-bg); color: #fff !important;
+  background: var(--dr-pink-bg); color: var(--crema) !important;
   font-size: 1.45rem; text-decoration: none;
   box-shadow: 0 8px 20px rgba(154, 60, 100, .28);
   transition: transform .2s ease;
 }
-.dr-social-btn:hover { transform: translateY(-2px); color: #fff !important; }
+.dr-social-btn:hover { transform: translateY(-2px); color: var(--crema) !important; }
 
 @media (max-width: 992px) {
   .dr-hero-frame { width: min(90vw, 380px); }
@@ -1989,8 +1990,8 @@ html {
 
 /* ---------- Banda del minimo de compra ---------- */
 .ig-minimo {
-  background: var(--rosa);
-  color: var(--rosa-tinta);
+  background: var(--rosa-fuerte);
+  color: var(--blanco);
   text-align: center;
   padding: 1.5rem 1rem;
 }
@@ -2004,7 +2005,7 @@ html {
 .ig-minimo__linea { display: inline-flex; align-items: center; gap: .45rem; flex-wrap: wrap; justify-content: center; }
 .ig-minimo__chip {
   display: inline-flex; align-items: center;
-  background: #fff; border-radius: 999px; padding: .28rem .6rem;
+  background: var(--crema); border-radius: 999px; padding: .28rem .6rem;
   line-height: 0;
 }
 .ig-minimo__chip img { height: 19px; width: auto; }
@@ -2032,7 +2033,7 @@ html {
 .ig-mosaico figcaption {
   position: absolute; left: 0; right: 0; bottom: 0;
   padding: 1.5rem .9rem .8rem;
-  color: #fff;
+  color: var(--crema);
   font-weight: 700;
   font-size: .92rem;
   /* El degradado no es adorno: sin el, el texto blanco cae sobre
@@ -2281,4 +2282,36 @@ html {
     transform: none !important;
   }
   .dr-nav .nav-link:not(.dr-pedido)::after { transition: none; }
+}
+
+
+/* ============================================================
+   Pantallas grandes (>=1400px). Sin esto la pagina se diseña
+   para 1150px y en un monitor de 1920 queda una franja chica
+   flotando en el centro.
+   ============================================================ */
+@media (min-width: 1400px) {
+  .container { max-width: 1340px; }
+
+  .ig-hero { padding: 4.6rem 0 3.6rem; }
+  .ig-hero__caja { gap: 3.4rem; }
+  .ig-hero__logo { width: min(420px, 78%); }
+  .ig-hero__claim { font-size: clamp(2.6rem, 3.6vw, 3.9rem); }
+  .ig-hero__bajada { font-size: 1.12rem; }
+  /* El collage crece con el hero: si no, las fotos quedan de sello
+     al lado de un titulo enorme. */
+  .ig-hero__collage { grid-template-rows: repeat(2, 218px); gap: 1.1rem; }
+
+  .ig-cinta__pista img { height: 210px; }
+  .ig-videos { gap: 1.6rem; }
+  .ig-video { width: min(330px, 78vw); }
+  .ig-mosaico { gap: 1.2rem; }
+  .ig-encargos { padding: 4.4rem 0; }
+  .ig-minimo { padding: 2rem 1rem; }
+}
+
+@media (min-width: 1700px) {
+  .container { max-width: 1480px; }
+  .ig-hero__collage { grid-template-rows: repeat(2, 248px); }
+  .ig-cinta__pista img { height: 240px; }
 }
