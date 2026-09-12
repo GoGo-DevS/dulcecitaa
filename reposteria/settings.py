@@ -190,6 +190,10 @@ DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "no-repl
 # Correo de contacto público (se muestra en footer y formularios)
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL") or "contacto@dulcecita.cl"
 
+# Minimo de compra por producto. La venta es por volumen: no se despacha de a
+# una unidad. Va por variable de entorno para poder cambiarlo sin tocar codigo.
+MINIMO_UNIDADES = max(1, int(os.getenv("MINIMO_UNIDADES", "10")))
+
 BRAND_NAME = os.getenv("BRAND_NAME", "Dulcecita")
 WEBSITE_URL = os.getenv("WEBSITE_URL", "")
 # Logo para los correos (URL absoluta publica; los clientes de email no leen estaticos relativos).

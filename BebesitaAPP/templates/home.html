@@ -53,7 +53,16 @@
 
 <section class="ig-minimo">
   <b>Pedidos desde 10 unidades por producto</b>
-  <span>Despacho a todo Chile por Paket · Santiago con entrega coordinada</span>
+  <span class="ig-minimo__linea">
+    Despacho a todo Chile por
+    {% comment %}
+      Paket es marca de un tercero: va con sus colores, sin recolorear. Su
+      morado no contrasta contra la banda chocolate, asi que se apoya en un
+      chip claro en vez de tocarle el color al logotipo.
+    {% endcomment %}
+    <span class="ig-minimo__chip"><img src="{% static 'img/paket-logo.png' %}" alt="Paket"></span>
+    · Santiago con entrega coordinada
+  </span>
 </section>
 
 <!-- VIDEO: así trabajamos -->

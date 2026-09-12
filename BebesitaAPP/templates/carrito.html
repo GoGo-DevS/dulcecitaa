@@ -7,6 +7,12 @@
   <div class="section-head mb-4">
     <p class="eyebrow">Resumen de compra</p>
     <h1>Tu carrito</h1>
+    {% comment %}
+      La regla se dice donde el cliente ve las cantidades. Si solo estuviera en
+      la portada, el que entra directo al carrito no se entera de por que no
+      puede bajar de {{ minimo_unidades }}.
+    {% endcomment %}
+    <p class="sutil-minimo">Pedido mínimo de {{ minimo_unidades }} unidades por producto · despacho a todo Chile por Paket</p>
   </div>
 
   {% if productos %}

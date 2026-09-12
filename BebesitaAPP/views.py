@@ -37,6 +37,34 @@ def _get_cart(request):
     return cart
 
 
+def _minimo():
+    """Unidades minimas por producto. La venta es por volumen."""
+    return max(1, int(getattr(settings, "MINIMO_UNIDADES", 1)))
+
+
+def _sumar_al_carrito(cart, pid):
+    """Un producto entra al carrito CON el minimo puesto, no de a uno.
+
+    Si entrara con 1, el cliente veria "1" en el carrito y recien se enteraria
+    del minimo al pagar. Entrar ya en el minimo hace visible la regla en el
+    momento en que agrega.
+    """
+    minimo = _minimo()
+    cart[pid] = max(minimo, cart.get(pid, 0) + 1)
+    return cart[pid]
+
+
+def _restar_del_carrito(cart, pid):
+    """Bajar del minimo saca el producto: no existe un carrito con 9."""
+    if pid not in cart:
+        return 0
+    if cart[pid] - 1 >= _minimo():
+        cart[pid] -= 1
+        return cart[pid]
+    del cart[pid]
+    return 0
+
+
 def _save_cart(request, cart):
     request.session["cart"] = cart
     request.session.modified = True
@@ -210,8 +238,7 @@ def agregar_al_carrito(request, producto_id):
         messages.error(request, "Este producto no está disponible por ahora.")
         return redirect("productos")
     cart = _get_cart(request)
-    pid = str(producto_id)
-    cart[pid] = cart.get(pid, 0) + 1
+    _sumar_al_carrito(cart, str(producto_id))
     _save_cart(request, cart)
     return redirect("carrito")
 
@@ -320,10 +347,7 @@ def quitar_carrito(request, producto_id):
     cart = _get_cart(request)
     pid = str(producto_id)
     if pid in cart:
-        if cart[pid] > 1:
-            cart[pid] -= 1
-        else:
-            del cart[pid]
+        _restar_del_carrito(cart, pid)
         _save_cart(request, cart)
     return redirect("carrito")
 
@@ -335,7 +359,7 @@ def agregar_carrito_ajax(request, producto_id):
         return JsonResponse({"ok": False, "error": "Producto no disponible"}, status=400)
     cart = _get_cart(request)
     pid = str(producto_id)
-    cart[pid] = cart.get(pid, 0) + 1
+    _sumar_al_carrito(cart, pid)
     _save_cart(request, cart)
 
     productos, total = _build_cart_items(cart)
@@ -362,10 +386,7 @@ def decrementar_carrito_ajax(request, producto_id):
     cart = _get_cart(request)
     pid = str(producto_id)
     if pid in cart:
-        if cart[pid] > 1:
-            cart[pid] -= 1
-        else:
-            del cart[pid]
+        _restar_del_carrito(cart, pid)
         _save_cart(request, cart)
 
     productos, total = _build_cart_items(cart)

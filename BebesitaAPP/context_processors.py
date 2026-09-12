@@ -18,5 +18,6 @@ def site_config(request):
         "whatsapp_url": getattr(settings, "WHATSAPP_URL", ""),
         "instagram_url": getattr(settings, "INSTAGRAM_URL", ""),
         "business_hours": getattr(settings, "BUSINESS_HOURS", ""),
+        "minimo_unidades": getattr(settings, "MINIMO_UNIDADES", 1),
         "default_og_image_url": default_og_image_url,
     }
