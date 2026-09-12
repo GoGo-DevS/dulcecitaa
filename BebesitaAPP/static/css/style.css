@@ -1429,6 +1429,14 @@ input[type="submit"].is-loading::after {
    footer y componentes propios del rediseño 2026-08.
    ============================================================ */
 
+.dr-cabecera {
+  position: sticky;
+  top: 0;
+  /* Por encima de los botones flotantes (1045-1046) y del carrito (1060),
+     que si no se montan sobre la cabecera al hacer scroll. */
+  z-index: 1070;
+}
+
 /* ---------- Barra superior (announcement) ---------- */
 .dr-topbar {
   background: var(--marca);

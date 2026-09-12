@@ -25,9 +25,16 @@
   <link rel="stylesheet" href="{% static 'css/style.css' %}?v=20260911-ig">
 </head>
 <body>
+  {% comment %}
+    La franja y la barra van dentro de UN contenedor pegajoso, no pegadas por
+    separado: asi viajan juntas y no hay que calcular a mano cuanto mide la
+    franja para desplazar la barra (ese calculo se rompe solo cuando el texto
+    de la franja se parte en dos lineas en un telefono).
+  {% endcomment %}
+  <div class="dr-cabecera">
   <div class="dr-topbar">Compra aquí · Entrega coordinada por WhatsApp</div>
 
-  <nav class="navbar navbar-expand-lg navbar-light site-navbar dr-nav sticky-top" aria-label="Navegación principal">
+  <nav class="navbar navbar-expand-lg navbar-light site-navbar dr-nav" aria-label="Navegación principal">
     <div class="container">
       <a class="navbar-brand dr-brand" href="{% url 'home' %}">
         <img src="{% static 'img/logo-dulcecita-rosado.png' %}?v=2" alt="{{ site_brand }}" class="dr-logo-img">
@@ -48,6 +55,7 @@
       </div>
     </div>
   </nav>
+  </div>
 
   <main class="site-main">
     {% block content %}{% endblock %}
