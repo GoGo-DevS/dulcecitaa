@@ -1,33 +1,30 @@
 :root {
   /* ============================================================
-     TRES PASTELES: rosado, blanco y crema.
+     DOS COLORES, y MANDA EL ROSADO.
 
-     Se reparten por SUPERFICIE, que es lo que da profundidad sin
-     sumar colores:
+       rosado  #f5a7d6  el fondo de la pagina y las franjas
+       blanco  #ffffff  solo lo que se levanta: barra, tarjetas,
+                        fichas de producto
 
-       crema    #fef6e1  el fondo de la pagina
-       blanco   #ffffff  lo que se levanta del fondo: barra,
-                         tarjetas, fichas de producto
-       rosado   #f5a7d6  franjas, pie, botones y acentos
+     El rosado es la superficie por defecto; el blanco aparece
+     unicamente donde algo tiene que despegarse del fondo. Asi
+     predomina el rosa sin que el contenido se pierda.
 
-     El crema no es un color agregado: es el tono con el que esta
-     escrito "dulcecita BAKERY" en el logotipo.
-
-     Y el TEXTO: los tres pasteles son claros, asi que ninguno
-     sirve para escribir encima de otro -- rosado sobre crema da
-     1,71:1 y no se lee. La letra usa el mismo rosa saturado
-     (#c2185b), SOLO como tinta, nunca como superficie: asi lo que
-     se ve siguen siendo los tres pasteles.
+     El TEXTO va en el mismo rosado. Decision de Diego, tomada
+     viendo la pagina: no entra NINGUN otro tono, aunque el rosado
+     sobre crema de 1,71:1 y sobre blanco 1,85:1 (el minimo comodo
+     es 4,5:1). Los tres colores salen de su logotipo y son los
+     unicos que se usan.
      ============================================================ */
   --rosa: #f5a7d6;
-  --crema: #fef6e1;
+  --crema: var(--blanco);  /* las tarjetas van en blanco: el rosado es el FONDO */
   --blanco: #ffffff;
-  --tinta-rosa: #c2185b;   /* solo para escribir */
+  --tinta-rosa: var(--rosa);  /* el texto va en el mismo rosado */
 
   --rosa-suave: rgba(245, 167, 214, .30);
-  --borde: rgba(194, 24, 91, .14);
+  --borde: rgba(245, 167, 214, .55);
 
-  --shadow-soft: 0 14px 38px rgba(194, 24, 91, .09);
+  --shadow-soft: 0 14px 38px rgba(245, 167, 214, .35);
   --radius-lg: 24px;
   --radius-md: 16px;
   --radius-sm: 10px;
@@ -35,7 +32,7 @@
   --rosa-fuerte: var(--tinta-rosa);
   --crema-claro: var(--blanco);
   --rosa-tinta: var(--tinta-rosa);
-  --fondo: var(--crema);
+  --fondo: var(--rosa);
   --superficie: var(--blanco);
   --lino: var(--borde);
   --tinta: var(--tinta-rosa);
@@ -137,7 +134,7 @@ a:hover { color: var(--tinta); }
   padding: 0.9rem 0;
   background: rgba(255, 253, 249, 0.88);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(111, 0, 17, 0.1);
+  border-bottom: 1px solid rgba(245, 167, 214, 0.1);
 }
 
 .brand-lockup {
@@ -164,7 +161,7 @@ a:hover { color: var(--tinta); }
 .nav-link:hover,
 .nav-link:focus {
   color: var(--rose-700);
-  background: rgba(177, 36, 94, 0.12);
+  background: rgba(245, 167, 214, 0.12);
 }
 
 .cart-pill {
@@ -173,7 +170,7 @@ a:hover { color: var(--tinta); }
   gap: 0.55rem;
   border-radius: 999px;
   padding: 0.55rem 0.95rem;
-  border: 1px solid rgba(111, 0, 17, 0.2);
+  border: 1px solid rgba(245, 167, 214, 0.2);
   color: var(--ink-900);
   font-weight: 700;
   background: var(--crema);
@@ -207,7 +204,7 @@ a:hover { color: var(--tinta); }
   background: var(--rosa-tinta);
   color: var(--crema);
   padding: 0.8rem 1.5rem;
-  box-shadow: 0 10px 24px rgba(111, 0, 17, 0.28);
+  box-shadow: 0 10px 24px rgba(245, 167, 214, 0.28);
 }
 
 .btn-main:hover {
@@ -217,26 +214,26 @@ a:hover { color: var(--tinta); }
 
 .btn-ghost {
   background: transparent;
-  border: 1px solid rgba(111, 0, 17, 0.35);
+  border: 1px solid rgba(245, 167, 214, 0.35);
   color: var(--vino);
   padding: 0.78rem 1.35rem;
 }
 
 .btn-ghost:hover {
   color: var(--vino);
-  background: rgba(111, 0, 17, 0.08);
+  background: rgba(245, 167, 214, 0.08);
 }
 
 .btn-secondary {
   background: var(--crema);
-  border: 1px solid rgba(111, 0, 17, 0.26);
+  border: 1px solid rgba(245, 167, 214, 0.26);
   color: var(--ink-900);
   padding: 0.56rem 1.05rem;
   font-size: 0.9rem;
 }
 
 .btn-secondary:hover {
-  background: rgba(177, 36, 94, 0.08);
+  background: rgba(245, 167, 214, 0.08);
 }
 
 .btn-linkline {
@@ -287,7 +284,7 @@ a:hover { color: var(--tinta); }
 
 .hero-metrics li {
   background: var(--crema);
-  border: 1px solid rgba(111, 0, 17, 0.14);
+  border: 1px solid rgba(245, 167, 214, 0.14);
   border-radius: var(--radius-md);
   padding: 0.7rem;
 }
@@ -318,7 +315,7 @@ a:hover { color: var(--tinta); }
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  background: rgba(47, 31, 34, 0.86);
+  background: rgba(245, 167, 214, 0.86);
   color: var(--crema);
   border-radius: 999px;
   padding: 0.5rem 0.9rem;
@@ -364,8 +361,8 @@ a:hover { color: var(--tinta); }
   background: var(--crema);
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid rgba(111, 0, 17, 0.12);
-  box-shadow: 0 10px 24px rgba(72, 35, 40, 0.08);
+  border: 1px solid rgba(245, 167, 214, 0.12);
+  box-shadow: 0 10px 24px rgba(245, 167, 214, 0.08);
 }
 
 .featured-image-wrap {
@@ -440,7 +437,7 @@ a:hover { color: var(--tinta); }
 
 .check-list li {
   background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(111, 0, 17, 0.11);
+  border: 1px solid rgba(245, 167, 214, 0.11);
   border-radius: 999px;
   padding: 0.45rem 0.85rem;
 }
@@ -467,10 +464,10 @@ a:hover { color: var(--tinta); }
 
 .surface-card {
   background: var(--crema);
-  border: 1px solid rgba(111, 0, 17, 0.12);
+  border: 1px solid rgba(245, 167, 214, 0.12);
   border-radius: var(--radius-md);
   padding: 1.3rem;
-  box-shadow: 0 12px 26px rgba(72, 35, 40, 0.08);
+  box-shadow: 0 12px 26px rgba(245, 167, 214, 0.08);
 }
 
 .surface-card h3 {
@@ -520,10 +517,10 @@ a:hover { color: var(--tinta); }
   display: flex;
   flex-direction: column;
   background: var(--crema);
-  border: 1px solid rgba(111, 0, 17, 0.12);
+  border: 1px solid rgba(245, 167, 214, 0.12);
   border-radius: var(--radius-md);
   overflow: hidden;
-  box-shadow: 0 12px 24px rgba(72, 35, 40, 0.08);
+  box-shadow: 0 12px 24px rgba(245, 167, 214, 0.08);
 }
 
 .catalog-media {
@@ -575,7 +572,7 @@ a:hover { color: var(--tinta); }
 
 .product-detail-wrap {
   background: var(--crema);
-  border: 1px solid rgba(111, 0, 17, 0.12);
+  border: 1px solid rgba(245, 167, 214, 0.12);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   overflow: hidden;
@@ -616,7 +613,7 @@ a:hover { color: var(--tinta); }
 }
 
 .detail-badges span {
-  border: 1px solid rgba(111, 0, 17, 0.22);
+  border: 1px solid rgba(245, 167, 214, 0.22);
   border-radius: 999px;
   padding: 0.35rem 0.7rem;
   font-size: 0.83rem;
@@ -649,7 +646,7 @@ a:hover { color: var(--tinta); }
 .cart-item {
   background: var(--crema);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(111, 0, 17, 0.12);
+  border: 1px solid rgba(245, 167, 214, 0.12);
   padding: 1rem;
   display: flex;
   align-items: center;
@@ -672,8 +669,8 @@ a:hover { color: var(--tinta); }
   border-radius: 18px;
   overflow: hidden;
   background: linear-gradient(145deg, var(--crema), var(--crema-claro));
-  border: 1px solid rgba(111, 0, 17, 0.12);
-  box-shadow: 0 12px 24px rgba(72, 35, 40, 0.08);
+  border: 1px solid rgba(245, 167, 214, 0.12);
+  box-shadow: 0 12px 24px rgba(245, 167, 214, 0.08);
 }
 
 .cart-item-media img {
@@ -713,7 +710,7 @@ a:hover { color: var(--tinta); }
 .cart-summary {
   background: var(--crema);
   border-radius: var(--radius-md);
-  border: 1px solid rgba(111, 0, 17, 0.16);
+  border: 1px solid rgba(245, 167, 214, 0.16);
   padding: 1.2rem;
   position: sticky;
   top: 95px;
@@ -749,10 +746,10 @@ a:hover { color: var(--tinta); }
 .checkout-form-card,
 .form-shell {
   background: var(--crema);
-  border: 1px solid rgba(111, 0, 17, 0.12);
+  border: 1px solid rgba(245, 167, 214, 0.12);
   border-radius: var(--radius-md);
   padding: 1.35rem;
-  box-shadow: 0 12px 24px rgba(72, 35, 40, 0.07);
+  box-shadow: 0 12px 24px rgba(245, 167, 214, 0.07);
 }
 
 .checkout-list {
@@ -767,7 +764,7 @@ a:hover { color: var(--tinta); }
   display: flex;
   justify-content: space-between;
   gap: 0.8rem;
-  border-bottom: 1px dashed rgba(79, 62, 66, 0.2);
+  border-bottom: 1px dashed rgba(245, 167, 214, 0.2);
   padding-bottom: 0.45rem;
 }
 
@@ -803,7 +800,7 @@ a:hover { color: var(--tinta); }
 .field-input {
   width: 100%;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(79, 62, 66, 0.2);
+  border: 1px solid rgba(245, 167, 214, 0.2);
   background: var(--crema);
   color: var(--ink-900);
   padding: 0.72rem 0.8rem;
@@ -813,7 +810,7 @@ a:hover { color: var(--tinta); }
 
 .field-input:focus {
   border-color: var(--rose-500);
-  box-shadow: 0 0 0 3px rgba(177, 36, 94, 0.16);
+  box-shadow: 0 0 0 3px rgba(245, 167, 214, 0.16);
 }
 
 .field-textarea {
@@ -852,7 +849,7 @@ a:hover { color: var(--tinta); }
   padding: 2.6rem;
   border-radius: var(--radius-lg);
   background: var(--crema);
-  border: 1px solid rgba(111, 0, 17, 0.14);
+  border: 1px solid rgba(245, 167, 214, 0.14);
   box-shadow: var(--shadow-soft);
   text-align: center;
 }
@@ -867,7 +864,7 @@ a:hover { color: var(--tinta); }
   margin: 0 auto;
   text-align: center;
   background: var(--crema);
-  border: 1px solid rgba(111, 0, 17, 0.13);
+  border: 1px solid rgba(245, 167, 214, 0.13);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
   padding: 2.3rem;
@@ -932,7 +929,7 @@ a:hover { color: var(--tinta); }
   padding: 0.72rem 1.05rem;
   border-radius: 999px;
   font-weight: 700;
-  box-shadow: 0 10px 24px rgba(31, 165, 106, 0.33);
+  box-shadow: 0 10px 24px rgba(245, 167, 214, 0.33);
 }
 
 .whatsapp-float:hover {
@@ -942,7 +939,7 @@ a:hover { color: var(--tinta); }
 
 .toast-cart {
   border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(47, 31, 34, 0.94);
+  background: rgba(245, 167, 214, 0.94);
   color: var(--crema);
 }
 
@@ -950,7 +947,7 @@ a:hover { color: var(--tinta); }
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  border: 1px solid rgba(111, 0, 17, 0.24);
+  border: 1px solid rgba(245, 167, 214, 0.24);
   border-radius: 999px;
   padding: 0.35rem 0.55rem;
   background: var(--crema);
@@ -988,7 +985,7 @@ a:hover { color: var(--tinta); }
   color: var(--crema);
   font-weight: 700;
   padding: 0.55rem 1rem;
-  box-shadow: 0 8px 18px rgba(111, 0, 17, 0.28);
+  box-shadow: 0 8px 18px rgba(245, 167, 214, 0.28);
 }
 
 .btn-add-only:hover {
@@ -1124,11 +1121,11 @@ a:hover { color: var(--tinta); }
 
 /* Polish responsive final */
 .navbar-toggler {
-  border: 1px solid rgba(111, 0, 17, 0.26);
+  border: 1px solid rgba(245, 167, 214, 0.26);
 }
 
 .navbar-toggler:focus {
-  box-shadow: 0 0 0 3px rgba(177, 36, 94, 0.18);
+  box-shadow: 0 0 0 3px rgba(245, 167, 214, 0.18);
 }
 
 .hero-metrics li span {
@@ -1148,7 +1145,7 @@ a:hover { color: var(--tinta); }
   .navbar-collapse {
     margin-top: 0.8rem;
     padding-top: 0.6rem;
-    border-top: 1px solid rgba(111, 0, 17, 0.15);
+    border-top: 1px solid rgba(245, 167, 214, 0.15);
   }
 
   .nav-link {
@@ -1197,8 +1194,8 @@ a:hover { color: var(--tinta); }
 
 .site-navbar.is-scrolled {
   background: rgba(255, 252, 249, 0.95);
-  box-shadow: 0 10px 24px rgba(47, 31, 34, 0.08);
-  border-bottom-color: rgba(111, 0, 17, 0.18);
+  box-shadow: 0 10px 24px rgba(245, 167, 214, 0.08);
+  border-bottom-color: rgba(245, 167, 214, 0.18);
 }
 
 .reveal-item {
@@ -1227,7 +1224,7 @@ a:hover { color: var(--tinta); }
 .btn-add-only.is-success,
 .qty-control .btn-qty.is-success,
 .btn-view.is-success {
-  box-shadow: 0 0 0 3px rgba(39, 174, 96, 0.25);
+  box-shadow: 0 0 0 3px rgba(245, 167, 214, 0.25);
 }
 
 .btn-add-only.is-busy,
@@ -1308,7 +1305,7 @@ input[type="submit"].is-loading::after {
   border-radius: inherit;
   pointer-events: none;
   border: 1px solid transparent;
-  background: linear-gradient(125deg, rgba(177, 36, 94, 0.16), rgba(255, 255, 255, 0)) border-box;
+  background: linear-gradient(125deg, rgba(245, 167, 214, 0.16), rgba(255, 255, 255, 0)) border-box;
   -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -1319,8 +1316,8 @@ input[type="submit"].is-loading::after {
 .catalog-card-premium:hover,
 .catalog-card-premium.is-hovered {
   transform: translateY(-4px);
-  box-shadow: 0 18px 30px rgba(72, 35, 40, 0.12);
-  border-color: rgba(111, 0, 17, 0.26);
+  box-shadow: 0 18px 30px rgba(245, 167, 214, 0.12);
+  border-color: rgba(245, 167, 214, 0.26);
 }
 
 .catalog-card-premium:hover::after,
@@ -1350,7 +1347,7 @@ input[type="submit"].is-loading::after {
 .catalog-card-premium .catalog-cta:hover,
 .catalog-card-premium .catalog-cta:focus-visible {
   transform: translateY(-1px);
-  box-shadow: 0 7px 14px rgba(47, 31, 34, 0.12);
+  box-shadow: 0 7px 14px rgba(245, 167, 214, 0.12);
 }
 
 .catalog-card-premium .qty-control {
@@ -1359,8 +1356,8 @@ input[type="submit"].is-loading::after {
 
 .catalog-card-premium .qty-control:hover,
 .catalog-card-premium .qty-control:focus-within {
-  border-color: rgba(111, 0, 17, 0.38);
-  box-shadow: 0 0 0 2px rgba(177, 36, 94, 0.12);
+  border-color: rgba(245, 167, 214, 0.38);
+  box-shadow: 0 0 0 2px rgba(245, 167, 214, 0.12);
 }
 
 @media (max-width: 640px) {
@@ -1416,8 +1413,8 @@ input[type="submit"].is-loading::after {
   border-radius: 999px;
   font-size: 0.75rem;
   font-weight: 700;
-  border: 1px solid rgba(111, 0, 17, 0.2);
-  background: rgba(177, 36, 94, 0.1);
+  border: 1px solid rgba(245, 167, 214, 0.2);
+  background: rgba(245, 167, 214, 0.1);
   color: var(--ink-900);
   padding: 0.18rem 0.6rem;
 }
@@ -1455,7 +1452,7 @@ html {
 /* La cabecera se compacta al bajar: devuelve pantalla al contenido y da
    la señal de que la pagina se movio. */
 .dr-cabecera { transition: box-shadow .25s ease; }
-.dr-cabecera.encogida { box-shadow: 0 6px 22px rgba(44, 29, 19, .10); }
+.dr-cabecera.encogida { box-shadow: 0 6px 22px rgba(245, 167, 214, .10); }
 .dr-cabecera.encogida .dr-topbar {
   padding-top: 3px; padding-bottom: 3px; font-size: .66rem;
 }
@@ -1482,9 +1479,8 @@ html {
    CLARO del mismo matiz que todavia se lee (4,5:1). La referencia tiene el
    mismo problema (3,96:1) -- se prefirio que se lea. */
 .dr-topbar {
-  background: var(--crema);
-  color: var(--tinta-rosa);
-  border-bottom: 1px solid var(--rosa-suave);
+  background: var(--rosa);
+  color: var(--blanco);
   text-align: center;
   font-size: .72rem;
   font-weight: 700;
@@ -1497,7 +1493,7 @@ html {
 .site-navbar.dr-nav {
   background: var(--blanco) !important;
   border-bottom: 1px solid var(--rosa-suave);
-  box-shadow: 0 6px 24px rgba(154, 91, 114, .07);
+  box-shadow: 0 6px 24px rgba(245, 167, 214, .07);
   padding-top: .55rem;
   padding-bottom: .55rem;
 }
@@ -1544,7 +1540,7 @@ html {
   letter-spacing: .06em;
   text-transform: uppercase;
   font-size: .95rem;
-  box-shadow: 0 8px 18px rgba(154, 60, 100, .18);
+  box-shadow: 0 8px 18px rgba(245, 167, 214, .18);
   transition: transform .15s ease, background .2s ease, color .2s ease;
 }
 /* En hover se mantiene blanco con letra rosada (solo un leve realce). */
@@ -1553,7 +1549,7 @@ html {
   background: var(--rosa);
   color: var(--dr-pink-deep) !important;
   transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(154, 60, 100, .26);
+  box-shadow: 0 10px 22px rgba(245, 167, 214, .26);
 }
 
 
@@ -1579,7 +1575,7 @@ html {
   display: inline-flex; align-items: center; gap: .5rem;
   background: var(--rosa-tinta); color: var(--crema) !important;
   padding: .62rem 1.2rem; border-radius: 999px;
-  box-shadow: 0 12px 28px rgba(67, 0, 9, .5);
+  box-shadow: 0 12px 28px rgba(245, 167, 214, .5);
   z-index: 1045; font-weight: 700; font-size: .9rem; text-decoration: none;
   transition: transform .28s cubic-bezier(.34,1.56,.64,1), opacity .25s ease;
 }
@@ -1619,12 +1615,12 @@ html {
 }
 .dr-hero .carousel-item::after {
   content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none;
-  background: linear-gradient(0deg, rgba(20,4,8,.62) 0%, transparent 34%);
+  background: linear-gradient(0deg, rgba(245, 167, 214, .62) 0%, transparent 34%);
 }
 
 .dr-hero-card {
   position: absolute; left: 5%; right: 5%; bottom: 6%; z-index: 5;
-  background: rgba(74, 58, 64, .5);
+  background: rgba(245, 167, 214, .5);
   backdrop-filter: blur(6px);
   border: 1px solid rgba(255,255,255,.18);
   border-radius: 14px;
@@ -1644,7 +1640,7 @@ html {
 .dr-hero-btn {
   display: inline-block; background: var(--rosa-tinta); color: var(--crema);
   border-radius: 999px; padding: .55rem 1.4rem; font-weight: 700;
-  letter-spacing: .04em; box-shadow: 0 10px 22px rgba(67,0,9,.5);
+  letter-spacing: .04em; box-shadow: 0 10px 22px rgba(245, 167, 214, .5);
 }
 .dr-hero-btn:hover { background: var(--crema); color: var(--dr-vino); }
 .dr-hero .carousel-indicators [data-bs-target] { background-color: var(--dr-pink); }
@@ -1660,7 +1656,7 @@ html {
   object-fit: cover;
   border-radius: 50%;
   border: 4px solid var(--dr-crema);
-  box-shadow: 0 14px 30px rgba(74, 6, 20, .35);
+  box-shadow: 0 14px 30px rgba(245, 167, 214, .35);
   transform: rotate(8deg);
   background: var(--superficie);
 }
@@ -1701,7 +1697,7 @@ html {
    borroso por el zoom). Mismo tratamiento de "marco" que el hero. */
 .dr-work-video {
   position: relative;
-  background: var(--crema);
+  background: var(--rosa);
   padding: 2.2rem 0;
   display: flex;
   justify-content: center;
@@ -1769,7 +1765,7 @@ html {
 .dr-tile-overlay {
   position: absolute; inset: 0; display: flex; flex-direction: column;
   justify-content: flex-end; padding: 1rem;
-  background: linear-gradient(to top, rgba(74,58,64,.72), rgba(74,58,64,0) 55%);
+  background: linear-gradient(to top, rgba(245, 167, 214, .72), rgba(245, 167, 214, 0) 55%);
   opacity: 0; transition: opacity .3s ease;
 }
 .dr-tile:hover .dr-tile-overlay { opacity: 1; }
@@ -1787,7 +1783,7 @@ html {
 .dr-corp {
   margin: 2rem 0 0; padding: 3.4rem 0;
   background: var(--superficie);
-  border-top: 1px solid rgba(111, 0, 17, .14);
+  border-top: 1px solid rgba(245, 167, 214, .14);
   text-align: center;
 }
 .dr-corp h2 { font-family: 'Manrope', system-ui, sans-serif;
@@ -1795,14 +1791,14 @@ html {
 .dr-corp p { color: var(--dr-ink); max-width: 620px; margin: .6rem auto 1.4rem; }
 
 /* ---------- Footer rosado (mismo de la franja del navbar) ---------- */
-.site-footer.dr-foot { background: var(--crema); border-top: 3px solid var(--rosa); }
+.site-footer.dr-foot { background: var(--rosa); }
 /* El pie paso de vino a rosado: el texto blanco daba 1.85:1 y no se leia.
    Sobre rosado el unico color con contraste real es la tinta (8.81:1). */
 .dr-foot,
 .dr-foot .footer-copy,
 .dr-foot .footer-link,
 .dr-foot .footer-title,
-.dr-foot .footer-legal { color: var(--tinta-rosa); }
+.dr-foot .footer-legal { color: var(--blanco); }
 .dr-foot .footer-link:hover { color: var(--rosa); }
 .dr-foot .footer-legal { border-top-color: rgba(255, 255, 255, .3); }
 /* "Navegación" y "Atención" con la misma fuente del navbar (Manrope) */
@@ -1836,7 +1832,7 @@ html {
   display: inline-flex; align-items: center; justify-content: center;
   background: var(--dr-pink-bg); color: var(--crema) !important;
   font-size: 1.45rem; text-decoration: none;
-  box-shadow: 0 8px 20px rgba(154, 60, 100, .28);
+  box-shadow: 0 8px 20px rgba(245, 167, 214, .28);
   transition: transform .2s ease;
 }
 .dr-social-btn:hover { transform: translateY(-2px); color: var(--crema) !important; }
@@ -1850,7 +1846,7 @@ html {
   .dr-topbar { font-size: .6rem; letter-spacing: .08em; padding: 6px 10px; line-height: 1.3; }
   /* grilla a 2 columnas en móvil */
   .dr-grid { grid-template-columns: repeat(2, 1fr); gap: 5px; }
-  .dr-tile-overlay { opacity: 1; padding: .55rem; background: linear-gradient(to top, rgba(74,58,64,.78), rgba(74,58,64,0) 60%); }
+  .dr-tile-overlay { opacity: 1; padding: .55rem; background: linear-gradient(to top, rgba(245, 167, 214, .78), rgba(245, 167, 214, 0) 60%); }
   .dr-tile-name { font-size: .82rem; }
   .dr-tile-price { font-size: .8rem; }
   /* Card de producto en móvil: imagen full-width cuadrada, sin huecos */
@@ -1988,7 +1984,7 @@ html {
 .ig-cinta__pista img {
   height: 168px; width: auto;
   border-radius: var(--radius-sm);
-  box-shadow: 0 8px 20px rgba(44, 29, 19, .16);
+  box-shadow: 0 8px 20px rgba(245, 167, 214, .16);
 }
 /* La pista lleva la lista DOS veces y se corre exactamente la mitad:
    asi el salto del bucle cae en un punto identico y no se ve el corte. */
@@ -2000,7 +1996,7 @@ html {
 /* ---------- Banda del minimo de compra ---------- */
 .ig-minimo {
   background: var(--rosa);
-  color: var(--tinta-rosa);
+  color: var(--blanco);
   text-align: center;
   padding: 1.5rem 1rem;
 }
@@ -2047,7 +2043,7 @@ html {
   font-size: .92rem;
   /* El degradado no es adorno: sin el, el texto blanco cae sobre
      zonas claras de la foto y deja de leerse. */
-  background: linear-gradient(to top, rgba(28, 18, 11, .82), rgba(28, 18, 11, 0));
+  background: linear-gradient(to top, rgba(245, 167, 214, .82), rgba(245, 167, 214, 0));
   transform: translateY(6px);
   opacity: 0;
   transition: opacity .3s ease, transform .3s ease;
@@ -2084,7 +2080,7 @@ html {
 }
 
 /* ---------- Encargos: la caja armada a pedido ---------- */
-.ig-encargos { background: var(--crema); padding: 3.4rem 0; }
+.ig-encargos { background: var(--rosa); padding: 3.4rem 0; }
 .ig-encargos__caja {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -2187,7 +2183,7 @@ html {
   background: var(--fondo);
   transition: transform .3s cubic-bezier(.2,.7,.3,1), box-shadow .3s ease;
 }
-.catalog-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-2, 0 16px 36px rgba(44,29,19,.13)); }
+.catalog-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-2, 0 16px 36px rgba(245, 167, 214, .13)); }
 .catalog-card:focus-within { outline: 2px solid var(--marca-legible); outline-offset: 2px; }
 
 /* Es un <button> para que se pueda llegar con el teclado; hay que apagarle
@@ -2259,7 +2255,7 @@ html {
 }
 .btn-main:hover, .dr-btn-wine:hover, .btn-add-only:hover, .dr-pedido:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 22px rgba(169, 91, 138, .26);
+  box-shadow: 0 10px 22px rgba(245, 167, 214, .26);
 }
 .btn-main:active, .dr-btn-wine:active, .btn-add-only:active, .dr-pedido:active {
   transform: translateY(1px) scale(.985);
@@ -2268,7 +2264,7 @@ html {
 
 /* Las fotos del mosaico se levantan, no solo hacen zoom. */
 .ig-mosaico figure { transition: transform .35s cubic-bezier(.2,.7,.3,1), box-shadow .35s ease; }
-.ig-mosaico figure:hover { transform: translateY(-5px); box-shadow: 0 18px 38px rgba(44,29,19,.16); }
+.ig-mosaico figure:hover { transform: translateY(-5px); box-shadow: 0 18px 38px rgba(245, 167, 214, .16); }
 
 /* Los enlaces del menu se subrayan creciendo desde la izquierda. */
 .dr-nav .nav-link:not(.dr-pedido) { position: relative; }
@@ -2371,4 +2367,129 @@ html {
 .catalog-pack {
   margin: 0 0 .5rem; font-size: .8rem; font-weight: 600;
   color: var(--tinta-rosa); opacity: .85;
+}
+
+
+/* ============================================================
+   Con el rosado de fondo, cualquier texto rosado DESAPARECE.
+   Todo lo que cae sobre el fondo va en blanco.
+   ============================================================ */
+body { color: var(--blanco); }
+.ig-hero__claim,
+.ig-hero__claim em,
+.ig-hero__bajada,
+.ig-encargos__titulo,
+.ig-encargos__texto,
+.section-head h2,
+.section-head p,
+.dr-products-title,
+.dr-products-sub,
+.ig-video figcaption,
+.eyebrow,
+h1, h2, h3 { color: var(--blanco); }
+
+/* Lo que se levanta sobre blanco conserva la letra rosada. */
+.catalog-card, .catalog-card *,
+.surface-card, .surface-card *,
+.tarjeta, .tarjeta *,
+.entrega__via, .entrega__via *,
+.ig-encargos__caso, .ig-encargos__caso * { color: var(--rosa); }
+.ig-encargos__caso-tit { color: var(--rosa); }
+
+/* El logotipo del hero, sobre rosado, va en su version blanca. */
+.ig-hero__logo { filter: brightness(0) invert(1); }
+
+/* Los botones sobre el fondo rosado: el primario invierte (blanco con letra
+   rosada) y el secundario va con borde blanco. Un boton rosado sobre fondo
+   rosado no existe. */
+.dr-btn-wine, .btn-main, .btn-add-only, .dr-hero-btn {
+  background: var(--blanco) !important;
+  color: var(--rosa) !important;
+  border-color: var(--blanco) !important;
+}
+.dr-btn-wine:hover, .btn-main:hover, .btn-add-only:hover, .dr-hero-btn:hover {
+  background: var(--blanco) !important;
+  color: var(--rosa) !important;
+}
+.btn-ghost {
+  background: transparent !important;
+  color: var(--blanco) !important;
+  border: 1px solid var(--blanco) !important;
+}
+.btn-ghost:hover { background: rgba(255, 255, 255, .16) !important; }
+
+/* Dentro de una tarjeta blanca el boton vuelve a ser rosado con letra blanca:
+   ahi el fondo ya no es rosado. */
+.catalog-card .btn-add-only,
+.surface-card .btn-main,
+.tarjeta .btn-main {
+  background: var(--rosa) !important;
+  color: var(--blanco) !important;
+  border-color: var(--rosa) !important;
+}
+
+/* ============================================================
+   REGLA DE ORO con dos colores: sobre rosado se escribe blanco,
+   sobre blanco se escribe rosado. Aca se fijan las superficies
+   que se habian quedado rosadas por dentro y dejaban su propio
+   texto invisible.
+   ============================================================ */
+.catalog-card,
+.surface-card,
+.tarjeta,
+.entrega__via,
+.ig-encargos__caso,
+.catalog-filter-bar,
+.cart-item,
+.field-input,
+input, select, textarea {
+  background: var(--blanco) !important;
+}
+.catalog-card *, .surface-card *, .tarjeta *,
+.entrega__via *, .ig-encargos__caso *,
+.catalog-filter-bar *, .cart-item * {
+  color: var(--rosa);
+}
+/* Las pildoras y chips llevan fondo rosado: ahi la letra va blanca. */
+.catalog-tag, .sutil-minimo, .catalog-tag--flota, .pildora, .marca-estado {
+  background: var(--rosa) !important;
+  color: var(--blanco) !important;
+}
+/* Los enlaces sueltos sobre el fondo rosado. */
+a { color: var(--blanco); }
+.catalog-card a, .surface-card a, .tarjeta a, .entrega__via a { color: var(--rosa); }
+
+/* Los ultimos que quedaban del mismo color que su fondo. */
+.dr-tile-price { color: var(--blanco); }
+.check-list li { color: var(--blanco); }
+.surface-card .check-list li, .tarjeta .check-list li { color: var(--rosa); }
+/* "Limpiar" y "Hablar por WhatsApp" son botones fantasma sobre fondo rosado. */
+.btn-ghost, a.btn-ghost { color: var(--blanco) !important; border-color: var(--blanco) !important; }
+.catalog-filter-bar .btn-ghost,
+.surface-card .btn-ghost,
+.tarjeta .btn-ghost { color: var(--rosa) !important; border-color: var(--rosa) !important; }
+
+/* La lista de la pagina de contacto tiene su propio fondo BLANCO
+   translucido, asi que su texto va rosado aunque este sobre el fondo rosa. */
+.check-list li { color: var(--rosa) !important; background: var(--blanco) !important; }
+/* El segundo boton de la franja corporativa esta sobre fondo rosado. */
+/* El hero SI esta sobre rosado: ahi el boton fantasma va blanco. */
+.ig-hero__acciones .btn-ghost {
+  color: var(--blanco) !important;
+  border-color: var(--blanco) !important;
+  background: transparent !important;
+}
+/* La franja corporativa quedo con fondo BLANCO, asi que todo lo suyo va en
+   rosado -- incluido su boton fantasma, que estaba blanco sobre blanco. */
+.dr-corp { background: var(--blanco) !important; }
+.dr-corp h2, .dr-corp p, .dr-corp .eyebrow { color: var(--rosa) !important; }
+.dr-corp .btn-ghost {
+  color: var(--rosa) !important;
+  border-color: var(--rosa) !important;
+  background: transparent !important;
+}
+.dr-corp .dr-btn-wine {
+  background: var(--rosa) !important;
+  color: var(--blanco) !important;
+  border-color: var(--rosa) !important;
 }
