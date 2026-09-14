@@ -2837,3 +2837,21 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
 .detail-actions { align-items: center; }
 .detail-actions .btn-add-only,
 .detail-actions > .btn-ghost { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; margin: 0; }
+
+/* Franja azul: las lineas de Dulcecita, letra delgada */
+.ig-lineas {
+  list-style: none; margin: 0 auto; padding: 0; max-width: 60rem;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: .35rem 2.2rem;
+}
+.ig-minimo .ig-lineas li {
+  color: #fff !important;
+  font-size: clamp(1.1rem, 2.4vw, 1.45rem);
+  font-weight: 400; letter-spacing: .02em; line-height: 1.5;
+}
+@media (max-width: 640px) { .ig-lineas { gap: .25rem 1.5rem; } }
+@media (min-width: 901px) {
+  .ig-minimo:has(.ig-lineas) { padding-block: 2rem; }
+  .ig-minimo .ig-lineas li { font-size: 1.6rem; }
+  .ig-lineas { gap: .35rem 3rem; }
+}
