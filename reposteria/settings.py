@@ -61,9 +61,20 @@ RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
-CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com"]
+# Dominios propios del sitio. Sin esto, al entrar por dulcecita.cl Django
+# responde 400 (host no permitido) y los formularios POST (checkout, contacto,
+# arma tu box) fallan con 403 de CSRF: solo se confiaba en *.onrender.com.
+SITE_DOMAINS = env_list("SITE_DOMAINS", default="dulcecita.cl,www.dulcecita.cl")
+ALLOWED_HOSTS = list(dict.fromkeys(list(ALLOWED_HOSTS) + SITE_DOMAINS))
+
+CSRF_TRUSTED_ORIGINS = ["https://*.onrender.com"] + [f"https://{d}" for d in SITE_DOMAINS]
 if RENDER_EXTERNAL_HOSTNAME:
     CSRF_TRUSTED_ORIGINS.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
+
+if not DEBUG:
+    # Render termina el HTTPS en su proxy y le pasa la peticion a Django por
+    # HTTP; esta cabecera es la que dice que el cliente entro por https.
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
 INSTALLED_APPS = [

@@ -597,3 +597,14 @@ class PagoPorTransferenciaTests(TestCase):
         self.assertContains(pagina, "11111111")
         self.assertContains(pagina, "BancoEstado")
         self.assertIn("11111111", mail.outbox[0].body)
+
+
+class DominioPropioTests(TestCase):
+    """Entrando por dulcecita.cl la pagina responde y el checkout no da 403."""
+
+    def test_dulcecita_cl_esta_permitido_y_es_confiable_para_formularios(self):
+        from django.conf import settings
+        self.assertIn("dulcecita.cl", settings.ALLOWED_HOSTS)
+        self.assertIn("www.dulcecita.cl", settings.ALLOWED_HOSTS)
+        self.assertIn("https://dulcecita.cl", settings.CSRF_TRUSTED_ORIGINS)
+        self.assertEqual(self.client.get("/", HTTP_HOST="dulcecita.cl").status_code, 200)

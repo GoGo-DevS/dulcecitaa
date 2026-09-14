@@ -20,7 +20,7 @@ services:
       - key: BRAND_NAME
         value: "Dulcecita"
       - key: WEBSITE_URL          # base para link del footer y logo de los correos
-        value: "https://dulcecitaa.onrender.com"
+        value: "https://dulcecita.cl"
       - key: DATABASE_URL
         fromDatabase:
           name: dulcecitaa-db
