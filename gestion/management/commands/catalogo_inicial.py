@@ -30,7 +30,7 @@ CATALOGO = [
             "extremos. Una combinación equilibrada de texturas y sabores, perfecta para "
             "acompañar un café o disfrutar en cualquier momento."
         ),
-        "precio": 1590, "orden": 0, "unidades_por_pack": 1, "foto": "barquillos-puntas.jpg",
+        "precio": 1290, "orden": 0, "unidades_por_pack": 1, "foto": "barquillos-puntas.jpg",
     },
     {
         "nombre": "Alfajores",
