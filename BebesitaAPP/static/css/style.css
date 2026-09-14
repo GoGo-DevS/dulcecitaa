@@ -2516,3 +2516,12 @@ a { color: var(--blanco); }
   .corp-foto { position: static; order: -1; }
   .corp-foto img { aspect-ratio: 4 / 3; }
 }
+
+/* El pie pasa a BLANCO, igual que venta corporativa: cierra la pagina
+   separandola del rosado. Sobre blanco, todo lo escrito va en rosado, con una
+   linea rosada arriba para que no se funda con una seccion blanca previa. */
+.site-footer.dr-foot { background: #fff !important; border-top: 3px solid var(--rosa); }
+.dr-foot, .dr-foot *, .dr-foot .footer-copy, .dr-foot .footer-link,
+.dr-foot .footer-title, .dr-foot .footer-legal, .dr-foot p, .dr-foot a { color: var(--rosa) !important; }
+.dr-foot .footer-legal { border-top-color: rgba(245, 167, 214, .5) !important; }
+.dr-foot .footer-link:hover { text-decoration: underline; }
