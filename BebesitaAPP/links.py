@@ -48,19 +48,10 @@ def _destinos():
     return {slug: d for slug, d in destinos.items() if d[0]}
 
 
-def _productos():
-    productos = list(Producto.objects.filter(visible=True, disponible=True, variante_de__isnull=True)
-                     .prefetch_related("opciones").order_by("orden", "nombre")[:8])
-    for p in productos:
-        p.slug_link = f"p{p.id}"
-    return productos
-
-
 def links(request):
     instagram = getattr(settings, "INSTAGRAM_URL", "")
     usuario_ig = urlparse(instagram).path.strip("/") if instagram else ""
     return render(request, "links.html", {
-        "productos": _productos(),
         "destinos": _destinos(),
         "usuario_ig": usuario_ig,
         "precio_caja": arma_box.precio_caja(),

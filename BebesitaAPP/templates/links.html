@@ -114,30 +114,6 @@
     .lk-btn--box .lk-ico { background: rgba(255, 255, 255, .12); color: var(--rosa); }
     .lk-btn--box .lk-txt span, .lk-btn--box .lk-flecha { color: rgba(255, 255, 255, .8); }
 
-    /* Productos */
-    .lk-seccion { padding: 1.4rem 0 .2rem; }
-    .lk-seccion h2 { margin: 0 1.2rem .7rem; font-size: 1.05rem; font-weight: 800; color: var(--azul); }
-    .lk-productos {
-      display: grid; grid-auto-flow: column; grid-auto-columns: 46%; gap: .7rem;
-      overflow-x: auto; padding: .1rem 1.1rem .8rem; scroll-snap-type: x mandatory; scroll-padding-inline: 1.1rem;
-      scrollbar-width: none; -webkit-overflow-scrolling: touch;
-    }
-    .lk-productos::-webkit-scrollbar { display: none; }
-    .lk-prod {
-      scroll-snap-align: start; border-radius: var(--radio); overflow: hidden; background: #fff;
-      border: 1px solid var(--linea); display: flex; flex-direction: column;
-      transition: transform .18s cubic-bezier(.2, .8, .2, 1);
-    }
-    .lk-prod:active { transform: scale(.98); }
-    .lk-prod:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
-    .lk-prod img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: var(--rosa-lavado); }
-    .lk-prod div { padding: .55rem .7rem .7rem; }
-    .lk-prod b { display: block; font-size: .88rem; line-height: 1.25; font-weight: 700; }
-    .lk-prod span { display: block; margin-top: .2rem; font-size: .95rem; font-weight: 800; color: var(--azul); }
-    .lk-prod small { font-weight: 600; font-size: .72rem; color: var(--tinta-suave); }
-    .lk-muestras { display: flex; gap: .25rem; margin-top: .35rem; }
-    .lk-muestras i { display: inline-block; width: 13px; height: 12px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(31, 49, 69, .2); }
-
     /* Mas enlaces */
     .lk-lista { list-style: none; margin: 0 1.1rem; padding: 0; border: 1px solid var(--linea); border-radius: var(--radio); overflow: hidden; }
     .lk-lista li + li { border-top: 1px solid var(--linea); }
@@ -207,27 +183,8 @@
       {% endif %}
     </nav>
 
-    {% if productos %}
-    <section class="lk-seccion lk-anim" style="--i:7" aria-labelledby="lk-prod-titulo">
-      <h2 id="lk-prod-titulo">Nuestros productos</h2>
-      <div class="lk-productos">
-        {% for p in productos %}
-        <a class="lk-prod" href="{% url 'links_ir' p.slug_link %}">
-          <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" loading="lazy" width="300" height="300">
-          <div>
-            <b>{{ p.nombre }}</b>
-            <span>${{ p.precio|intcomma }} <small>{% if p.unidades_por_pack > 1 %}bolsita de {{ p.unidades_por_pack }}{% else %}c/u{% endif %}</small></span>
-            {% with grupos=p.grupos_opciones %}{% if grupos %}
-            <span class="lk-muestras" aria-label="Coberturas disponibles">{% for tipo, etiqueta, opciones in grupos %}{% for op in opciones %}<i style="--c: {{ op.color }}" title="{{ op.nombre }}"></i>{% endfor %}{% endfor %}</span>
-            {% endif %}{% endwith %}
-          </div>
-        </a>
-        {% endfor %}
-      </div>
-    </section>
-    {% endif %}
 
-    <section class="lk-seccion lk-anim" style="--i:8" aria-labelledby="lk-mas-titulo">
+    <section class="lk-seccion lk-anim" style="--i:7" aria-labelledby="lk-mas-titulo">
       <h2 id="lk-mas-titulo">Más de {{ site_brand }}</h2>
       <ul class="lk-lista">
         {% if destinos.corporativo %}<li><a class="lk-fila" href="{% url 'links_ir' 'corporativo' %}"><i class="bi bi-building" aria-hidden="true"></i><span>Regalos para empresas</span><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>{% endif %}

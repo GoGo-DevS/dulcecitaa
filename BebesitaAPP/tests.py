@@ -618,11 +618,11 @@ class LinksBioTests(TestCase):
             nombre="Alfajores", descripcion="x", precio=1590,
             imagen=SimpleUploadedFile("a.jpg", b"img", content_type="image/jpeg"))
 
-    def test_pagina_muestra_botones_y_productos_con_precio(self):
+    def test_pagina_muestra_los_botones_sin_carrusel_de_productos(self):
         r = self.client.get(reverse("links"))
         self.assertContains(r, "Haz tu pedido")
-        self.assertContains(r, reverse("links_ir", args=[f"p{self.producto.id}"]))
-        self.assertContains(r, "Alfajores")
+        self.assertContains(r, "Arma tu box")
+        self.assertNotContains(r, "Nuestros productos")
 
     def test_redirige_con_utm_y_cuenta_el_clic(self):
         from .models import ClicEnlace
