@@ -21,7 +21,15 @@ Datos de entrega:
 
 Ocasión: {{ pedido.comentario_ocasion }}
 
-Te contactaremos para coordinar la entrega.
+Cómo pagar:
+1. Transfiere {{ total_formatted }}{% if transferencia %}
+   Titular: {{ transferencia.titular }}
+   RUT: {{ transferencia.rut }}
+   Banco: {{ transferencia.banco }} ({{ transferencia.tipo_cuenta }})
+   Número: {{ transferencia.numero }}{% if transferencia.email %}
+   Correo: {{ transferencia.email }}{% endif %}{% else %}. Te enviamos los datos por WhatsApp.{% endif %}
+2. Envía el comprobante por WhatsApp indicando el pedido #{{ pedido.id }}{% if whatsapp_url %}: {{ whatsapp_url }}{% endif %}
+3. Tu pedido sale {{ despacho_horas }} horas después de confirmado el pago.
 {% if contact_email %}
 Si necesitas ayuda, escríbenos a {{ contact_email }}.
 {% endif %}

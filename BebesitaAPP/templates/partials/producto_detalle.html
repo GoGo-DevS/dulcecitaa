@@ -26,7 +26,7 @@
 
   <div class="product-detail-content" data-linea-scope data-pid="{{ p.id }}">
     <p class="eyebrow">Edición artesanal</p>
-    <h2>{{ p.nombre }}</h2>
+    {% if es_pagina %}<h1 class="detail-titulo">{{ p.nombre }}</h1>{% else %}<h2>{{ p.nombre }}</h2>{% endif %}
     <p class="detail-price"><span data-precio="{{ p.precio }}">${{ p.precio }}</span></p>
     <p class="detail-description">{{ p.descripcion|linebreaksbr }}</p>
 
@@ -42,7 +42,7 @@
       <div class="product-ctl" data-id="{{ p.clave_inicial }}">
         <button type="button" class="btn-add-only" aria-label="Agregar" title="Agregar">Agregar al carrito</button>
         <div class="qty-control d-none">
-          <button class="btn-qty btn-trash" title="Quitar del carrito" aria-label="Quitar">Eliminar</button>
+          <button class="btn-qty btn-trash" title="Quitar del carrito" aria-label="Quitar del carrito"><i class="bi bi-trash3" aria-hidden="true"></i></button>
           <span class="qty">0</span>
           <button class="btn-qty btn-plus" title="Agregar uno" aria-label="Agregar">+</button>
         </div>

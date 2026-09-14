@@ -13,7 +13,34 @@
   <div class="success-card">
     <p class="eyebrow">Pedido confirmado</p>
     <h1>Gracias por elegir {{ site_brand }}</h1>
-    <p class="success-text">Recibimos tu pedido <strong>#{{ pedido_id }}</strong>. En breve coordinaremos contigo los detalles de {{ delivery_label|lower }}.</p>
+    <p class="success-text">Recibimos tu pedido <strong>#{{ pedido_id }}</strong>. Para empezar a prepararlo necesitamos el pago.</p>
+{% comment %}
+  Como se paga hoy: transferencia y comprobante por WhatsApp. El plazo corre
+  desde el pago, no desde el pedido: por eso se dice aqui y no solo en Delivery.
+{% endcomment %}
+<section class="pago-pasos" aria-labelledby="pago-titulo">
+  <h2 id="pago-titulo" class="pago-pasos__titulo">Cómo pagar tu pedido</h2>
+  <ol class="pago-pasos__lista">
+    <li>
+      <b>Transfiere {{ total_formatted }}</b>
+      {% if transferencia %}
+      <dl class="pago-datos">
+        {% if transferencia.titular %}<div><dt>Titular</dt><dd>{{ transferencia.titular }}</dd></div>{% endif %}
+        {% if transferencia.rut %}<div><dt>RUT</dt><dd>{{ transferencia.rut }}</dd></div>{% endif %}
+        {% if transferencia.banco %}<div><dt>Banco</dt><dd>{{ transferencia.banco }}</dd></div>{% endif %}
+        {% if transferencia.tipo_cuenta %}<div><dt>Cuenta</dt><dd>{{ transferencia.tipo_cuenta }}</dd></div>{% endif %}
+        <div><dt>Número</dt><dd>{{ transferencia.numero }}</dd></div>
+        {% if transferencia.email %}<div><dt>Correo</dt><dd>{{ transferencia.email }}</dd></div>{% endif %}
+      </dl>
+      {% else %}
+      <span>Te enviamos los datos de transferencia por WhatsApp.</span>
+      {% endif %}
+    </li>
+    <li><b>Envíanos el comprobante por WhatsApp</b> <span>indicando el pedido #{{ pedido_id }}.</span></li>
+    <li><b>Tu pedido sale en {{ despacho_horas }} horas</b> <span>desde que confirmamos el pago. Si pagas hoy, se despacha en dos días.</span></li>
+  </ol>
+</section>
+
     <ul class="checkout-list text-start my-4">
       <li><span>Método de entrega</span><strong>{{ delivery_label }}</strong></li>
       <li><span>Comuna o sector</span><strong>{{ pedido.comuna_sector }}</strong></li>
@@ -23,12 +50,12 @@
       <li><span>Total confirmado</span><strong>{{ total_formatted }}</strong></li>
     </ul>
     <div class="hero-actions justify-content-center">
-      <a href="{% url 'productos' %}" class="btn-main">Seguir comprando</a>
       {% if whatsapp_order_url %}
-      <a href="{{ whatsapp_order_url }}" target="_blank" rel="noopener" class="btn-ghost">Coordinar por WhatsApp</a>
+      <a href="{{ whatsapp_order_url }}" target="_blank" rel="noopener" class="btn-main">Enviar comprobante por WhatsApp</a>
       {% endif %}
+      <a href="{% url 'productos' %}" class="btn-ghost">Seguir comprando</a>
     </div>
-    <p class="cart-summary-note mb-0 mt-3">Siguiente paso: revisaremos tu pedido y te confirmaremos disponibilidad, horario y forma de entrega.</p>
+
   </div>
 </section>
 {% endblock %}

@@ -21,5 +21,13 @@ def site_config(request):
         "instagram_url": getattr(settings, "INSTAGRAM_URL", ""),
         "business_hours": getattr(settings, "BUSINESS_HOURS", ""),
         "minimo_unidades": getattr(settings, "MINIMO_UNIDADES", 1),
+        "despacho_horas": getattr(settings, "DESPACHO_HORAS", 48),
+        "transferencia": _transferencia(settings),
         "default_og_image_url": default_og_image_url,
     }
+
+
+def _transferencia(settings):
+    """Datos para transferir, o None si todavia no estan cargados."""
+    datos = getattr(settings, "TRANSFERENCIA", {}) or {}
+    return datos if datos.get("numero") else None

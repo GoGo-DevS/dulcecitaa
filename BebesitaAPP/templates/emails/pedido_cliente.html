@@ -45,6 +45,23 @@
   </tr>
 </table>
 
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;border-collapse:separate;border-spacing:0;background:#f4f6f9;border:1px solid #d9e0e8;border-radius:14px;">
+  <tr>
+    <td style="padding:16px 18px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#2a4057;line-height:1.6;">
+      <p style="margin:0 0 8px;font-size:15px;font-weight:800;">Cómo pagar tu pedido</p>
+      <p style="margin:0 0 6px;"><strong>1. Transfiere {{ total_formatted }}</strong>{% if not transferencia %}. Te enviamos los datos por WhatsApp.{% endif %}</p>
+      {% if transferencia %}<p style="margin:0 0 8px 16px;">
+        {% if transferencia.titular %}Titular: {{ transferencia.titular }}<br>{% endif %}
+        {% if transferencia.rut %}RUT: {{ transferencia.rut }}<br>{% endif %}
+        {% if transferencia.banco %}Banco: {{ transferencia.banco }}{% if transferencia.tipo_cuenta %} ({{ transferencia.tipo_cuenta }}){% endif %}<br>{% endif %}
+        Número: {{ transferencia.numero }}{% if transferencia.email %}<br>Correo: {{ transferencia.email }}{% endif %}
+      </p>{% endif %}
+      <p style="margin:0 0 6px;"><strong>2. Envía el comprobante por WhatsApp</strong> indicando el pedido #{{ pedido.id }}.</p>
+      <p style="margin:0;"><strong>3. Tu pedido sale {{ despacho_horas }} horas</strong> después de confirmado el pago.</p>
+    </td>
+  </tr>
+</table>
+
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;border-collapse:separate;border-spacing:0;background:#fffafd;border:1px solid #f4dcea;border-radius:14px;">
   <tr>
     <td style="padding:16px 18px;">

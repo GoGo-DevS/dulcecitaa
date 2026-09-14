@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Página no encontrada | {{ site_brand }}{% endblock %}
+{% block meta_description %}Esta página no existe. Vuelve al catálogo de {{ site_brand }}.{% endblock %}
+
+{% block content %}
+{% comment %}
+  Sin esto, en produccion (DEBUG=False) Django muestra un "Not Found" en
+  blanco, sin marca ni forma de volver.
+{% endcomment %}
+<section class="container pagina-error">
+  <img src="{% static 'img/galeria/alfajores-hilo-blanco.jpg' %}" alt="" class="pagina-error__foto">
+  <div>
+    <h1>No encontramos esta página</h1>
+    <p>Puede que el enlace esté mal escrito o que la página ya no exista.</p>
+    <div class="pagina-error__acciones">
+      <a href="{% url 'productos' %}" class="btn-main">Ver el catálogo</a>
+      <a href="{% url 'home' %}" class="btn-ghost">Ir al inicio</a>
+    </div>
+  </div>
+</section>
+{% endblock %}

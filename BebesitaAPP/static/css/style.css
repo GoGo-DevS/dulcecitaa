@@ -3007,3 +3007,95 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
   .ig-lineas--despacho { max-width: none; }
   .ig-hero .ig-hero__bajada { max-width: 36rem; }
 }
+
+
+/* ============================================================
+   Revisión de QA antes de publicar (14-09)
+   ============================================================ */
+
+/* "Nuestros productos" en la portada: 4 productos en 4 columnas (con
+   auto-fill quedaba una quinta vacía), nombre y precio siempre visibles y
+   sobre un degradado azul, no rosado: el velo rosado lavaba las fotos y en
+   escritorio el texto solo aparecía al pasar el mouse. */
+.dr-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.dr-tile { border-radius: var(--radius-sm); }
+.dr-tile-overlay,
+.dr-tile:hover .dr-tile-overlay {
+  opacity: 1; padding: 1rem;
+  background: linear-gradient(to top, rgba(42, 64, 87, .88), rgba(42, 64, 87, .35) 38%, rgba(42, 64, 87, 0) 62%);
+}
+.dr-tile-name { color: #fff !important; font-size: 1rem; }
+.dr-tile-price { color: var(--rosa) !important; font-size: .95rem; }
+@media (max-width: 860px) {
+  .dr-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+  .dr-tile-overlay, .dr-tile:hover .dr-tile-overlay { padding: .6rem; }
+  .dr-tile-name { font-size: .85rem; }
+  .dr-tile-price { font-size: .82rem; }
+}
+
+/* En carrito y checkout el botón flotante "Ver carrito" sobra (ya estás
+   ahí) y tapaba el resumen del pedido. */
+.sin-fab .dr-cart-fab { display: none !important; }
+
+/* Botones del hero del mismo alto */
+.ig-hero__acciones a { min-height: 48px; display: inline-flex; align-items: center; justify-content: center; }
+
+/* Áreas táctiles de 44px en pantallas táctiles (guía de Apple). Se agranda
+   el área, no el dibujo: la muestra de color sigue viéndose igual. */
+@media (pointer: coarse), (max-width: 800px) {
+  .qty-control .btn-qty { min-width: 44px; height: 44px; font-size: 1rem; }
+  .catalog-actions .qty-control .btn-qty { min-width: 40px; height: 40px; padding: 0; }
+  .catalog-actions .qty-control { padding: .2rem; }
+  .btn-trash i { font-size: 1rem; }
+  .muestra { padding: 6px; margin: -6px; }
+  .opciones__muestras { gap: 1rem; }
+  .muestra__color { width: 32px; height: 32px; }
+  .btn-linkline { display: inline-flex; align-items: center; min-height: 44px; }
+  .box-stepper .btn-qty { width: 44px; height: 44px; }
+  .footer-link { display: block; padding-block: .35rem; }
+}
+
+/* Ficha como página propia: el nombre es el h1 */
+.detail-titulo { font-size: clamp(1.6rem, 3vw, 2.2rem); margin: 0 0 .4rem; }
+
+/* Página 404 */
+.pagina-error {
+  display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 2.5rem; align-items: center;
+  padding-block: 4rem 5rem; max-width: 960px;
+}
+.pagina-error__foto { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-md); }
+.pagina-error h1 { margin: 0 0 .6rem; }
+.pagina-error p { margin: 0 0 1.4rem; }
+.pagina-error__acciones { display: flex; flex-wrap: wrap; gap: .7rem; }
+@media (max-width: 700px) {
+  .pagina-error { grid-template-columns: 1fr; gap: 1.5rem; padding-block: 2rem 3rem; }
+  .pagina-error__foto { aspect-ratio: 16 / 9; }
+}
+
+/* Galería "Nuestros dulces": 12 fotos en filas completas (6, 4 o 2 por fila) */
+.ig-mosaico { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+@media (max-width: 1199.98px) { .ig-mosaico { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 767.98px) { .ig-mosaico { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; } }
+
+/* "Quitar box" es un botón de formulario: sin el borde gris del navegador */
+.cart-box__cabeza .btn-linkline { background: none; border: 0; padding: 0 .2rem; cursor: pointer; }
+
+/* Cómo pagar (pedido confirmado) */
+.pago-pasos { text-align: left; margin: 1.6rem 0 .4rem; padding: 1.2rem 1.3rem; border-radius: var(--radius-md); background: var(--rosa-lavado, rgba(245, 167, 214, .16)); }
+.pago-pasos__titulo { font-size: 1.15rem; margin: 0 0 .7rem; color: var(--azul); }
+.pago-pasos__lista { margin: 0; padding-left: 1.2rem; display: grid; gap: .7rem; color: var(--azul); }
+.pago-pasos__lista b { display: block; }
+.pago-datos { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: .4rem 1rem; margin: .5rem 0 0; }
+.pago-datos dt { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; opacity: .75; }
+.pago-datos dd { margin: 0; font-weight: 700; }
+
+/* Botones flotantes con los colores oficiales de cada marca: se reconocen
+   al tiro. Pintados de rosado parecían parte del sitio y no WhatsApp. */
+.dr-social-btn--wa,
+.dr-social-btn--wa:hover { background: #25d366 !important; color: #fff !important; box-shadow: 0 8px 22px rgba(37, 211, 102, .35) !important; }
+.dr-social-btn--ig,
+.dr-social-btn--ig:hover {
+  background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%) !important;
+  color: #fff !important; box-shadow: 0 8px 22px rgba(214, 36, 159, .3) !important;
+}
+.dr-social-btn--wa i, .dr-social-btn--ig i { color: #fff !important; }

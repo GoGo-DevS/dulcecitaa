@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+{% comment %}
+  Sin herencia de base.html a proposito: si el error viene de la plantilla
+  base o de un context processor, heredarla volveria a fallar.
+{% endcomment %}
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algo salió mal | Dulcecita</title>
+  <style>
+    body { margin: 0; font-family: Manrope, system-ui, sans-serif; background: #fff; color: #2a4057;
+           display: grid; place-items: center; min-height: 100dvh; padding: 1.5rem; box-sizing: border-box; text-align: center; }
+    h1 { font-size: 1.8rem; margin: 0 0 .6rem; }
+    p { margin: 0 0 1.4rem; line-height: 1.6; }
+    a { display: inline-block; background: #2a4057; color: #fff; text-decoration: none; font-weight: 700;
+        padding: .8rem 1.6rem; border-radius: 999px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Algo salió mal</h1>
+    <p>Tuvimos un problema al cargar esta página. Intenta de nuevo en unos minutos.</p>
+    <a href="/">Volver al inicio</a>
+  </main>
+</body>
+</html>

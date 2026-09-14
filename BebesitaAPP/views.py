@@ -181,9 +181,10 @@ def _build_order_whatsapp_url(pedido):
         return ""
 
     delivery_label = "Retiro en punto" if pedido.tipo_entrega == Pedido.TIPO_ENTREGA_RETIRO else "Despacho a domicilio"
+    total = f"${int(pedido.total):,}".replace(",", ".")
     message = (
-        f"Hola {settings.BRAND_NAME}, acabo de realizar el pedido #{pedido.id}. "
-        f"Quedo atento para coordinar {delivery_label.lower()}."
+        f"Hola {settings.BRAND_NAME}, hice el pedido #{pedido.id} por {total}. "
+        f"Te envío el comprobante de transferencia para coordinar {delivery_label.lower()}."
     )
     parsed = urlparse(base_url)
     query = dict(parse_qsl(parsed.query))

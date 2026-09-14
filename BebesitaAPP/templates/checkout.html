@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% block body_class %}sin-fab{% endblock %}
 {% block title %}Checkout | {{ site_brand }}{% endblock %}
 {% block meta_description %}Completa tus datos en {{ site_brand }} para confirmar tu pedido y coordinar la entrega.{% endblock %}
 
@@ -46,7 +47,7 @@
         <span>Total a pagar</span>
         <strong>${{ total }}</strong>
       </div>
-      <p class="cart-summary-note mb-0">Después del pago coordinaremos contigo por WhatsApp o correo para concretar la entrega.</p>
+      <p class="cart-summary-note mb-0">Pagas por transferencia al confirmar. Tu pedido sale {{ despacho_horas }} horas después de recibir el pago.</p>
       <a href="{% url 'carrito' %}" class="btn-linkline">Editar carrito</a>
     </aside>
 

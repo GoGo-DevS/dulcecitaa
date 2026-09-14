@@ -556,3 +556,44 @@ class ArmaTuBoxTests(TestCase):
         self.assertIn("Box #2 · Cobertura: Chocolate blanco", detalles)
         self.assertIn("Box #1", detalles)
         self.assertEqual(self.client.session["boxes"], [])
+
+
+class PaginasDeErrorTests(TestCase):
+    def test_404_con_la_marca_y_salida_al_catalogo(self):
+        response = self.client.get("/esta-pagina-no-existe/")
+        self.assertEqual(response.status_code, 404)
+        self.assertContains(response, "No encontramos esta página", status_code=404)
+        self.assertContains(response, reverse("productos"), status_code=404)
+
+
+@override_settings(MINIMO_UNIDADES=10, BOX_PRICE=0, SHIPPING_COST=0, DESPACHO_HORAS=48,
+                   EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+                   WHATSAPP_URL="https://wa.me/56900000000")
+class PagoPorTransferenciaTests(TestCase):
+    """Tras comprar, el cliente sabe como pagar y cuando sale su pedido."""
+
+    def _comprar(self):
+        producto = Producto.objects.create(
+            nombre="Alfajores", descripcion="x", precio=1590,
+            imagen=SimpleUploadedFile("a.jpg", b"img", content_type="image/jpeg"))
+        self.client.post(reverse("agregar_carrito_ajax", args=[producto.id]))
+        return self.client.post(reverse("checkout"), data={
+            "nombre": "Cliente", "email": "c@example.com", "telefono": "+56 9 1111 1111",
+            "tipo_entrega": "retiro", "comuna_sector": "Santiago", "direccion": "Ref"}, follow=True)
+
+    def test_sin_datos_bancarios_dice_que_llegan_por_whatsapp(self):
+        with self.settings(TRANSFERENCIA={"numero": ""}):
+            pagina = self._comprar()
+        self.assertContains(pagina, "Te enviamos los datos de transferencia por WhatsApp")
+        self.assertContains(pagina, "sale en 48 horas")
+        self.assertContains(pagina, "comprobante")
+        self.assertIn("48 horas", mail.outbox[0].body)
+
+    def test_con_datos_bancarios_los_muestra_en_la_pagina_y_el_correo(self):
+        datos = {"titular": "Dulcecita", "rut": "11.111.111-1", "banco": "BancoEstado",
+                 "tipo_cuenta": "Cuenta RUT", "numero": "11111111", "email": "pagos@example.com"}
+        with self.settings(TRANSFERENCIA=datos):
+            pagina = self._comprar()
+        self.assertContains(pagina, "11111111")
+        self.assertContains(pagina, "BancoEstado")
+        self.assertIn("11111111", mail.outbox[0].body)

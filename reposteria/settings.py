@@ -227,7 +227,22 @@ BOX_PRICE = int(os.getenv("BOX_PRICE", "1490"))
 # Minimo por linea dentro de "Arma tu box" (en el pedido normal es MINIMO_UNIDADES)
 MINIMO_BOX = max(1, int(os.getenv("MINIMO_BOX", "3")))
 PICKUP_POINT_LABEL = os.getenv("PICKUP_POINT_LABEL", "Retiro coordinado por WhatsApp")
-BUSINESS_HOURS = os.getenv("BUSINESS_HOURS", "Lunes a sabado de 09:00 a 19:00")
+
+# Horas entre que se confirma el pago y sale el pedido (todo se hace a mano).
+DESPACHO_HORAS = int(os.getenv("DESPACHO_HORAS", "48"))
+
+# Pago por transferencia. Los datos van en el entorno (Render > Environment),
+# nunca en el codigo. Mientras TRANSFER_NUMERO este vacio, la web no muestra
+# datos: le dice al cliente que se los mandan por WhatsApp.
+TRANSFERENCIA = {
+    "titular": os.getenv("TRANSFER_TITULAR", ""),
+    "rut": os.getenv("TRANSFER_RUT", ""),
+    "banco": os.getenv("TRANSFER_BANCO", ""),
+    "tipo_cuenta": os.getenv("TRANSFER_TIPO_CUENTA", ""),
+    "numero": os.getenv("TRANSFER_NUMERO", ""),
+    "email": os.getenv("TRANSFER_EMAIL", ""),
+}
+BUSINESS_HOURS = os.getenv("BUSINESS_HOURS", "Lunes a sábado de 09:00 a 19:00")
 DEFAULT_OG_IMAGE = os.getenv("DEFAULT_OG_IMAGE", "/static/img/sello-dulcecita.jpg")
 
 
