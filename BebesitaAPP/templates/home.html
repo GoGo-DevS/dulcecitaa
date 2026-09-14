@@ -16,8 +16,8 @@
         <img class="ig-hero__logo" src="{% static 'img/logo-dulcecita-rosado.png' %}?v=3" alt="{{ site_brand }} Bakery">
         <h1 class="ig-hero__claim">La felicidad <em>en cajita</em></h1>
         <p class="ig-hero__bajada">
-          Alfajores, cuchuflís, barquillos y box surtidos.
-          Todo hecho a mano, con amor.
+          Alfajores, cuchuflís, barquillos, box surtidos y corporativos.<br>
+          Todo hecho a mano, con amor <svg class="ig-hero__corazon" viewBox="0 0 24 24" role="img" aria-label="corazón"><path d="M12 21.2 10.6 20C5.4 15.4 2 12.3 2 8.5 2 5.4 4.4 3 7.5 3c1.7 0 3.4.8 4.5 2.1C13.1 3.8 14.8 3 16.5 3 19.6 3 22 5.4 22 8.5c0 3.8-3.4 6.9-8.6 11.5L12 21.2z"/></svg>
         </p>
         <div class="ig-hero__acciones">
           <a href="{% url 'productos' %}" class="dr-btn-wine">Ver todo el catálogo</a>
@@ -53,16 +53,15 @@
 
 <section class="ig-minimo">
   {% comment %}
-    Lo que hace Dulcecita, en palabras sueltas y letra delgada. Sin puntos
-    entre medio: al partirse la linea en el telefono el separador quedaba
-    solo al empezar el renglon. El minimo y Paket siguen en catalogo y carrito.
+    Minimo y despacho, en letra delgada. Los productos ya se nombran en el
+    texto de la portada. Sin "·" entre los datos: al partirse la linea en el
+    telefono el punto quedaba solo al empezar el renglon.
+    Paket es marca de un tercero: va con sus colores, sobre un chip claro.
   {% endcomment %}
-  <ul class="ig-lineas" aria-label="Lo que hacemos">
-    <li>Alfajores</li>
-    <li>Barquillos</li>
-    <li>Cuchuflís</li>
-    <li>Box surtidos</li>
-    <li>Corporativos</li>
+  <ul class="ig-lineas ig-lineas--despacho">
+    <li>Pedidos desde {{ minimo_unidades }} unidades por producto</li>
+    <li class="ig-lineas__paket">Despacho a todo Chile por <span class="ig-minimo__chip"><img src="{% static 'img/paket-logo.png' %}" alt="Paket"></span></li>
+    <li>Entrega coordinada en Santiago</li>
   </ul>
 </section>
 
