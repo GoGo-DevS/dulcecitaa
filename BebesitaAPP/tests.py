@@ -398,3 +398,57 @@ class CoberturasTests(TestCase):
         self.assertContains(response, 'data-opciones', count=1)
         self.assertContains(response, f'data-id="{self.alfajor.id}-{self.chocolate.id}"')
         self.assertNotContains(response, f'data-pid="{variante.id}"')
+
+
+class CatalogoInicialTests(TestCase):
+    """El deploy deja en produccion el catalogo nuevo sin pisar ediciones."""
+
+    def setUp(self):
+        import tempfile
+        self._media = tempfile.mkdtemp()
+        self._override = override_settings(MEDIA_ROOT=self._media)
+        self._override.enable()
+        self.viejo = Producto.objects.create(
+            nombre="Brownie chocolate", descripcion="x", precio=3000, visible=True, destacado=True,
+            imagen=SimpleUploadedFile("brownie.jpg", b"img", content_type="image/jpeg"),
+        )
+
+    def tearDown(self):
+        import shutil
+        self._override.disable()
+        shutil.rmtree(self._media, ignore_errors=True)
+
+    def _correr(self):
+        from django.core.management import call_command
+        call_command("catalogo_inicial", stdout=__import__("io").StringIO())
+
+    def test_carga_los_tres_con_coberturas_y_oculta_el_viejo(self):
+        self._correr()
+        visibles = Producto.objects.filter(visible=True)
+        self.assertEqual(visibles.count(), 3)
+        for p in visibles:
+            self.assertEqual([o.nombre for o in p.opciones.all()], ["Chocolate", "Chocolate blanco"])
+            self.assertTrue(p.imagen.storage.exists(p.imagen.name))
+        self.viejo.refresh_from_db()
+        self.assertFalse(self.viejo.visible)
+
+    def test_segunda_corrida_no_pisa_lo_editado_en_el_admin(self):
+        self._correr()
+        alfajor = Producto.objects.get(nombre="Alfajores")
+        alfajor.precio = 2200
+        alfajor.save()
+        self.viejo.visible = True
+        self.viejo.save()
+        self._correr()
+        self.assertEqual(Producto.objects.get(nombre="Alfajores").precio, 2200)
+        self.assertEqual(Producto.objects.filter(nombre="Alfajores").count(), 1)
+        self.viejo.refresh_from_db()
+        self.assertTrue(self.viejo.visible)
+
+    def test_repone_la_foto_si_el_disco_se_borro(self):
+        self._correr()
+        alfajor = Producto.objects.get(nombre="Alfajores")
+        alfajor.imagen.storage.delete(alfajor.imagen.name)
+        self._correr()
+        alfajor.refresh_from_db()
+        self.assertTrue(alfajor.imagen.storage.exists(alfajor.imagen.name))
