@@ -12,20 +12,26 @@
     descubre la regla despues de armar el pedido se va.
   {% endcomment %}
   <p class="sutil-minimo">Pedido mínimo de {{ minimo_unidades }} unidades por producto. Despacho a todo Chile por Paket</p>
-  <p>Busca por nombre, filtra por categoría y elige tu favorito para agregar al carrito en segundos.</p>
+  <p>Elige tu favorito y la cobertura, y agrégalo al carrito en segundos.</p>
 </section>
 
 <section class="container box-invita">
   <div class="box-invita__caja">
     <div class="box-invita__copia">
       <p class="box-invita__titulo">¿Quieres mezclar? Arma tu box</p>
-      <p class="box-invita__texto">Alfajores negros y blancos, barquillos, cuchuflís con o sin baño, desde 3 por producto. Caja incluida por $1.500.</p>
+      <p class="box-invita__texto">Alfajores negros y blancos, barquillos, cuchuflís con o sin baño, desde {{ minimo_box }} por producto. La caja cuesta ${{ precio_caja }}.</p>
     </div>
     <a href="{% url 'arma_tu_box' %}" class="btn-main">Arma tu box</a>
   </div>
 </section>
 
 <section class="container pb-5 catalog-experience">
+  {% comment %}
+    Con cuatro productos el buscador y los filtros sobran: ocupaban mas que
+    una fila de tarjetas. Vuelven solos si el catalogo crece, o si alguien
+    llega con un filtro en la direccion.
+  {% endcomment %}
+  {% if productos|length > 8 or filtro_q or filtro_categoria or filtro_destacados %}
   <form method="get" class="catalog-filter-bar surface-card mb-4">
     <div class="catalog-filter-main">
       <label for="filtro-q" class="form-label">Buscar</label>
@@ -51,8 +57,9 @@
       <a href="{% url 'productos' %}" class="btn-ghost">Limpiar</a>
     </div>
   </form>
+  {% endif %}
 
-  <div class="catalog-grid" data-catalog-grid>
+  <div class="catalog-grid catalog-grid--n{{ productos|length }}" data-catalog-grid>
     {% for p in productos %}
     {% comment %}
       La tarjeta ENTERA abre el detalle, asi que no hace falta un boton "Ver

@@ -254,6 +254,8 @@ def productos(request):
             "filtro_q": query,
             "filtro_categoria": categoria_slug,
             "filtro_destacados": solo_destacados,
+            "minimo_box": arma_box.minimo_box(),
+            "precio_caja": arma_box.precio_caja(),
         },
     )
 
