@@ -23,6 +23,12 @@ urlpatterns = [
     path('carrito/eliminar/<str:linea>/ajax/', views.eliminar_carrito_ajax, name='eliminar_carrito_ajax'),
     path('carrito/decrementar/<str:linea>/ajax/', views.decrementar_carrito_ajax, name='decrementar_carrito_ajax'),
 
+    # Arma tu box
+    path('arma-tu-box/', views.arma_tu_box, name='arma_tu_box'),
+    path('carrito/box/<int:indice>/sumar/<str:linea>/', views.box_sumar_ajax, name='box_sumar_ajax'),
+    path('carrito/box/<int:indice>/restar/<str:linea>/', views.box_restar_ajax, name='box_restar_ajax'),
+    path('carrito/box/<int:indice>/quitar/', views.box_quitar, name='box_quitar'),
+
     path('producto/<int:pk>/', views.producto_detalle, name='producto_detalle'),
 
     # Checkout

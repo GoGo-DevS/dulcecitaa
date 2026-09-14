@@ -119,6 +119,20 @@
     if (scope) aplicarSeleccion(scope);
   });
 
+  function actualizarBox(row, box, pid, data) {
+    // Si la linea salio (bajo el minimo) o la caja quedo vacia, se recarga:
+    // cambian los numeros de las cajas y es mas simple que rearmar el bloque.
+    if (data.recargar) { window.location.reload(); return; }
+    setCartCount(data.cart_count || 0);
+    const qtyEl = row.querySelector('.qty');
+    if (qtyEl) qtyEl.textContent = data.qty;
+    const sub = document.querySelector(`.line-subtotal[data-id="${pid}"][data-box="${box}"]`);
+    if (sub) sub.textContent = fmt.format(data.item_subtotal || 0);
+    const totalBox = document.querySelector(`[data-box-total="${box}"]`);
+    if (totalBox) totalBox.textContent = fmt.format(data.box_total || 0);
+    setCartTotal(data.total);
+  }
+
   async function initQuantities() {
     try {
       const resp = await fetch('/carrito/json/');
@@ -201,12 +215,18 @@
 
       try {
         setButtonBusy(plus, true);
-        const resp = await fetch(`/carrito/agregar/${pid}/ajax/`, {
+        // Una linea de box va a su propia ruta: su minimo es otro y suma a su caja.
+        const box = row.getAttribute('data-box');
+        const url = box !== null ? `/carrito/box/${box}/sumar/${pid}/` : `/carrito/agregar/${pid}/ajax/`;
+        const resp = await fetch(url, {
           method: 'POST',
           headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
         });
         const data = await resp.json();
-        if (data && data.ok) {
+        if (data && data.ok && box !== null) {
+          actualizarBox(row, box, pid, data);
+          flashButton(plus);
+        } else if (data && data.ok) {
           cartCache[pid] = data.qty || 0;
           setCartCount(data.cart_count || 0);
           if (qtyEl) qtyEl.textContent = data.qty ?? (parseInt(qtyEl.textContent || '0', 10) + 1);
@@ -234,12 +254,17 @@
 
       try {
         setButtonBusy(minus, true);
-        const resp = await fetch(`/carrito/decrementar/${pid}/ajax/`, {
+        const box = row.getAttribute('data-box');
+        const url = box !== null ? `/carrito/box/${box}/restar/${pid}/` : `/carrito/decrementar/${pid}/ajax/`;
+        const resp = await fetch(url, {
           method: 'POST',
           headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
         });
         const data = await resp.json();
-        if (data && data.ok) {
+        if (data && data.ok && box !== null) {
+          actualizarBox(row, box, pid, data);
+          flashButton(minus);
+        } else if (data && data.ok) {
           cartCache[pid] = data.qty || 0;
           setCartCount(data.cart_count || 0);
           if (qtyEl) qtyEl.textContent = data.qty || 0;

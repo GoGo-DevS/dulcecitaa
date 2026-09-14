@@ -1,6 +1,8 @@
 def cart_count(request):
-    cart = request.session.get("cart", {})
-    return {"cart_count": sum(cart.values())}
+    from .box import get_boxes, unidades
+    from .views import _get_cart
+
+    return {"cart_count": sum(_get_cart(request).values()) + unidades(get_boxes(request))}
 
 
 def site_config(request):

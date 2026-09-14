@@ -15,7 +15,11 @@
     <p class="sutil-minimo">Pedido mínimo de {{ minimo_unidades }} unidades por producto. Despacho a todo Chile por Paket</p>
   </div>
 
-  {% if productos %}
+  {% if messages %}
+    {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+  {% endif %}
+
+  {% if productos or boxes %}
   <div class="cart-layout">
     <div class="cart-list">
       {% for item in productos %}
@@ -47,6 +51,51 @@
         </div>
       </article>
       {% endfor %}
+
+      {% comment %}
+        Cada box es un bloque: sus lineas se ajustan de a una unidad, con su
+        propio minimo por linea, y la caja se cobra una vez por box.
+      {% endcomment %}
+      {% for caja in boxes %}
+      <section class="cart-box" aria-labelledby="box-{{ caja.numero }}">
+        <header class="cart-box__cabeza">
+          <h3 id="box-{{ caja.numero }}">Arma tu box #{{ caja.numero }}</h3>
+          <form method="post" action="{% url 'box_quitar' caja.indice %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-linkline">Quitar box</button>
+          </form>
+        </header>
+        {% for item in caja.items %}
+        <article class="cart-item cart-item--box" data-id="{{ item.linea }}" data-box="{{ caja.indice }}">
+          <div class="cart-item-main">
+            <div class="cart-item-media">
+              {% if item.producto.imagen %}<img src="{{ item.producto.imagen.url }}" alt="{{ item.producto.nombre }}">{% endif %}
+            </div>
+            <div class="cart-item-copy">
+              <h3>{{ item.producto.nombre }}</h3>
+              <p class="cart-item-opciones">
+                {% for op in item.opciones %}<span><i class="muestra__color muestra__color--chica" style="--muestra: {{ op.color }}"></i>{{ op.nombre }}</span>{% empty %}<span>Sin cobertura</span>{% endfor %}
+              </p>
+            </div>
+          </div>
+          <div class="cart-item-controls">
+            <div class="qty-control" data-id="{{ item.linea }}" data-box="{{ caja.indice }}">
+              <button class="btn-qty btn-minus" title="Restar uno" aria-label="Restar">-</button>
+              <span class="qty">{{ item.cantidad }}</span>
+              <button class="btn-qty btn-plus" title="Sumar uno" aria-label="Sumar">+</button>
+            </div>
+            <span class="line-subtotal" data-id="{{ item.linea }}" data-box="{{ caja.indice }}">${{ item.subtotal }}</span>
+          </div>
+        </article>
+        {% endfor %}
+        <footer class="cart-box__pie">
+          <span>Caja</span><strong>${{ caja.caja }}</strong>
+          <span>Total del box</span><strong class="cart-box__total" data-box-total="{{ caja.indice }}">${{ caja.total }}</strong>
+        </footer>
+      </section>
+      {% endfor %}
+
+      <a href="{% url 'arma_tu_box' %}" class="btn-ghost cart-box__otro">{% if boxes %}Armar otro box{% else %}Arma tu box{% endif %}</a>
     </div>
 
     <aside class="cart-summary">

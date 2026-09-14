@@ -2855,3 +2855,77 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
   .ig-minimo .ig-lineas li { font-size: 1.6rem; }
   .ig-lineas { gap: .35rem 3rem; }
 }
+
+
+/* ============================================================
+   Arma tu box
+   ============================================================ */
+.box-layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1.5rem; align-items: start; }
+.box-lista { display: grid; gap: 1rem; }
+.box-producto {
+  display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: 1.1rem;
+  background: #fff; border: 1px solid rgba(42, 64, 87, .1); border-radius: var(--radius-md);
+  padding: 1rem;
+}
+.box-producto__foto { width: 120px; height: 120px; object-fit: cover; border-radius: var(--radius-sm); }
+.box-producto__nombre { font-size: 1.15rem; margin: 0 0 .15rem; }
+.box-producto__pack { margin: 0 0 .4rem; font-size: .85rem; font-weight: 600; color: var(--azul); opacity: .8; }
+.box-filas { list-style: none; margin: .4rem 0 0; padding: 0; display: grid; gap: .5rem; }
+.box-fila {
+  display: flex; align-items: center; justify-content: space-between; gap: .8rem;
+  padding: .45rem .6rem; border-radius: var(--radius-sm); transition: background .18s ease;
+}
+.box-fila.is-activa { background: var(--rosa-lavado, rgba(245, 167, 214, .16)); }
+.box-fila__nombre { display: inline-flex; align-items: center; flex-wrap: wrap; gap: .4rem; font-weight: 600; color: var(--azul); }
+.box-fila__nombre small { font-weight: 500; opacity: .75; }
+.box-stepper { display: inline-flex; align-items: center; gap: .2rem; flex-shrink: 0; }
+.box-stepper__num {
+  width: 3rem; text-align: center; border: 0; background: transparent;
+  font-weight: 800; color: var(--azul); font-size: 1rem; -moz-appearance: textfield;
+}
+.box-stepper__num::-webkit-outer-spin-button,
+.box-stepper__num::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.box-resumen { position: sticky; top: calc(var(--alto-cabecera, 110px) + 1rem); }
+.box-resumen__lineas { list-style: none; margin: .4rem 0 .6rem; padding: 0; display: grid; gap: .35rem; }
+.box-resumen__lineas li { display: flex; justify-content: space-between; color: var(--azul); }
+.box-resumen [data-box-enviar]:disabled { opacity: .45; cursor: not-allowed; }
+@media (max-width: 860px) {
+  .box-layout { grid-template-columns: 1fr; }
+  .box-resumen { position: sticky; bottom: .5rem; top: auto; z-index: 5; box-shadow: 0 -6px 24px rgba(42, 64, 87, .12); }
+  .box-producto { grid-template-columns: 72px minmax(0, 1fr); padding: .8rem; gap: .8rem; }
+  .box-producto__foto { width: 72px; height: 72px; }
+  .box-fila { padding: .4rem .2rem; }
+}
+
+/* En el carrito */
+.cart-box {
+  border: 1.5px solid var(--rosa); border-radius: var(--radius-md);
+  padding: .8rem; display: grid; gap: .6rem; background: #fff;
+}
+.cart-box__cabeza { display: flex; justify-content: space-between; align-items: center; gap: 1rem; }
+.cart-box__cabeza h3 { margin: 0; font-size: 1.1rem; color: var(--azul); }
+.cart-box__cabeza form { margin: 0; }
+.cart-box__pie {
+  display: grid; grid-template-columns: 1fr auto; gap: .2rem 1rem;
+  padding: .4rem .4rem 0; border-top: 1px solid rgba(42, 64, 87, .1); color: var(--azul);
+}
+.cart-box__total { font-size: 1.1rem; }
+.cart-box__otro { justify-self: start; }
+.cart-list { display: grid; gap: .8rem; }
+
+/* Invitación a "Arma tu box" en el catálogo */
+.box-invita { margin-bottom: 1.2rem; }
+.box-invita__caja {
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem 2rem; flex-wrap: wrap;
+  background: var(--azul); color: #fff; border-radius: var(--radius-md); padding: 1.2rem 1.5rem;
+}
+.box-invita__titulo { margin: 0 0 .2rem; font-size: 1.25rem; font-weight: 800; color: #fff !important; }
+.box-invita__texto { margin: 0; color: #fff !important; opacity: .9; max-width: 44rem; }
+.box-invita .btn-main { background: var(--rosa) !important; color: var(--azul) !important; border-color: var(--rosa) !important; }
+@media (max-width: 560px) {
+  /* "Sin cobertura" se partía en dos líneas: el contador era muy ancho */
+  .box-stepper { padding: .15rem !important; }
+  .box-stepper .btn-qty { width: 2.2rem; height: 2.2rem; min-width: 0; padding: 0; }
+  .box-stepper__num { width: 2.1rem; }
+  .box-fila__nombre { font-size: .92rem; }
+}

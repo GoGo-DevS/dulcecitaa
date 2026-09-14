@@ -224,6 +224,8 @@ WHATSAPP_URL = os.getenv("WHATSAPP_URL") or "https://wa.me/56961192192"
 INSTAGRAM_URL = os.getenv("INSTAGRAM_URL") or "https://instagram.com/dulcecitaa.cl"
 SHIPPING_COST = int(os.getenv("SHIPPING_COST", "2500"))
 BOX_PRICE = int(os.getenv("BOX_PRICE", "1500"))
+# Minimo por linea dentro de "Arma tu box" (en el pedido normal es MINIMO_UNIDADES)
+MINIMO_BOX = max(1, int(os.getenv("MINIMO_BOX", "3")))
 PICKUP_POINT_LABEL = os.getenv("PICKUP_POINT_LABEL", "Retiro coordinado por WhatsApp")
 BUSINESS_HOURS = os.getenv("BUSINESS_HOURS", "Lunes a sabado de 09:00 a 19:00")
 DEFAULT_OG_IMAGE = os.getenv("DEFAULT_OG_IMAGE", "/static/img/sello-dulcecita.jpg")

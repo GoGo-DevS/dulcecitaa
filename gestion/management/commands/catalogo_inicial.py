@@ -30,7 +30,7 @@ CATALOGO = [
             "extremos. Una combinación equilibrada de texturas y sabores, perfecta para "
             "acompañar un café o disfrutar en cualquier momento."
         ),
-        "precio": 1500, "orden": 0, "unidades_por_pack": 1, "foto": "barquillos-puntas.jpg",
+        "precio": 1590, "orden": 0, "unidades_por_pack": 1, "foto": "barquillos-puntas.jpg",
     },
     {
         "nombre": "Alfajores",
@@ -46,7 +46,17 @@ CATALOGO = [
             "Cuchuflís crujientes rellenos de manjar y bañados enteros en chocolate. "
             "Se venden en bolsita de 4 unidades."
         ),
-        "precio": 1500, "orden": 3, "unidades_por_pack": 4, "foto": "cuchuflis-bolsita.jpg",
+        "precio": 1590, "orden": 3, "unidades_por_pack": 4, "foto": "cuchuflis-bolsita.jpg",
+    },
+    {
+        # Sin baño y sin cobertura a elegir: por eso es mas barato y va aparte.
+        "nombre": "Cuchuflís rellenos",
+        "descripcion": (
+            "Cuchuflís crujientes rellenos de manjar, sin baño de chocolate. "
+            "Se venden en bolsita de 4 unidades."
+        ),
+        "precio": 1190, "orden": 4, "unidades_por_pack": 4, "foto": "cuchuflis-rellenos.jpg",
+        "sin_cobertura": True,
     },
 ]
 
@@ -86,7 +96,8 @@ class Command(BaseCommand):
             )
             self._poner_foto(producto, item["foto"])
             producto.save()
-            producto.opciones.add(*coberturas)
+            if not item.get("sin_cobertura"):
+                producto.opciones.add(*coberturas)
 
         self.stdout.write(self.style.SUCCESS(
             f"Catalogo nuevo cargado: {len(CATALOGO)} productos, {ocultos} viejos ocultos."))

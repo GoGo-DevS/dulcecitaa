@@ -36,6 +36,12 @@
         <span>Despacho</span>
         <strong>{% if shipping_cost %}${{ shipping_cost }}{% else %}Sin costo{% endif %}</strong>
       </div>
+      {% if boxes %}
+      <div class="checkout-total">
+        <span>Caja{{ boxes|length|pluralize }} de box ({{ boxes|length }})</span>
+        <strong>${{ box_cost }}</strong>
+      </div>
+      {% endif %}
       <div class="checkout-total">
         <span>Total a pagar</span>
         <strong>${{ total }}</strong>

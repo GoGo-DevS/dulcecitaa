@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
+from . import box as arma_box
 from .email_utils import send_checkout_emails, send_contact_email, send_corporate_email
 from .forms import CheckoutForm, ContactoForm, CorporativoForm
 from .models import (
@@ -316,15 +317,29 @@ def agregar_al_carrito(request, linea):
 def mostrar_carrito(request):
     cart = _get_cart(request)
     productos, total = _build_cart_items(cart)
-    return render(request, "carrito.html", {"productos": productos, "total": total})
+    boxes = arma_box.build_boxes(arma_box.get_boxes(request))
+    total += sum(caja["total"] for caja in boxes)
+    return render(request, "carrito.html", {
+        "productos": productos, "boxes": boxes, "total": total,
+        "minimo_box": arma_box.minimo_box(),
+    })
 
 
 def checkout(request):
     cart = _get_cart(request)
-    if not cart:
+    boxes = arma_box.build_boxes(arma_box.get_boxes(request))
+    if not cart and not boxes:
         return redirect("carrito")
 
     productos, subtotal = _build_cart_items(cart)
+    # Las lineas de cada box entran al pedido marcadas con su numero de caja:
+    # la duena tiene que saber que va junto en la misma caja.
+    for caja in boxes:
+        for item in caja["items"]:
+            prefijo = f"Box #{caja['numero']}"
+            productos.append({**item, "detalle": f"{prefijo} · {item['detalle']}" if item["detalle"] else prefijo})
+        subtotal += caja["subtotal"]
+    box_cost = arma_box.precio_caja() * len(boxes)
     if not productos:
         _save_cart(request, {})
         messages.error(request, "Algunos productos ya no están disponibles. Tu carrito fue actualizado.")
@@ -335,14 +350,15 @@ def checkout(request):
         current_delivery_type = request.POST.get("tipo_entrega") or CheckoutForm.TIPO_ENTREGA_RETIRO
     shipping_cost = _shipping_cost_for_delivery(current_delivery_type)
     # El pedido normal no paga caja: va en bolsa (lo pidio la duena el 14-09).
-    total = subtotal + shipping_cost
+    # Solo cada "Arma tu box" suma su caja.
+    total = subtotal + shipping_cost + box_cost
 
     if request.method == "POST":
         form = CheckoutForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             shipping_cost = _shipping_cost_for_delivery(data["tipo_entrega"])
-            total = subtotal + shipping_cost
+            total = subtotal + shipping_cost + box_cost
             pedido = Pedido.objects.create(
                 nombre_cliente=data["nombre"],
                 email_cliente=data["email"],
@@ -351,8 +367,8 @@ def checkout(request):
                 comuna_sector=data["comuna_sector"],
                 direccion=data["direccion"],
                 costo_despacho=shipping_cost,
-                cantidad_cajas=0,
-                costo_caja=0,
+                cantidad_cajas=len(boxes),
+                costo_caja=box_cost,
                 comentario_ocasion=data["comentario_ocasion"],
                 total=total,
             )
@@ -371,6 +387,7 @@ def checkout(request):
                 messages.warning(request, "Tu pedido fue guardado, pero hubo un problema al enviar correos.")
 
             _save_cart(request, {})
+            arma_box.save_boxes(request, [])
             return redirect("checkout_exito", pedido_id=pedido.id)
         messages.error(request, "Revisa los campos del formulario para continuar.")
     else:
@@ -383,6 +400,8 @@ def checkout(request):
             "productos": productos,
             "subtotal": subtotal,
             "shipping_cost": shipping_cost,
+            "boxes": boxes,
+            "box_cost": box_cost,
             "total": total,
             "pickup_point_label": getattr(settings, "PICKUP_POINT_LABEL", ""),
             "form": form,
@@ -433,7 +452,7 @@ def agregar_carrito_ajax(request, linea):
         {
             "ok": True,
             "linea": pid,
-            "cart_count": sum(cart.values()),
+            "cart_count": sum(cart.values()) + arma_box.unidades(arma_box.get_boxes(request)),
             "qty": qty,
             "item_subtotal": float(item_subtotal),
             "total": float(total),
@@ -456,7 +475,7 @@ def decrementar_carrito_ajax(request, linea):
     return JsonResponse(
         {
             "ok": True,
-            "cart_count": sum(cart.values()),
+            "cart_count": sum(cart.values()) + arma_box.unidades(arma_box.get_boxes(request)),
             "qty": qty,
             "item_subtotal": float(item_subtotal),
             "total": float(total),
@@ -466,7 +485,8 @@ def decrementar_carrito_ajax(request, linea):
 
 def carrito_json(request):
     cart = _get_cart(request)
-    return JsonResponse({"ok": True, "cart": cart, "cart_count": sum(cart.values())})
+    count = sum(cart.values()) + arma_box.unidades(arma_box.get_boxes(request))
+    return JsonResponse({"ok": True, "cart": cart, "cart_count": count})
 
 
 @require_POST
@@ -479,7 +499,7 @@ def eliminar_carrito_ajax(request, linea):
     return JsonResponse(
         {
             "ok": True,
-            "cart_count": sum(cart.values()),
+            "cart_count": sum(cart.values()) + arma_box.unidades(arma_box.get_boxes(request)),
             "qty": 0,
             "item_subtotal": 0,
             "total": float(total),
@@ -505,3 +525,96 @@ def delivery(request):
     misma pagina: dos opciones distintas que llevaban al mismo lugar.
     """
     return render(request, 'delivery.html')
+
+
+@ensure_csrf_cookie
+def arma_tu_box(request):
+    """Pantalla para armar una caja: cantidades por producto y cobertura."""
+    minimo = arma_box.minimo_box()
+    filas = arma_box.filas_para_armar()
+
+    if request.method == "POST":
+        caja, errores = {}, []
+        validas = {fila["clave"]: fila for fila in filas}
+        for clave, fila in validas.items():
+            try:
+                qty = int(request.POST.get(f"q-{clave}") or 0)
+            except ValueError:
+                qty = 0
+            if qty <= 0:
+                continue
+            if qty < minimo:
+                errores.append(f"{fila['producto'].nombre}: el mínimo es {minimo}.")
+                continue
+            caja[clave] = qty
+        if errores:
+            for error in errores:
+                messages.error(request, error)
+        elif not caja:
+            messages.error(request, "Elige al menos un producto para tu box.")
+        else:
+            boxes = arma_box.get_boxes(request)
+            boxes.append(caja)
+            arma_box.save_boxes(request, boxes)
+            messages.success(request, f"Tu box #{len(boxes)} quedó en el carrito.")
+            return redirect("carrito")
+
+    return render(request, "arma_tu_box.html", {
+        "filas": filas,
+        "minimo_box": minimo,
+        "precio_caja": arma_box.precio_caja(),
+    })
+
+
+def _respuesta_box(request, indice, linea):
+    boxes = arma_box.get_boxes(request)
+    cart = _get_cart(request)
+    construidas = arma_box.build_boxes(boxes)
+    caja = next((c for c in construidas if c["indice"] == indice), None)
+    normales, total = _build_cart_items(cart)
+    total += sum(c["total"] for c in construidas)
+    qty = boxes[indice].get(linea, 0) if indice < len(boxes) else 0
+    return JsonResponse({
+        "ok": True,
+        "qty": qty,
+        "item_subtotal": float(_subtotal_de(caja["items"], linea)) if caja else 0,
+        "box_total": float(caja["total"]) if caja else 0,
+        "recargar": not caja or not qty,
+        "total": float(total),
+        "cart_count": sum(cart.values()) + arma_box.unidades(boxes),
+    })
+
+
+@require_POST
+def box_sumar_ajax(request, indice, linea):
+    boxes = arma_box.get_boxes(request)
+    clave = _clave_o_vacia(linea)
+    if indice >= len(boxes) or clave not in boxes[indice]:
+        return JsonResponse({"ok": False, "error": "Línea no encontrada"}, status=404)
+    boxes[indice][clave] += 1
+    arma_box.save_boxes(request, boxes)
+    return _respuesta_box(request, indice, clave)
+
+
+@require_POST
+def box_restar_ajax(request, indice, linea):
+    """Bajar del minimo del box saca la linea; sin lineas, se va la caja."""
+    boxes = arma_box.get_boxes(request)
+    clave = _clave_o_vacia(linea)
+    if indice >= len(boxes) or clave not in boxes[indice]:
+        return JsonResponse({"ok": False, "error": "Línea no encontrada"}, status=404)
+    if boxes[indice][clave] - 1 >= arma_box.minimo_box():
+        boxes[indice][clave] -= 1
+    else:
+        del boxes[indice][clave]
+    arma_box.save_boxes(request, boxes)
+    return _respuesta_box(request, indice, clave)
+
+
+@require_POST
+def box_quitar(request, indice):
+    boxes = arma_box.get_boxes(request)
+    if indice < len(boxes):
+        boxes.pop(indice)
+        arma_box.save_boxes(request, boxes)
+    return redirect("carrito")

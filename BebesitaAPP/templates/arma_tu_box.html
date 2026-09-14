@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Arma tu box | {{ site_brand }}{% endblock %}
+{% block meta_description %}Arma tu box de {{ site_brand }}: elige alfajores, barquillos y cuchuflís con la cobertura que quieras, desde {{ minimo_box }} por producto.{% endblock %}
+
+{% block content %}
+<section class="container py-5 box-armar">
+  <div class="section-head mb-4">
+    <p class="eyebrow">Arma tu box</p>
+    <h1>Tu caja, a tu gusto</h1>
+    <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. La caja cuesta ${{ precio_caja }}.</p>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}<div class="alert alert-{{ message.tags }}">{{ message }}</div>{% endfor %}
+  {% endif %}
+
+  {% comment %}
+    Es un formulario normal (POST) y no AJAX: la caja se agrega entera de una
+    vez al carrito. Los botones solo mueven el numero; el servidor vuelve a
+    validar el minimo y que cada cobertura exista para ese producto.
+  {% endcomment %}
+  <form method="post" class="box-layout" data-box-form data-minimo="{{ minimo_box }}" data-caja="{{ precio_caja }}">
+    {% csrf_token %}
+    <div class="box-lista">
+      {% regroup filas by producto as por_producto %}
+      {% for grupo in por_producto %}
+      <article class="box-producto">
+        <img src="{{ grupo.grouper.imagen.url }}" alt="{{ grupo.grouper.nombre }}" class="box-producto__foto" loading="lazy">
+        <div class="box-producto__cuerpo">
+          <h2 class="box-producto__nombre">{{ grupo.grouper.nombre }}</h2>
+          {% if grupo.grouper.unidades_por_pack > 1 %}<p class="box-producto__pack">Bolsita de {{ grupo.grouper.unidades_por_pack }} unidades</p>{% endif %}
+          <ul class="box-filas">
+            {% for fila in grupo.list %}
+            <li class="box-fila" data-box-fila data-precio="{{ fila.precio }}">
+              <span class="box-fila__nombre">
+                {% for op in fila.opciones %}<i class="muestra__color muestra__color--chica" style="--muestra: {{ op.color }}"></i>{{ op.nombre }}{% if not forloop.last %} · {% endif %}{% empty %}Sin cobertura{% endfor %}
+                <small>${{ fila.precio }} c/u</small>
+              </span>
+              <span class="qty-control box-stepper">
+                <button type="button" class="btn-qty" data-box-menos aria-label="Quitar uno de {{ fila.producto.nombre }}">-</button>
+                <input type="number" name="q-{{ fila.clave }}" value="0" min="0" inputmode="numeric"
+                       class="qty box-stepper__num" aria-label="Cantidad de {{ fila.producto.nombre }}{% for op in fila.opciones %} {{ op.nombre }}{% endfor %}">
+                <button type="button" class="btn-qty" data-box-mas aria-label="Sumar uno de {{ fila.producto.nombre }}">+</button>
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+
+    <aside class="cart-summary box-resumen">
+      <p class="cart-summary-label">Tu box</p>
+      <ul class="box-resumen__lineas">
+        <li><span>Productos (<b data-box-unidades>0</b> u.)</span><strong data-box-subtotal>$0</strong></li>
+        <li><span>Caja</span><strong>${{ precio_caja }}</strong></li>
+      </ul>
+      <p class="cart-summary-total" data-box-total>${{ precio_caja }}</p>
+      <button type="submit" class="btn-main w-100" data-box-enviar disabled>Agregar box al carrito</button>
+      <p class="cart-summary-note">Al primer + se suman {{ minimo_box }}, que es el mínimo por producto. Con − bajas de a uno.</p>
+    </aside>
+  </form>
+</section>
+
+<script>
+  (function () {
+    var form = document.querySelector('[data-box-form]');
+    if (!form) return;
+    var MIN = parseInt(form.dataset.minimo, 10) || 1;
+    var CAJA = parseInt(form.dataset.caja, 10) || 0;
+    var fmt = function (n) { return '$' + n; };
+
+    function recalcular() {
+      var unidades = 0, subtotal = 0;
+      form.querySelectorAll('[data-box-fila]').forEach(function (fila) {
+        var q = parseInt(fila.querySelector('input').value, 10) || 0;
+        fila.classList.toggle('is-activa', q > 0);
+        unidades += q;
+        subtotal += q * parseInt(fila.dataset.precio, 10);
+      });
+      form.querySelector('[data-box-unidades]').textContent = unidades;
+      form.querySelector('[data-box-subtotal]').textContent = fmt(subtotal);
+      form.querySelector('[data-box-total]').textContent = fmt(subtotal + CAJA);
+      form.querySelector('[data-box-enviar]').disabled = unidades === 0;
+    }
+
+    // Mismo trato que el carrito: de 0 se salta al minimo y bajo el minimo
+    // la linea vuelve a 0. Asi no se puede quedar en 1 o 2 sin darse cuenta.
+    form.addEventListener('click', function (e) {
+      var mas = e.target.closest('[data-box-mas]');
+      var menos = e.target.closest('[data-box-menos]');
+      if (!mas && !menos) return;
+      var input = e.target.closest('[data-box-fila]').querySelector('input');
+      var q = parseInt(input.value, 10) || 0;
+      if (mas) q = q < MIN ? MIN : q + 1;
+      else q = q - 1 < MIN ? 0 : q - 1;
+      input.value = q;
+      recalcular();
+    });
+    form.addEventListener('change', function (e) {
+      if (!e.target.matches('input[type=number]')) return;
+      var q = parseInt(e.target.value, 10) || 0;
+      e.target.value = q <= 0 ? 0 : Math.max(MIN, q);
+      recalcular();
+    });
+    recalcular();
+  })();
+</script>
+{% endblock %}

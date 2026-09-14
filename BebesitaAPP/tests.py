@@ -425,10 +425,12 @@ class CatalogoInicialTests(TestCase):
     def test_carga_los_tres_con_coberturas_y_oculta_el_viejo(self):
         self._correr()
         visibles = Producto.objects.filter(visible=True)
-        self.assertEqual(visibles.count(), 3)
+        self.assertEqual(visibles.count(), 4)
         for p in visibles:
-            self.assertEqual([o.nombre for o in p.opciones.all()], ["Chocolate", "Chocolate blanco"])
+            esperado = [] if p.nombre == "Cuchuflís rellenos" else ["Chocolate", "Chocolate blanco"]
+            self.assertEqual([o.nombre for o in p.opciones.all()], esperado)
             self.assertTrue(p.imagen.storage.exists(p.imagen.name))
+        self.assertEqual(Producto.objects.get(nombre="Cuchuflís rellenos").precio, 1190)
         self.viejo.refresh_from_db()
         self.assertFalse(self.viejo.visible)
 
@@ -475,3 +477,82 @@ class PedidoSinCajaTests(TestCase):
         pedido = Pedido.objects.get()
         self.assertEqual((pedido.cantidad_cajas, pedido.costo_caja, pedido.total), (0, 0, 15000))
         self.assertNotIn("Cajas (", mail.outbox[0].body)
+
+
+@override_settings(MINIMO_UNIDADES=10, MINIMO_BOX=3, BOX_PRICE=1500, SHIPPING_COST=0,
+                   EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+class ArmaTuBoxTests(TestCase):
+    """Box: minimo 3 por linea, caja $1.500 por box, lineas ajustables de a uno."""
+
+    def setUp(self):
+        self.chocolate = Opcion.objects.create(nombre="Chocolate", color="#5b3a29", orden=1)
+        self.blanco = Opcion.objects.create(nombre="Chocolate blanco", color="#f3ead9", orden=2)
+        self.alfajor = Producto.objects.create(
+            nombre="Alfajores", descripcion="x", precio=2000,
+            imagen=SimpleUploadedFile("a.jpg", b"img", content_type="image/jpeg"))
+        self.alfajor.opciones.add(self.chocolate, self.blanco)
+        self.relleno = Producto.objects.create(
+            nombre="Cuchuflís rellenos", descripcion="x", precio=1190, unidades_por_pack=4,
+            imagen=SimpleUploadedFile("c.jpg", b"img", content_type="image/jpeg"))
+        self.negro = f"{self.alfajor.id}-{self.chocolate.id}"
+        self.claro = f"{self.alfajor.id}-{self.blanco.id}"
+
+    def _armar(self, **cantidades):
+        return self.client.post(reverse("arma_tu_box"), data={f"q-{k}": v for k, v in cantidades.items()})
+
+    def _armar_basico(self):
+        return self.client.post(reverse("arma_tu_box"), data={
+            f"q-{self.negro}": 3, f"q-{self.claro}": 4, f"q-{self.relleno.id}": 3})
+
+    def test_pantalla_muestra_una_fila_por_cobertura_y_sin_cobertura(self):
+        pagina = self.client.get(reverse("arma_tu_box"))
+        self.assertContains(pagina, f'name="q-{self.negro}"')
+        self.assertContains(pagina, f'name="q-{self.claro}"')
+        self.assertContains(pagina, f'name="q-{self.relleno.id}"')
+        self.assertContains(pagina, "Sin cobertura")
+
+    def test_armar_box_lo_deja_en_el_carrito(self):
+        response = self._armar_basico()
+        self.assertRedirects(response, reverse("carrito"))
+        self.assertEqual(self.client.session["boxes"], [{self.negro: 3, self.claro: 4, str(self.relleno.id): 3}])
+        carrito = self.client.get(reverse("carrito"))
+        self.assertContains(carrito, "Arma tu box #1")
+        # 3*2000 + 4*2000 + 3*1190 + caja 1500
+        self.assertContains(carrito, "$19070")
+
+    def test_bajo_el_minimo_del_box_no_se_agrega(self):
+        self.client.post(reverse("arma_tu_box"), data={f"q-{self.negro}": 2})
+        self.assertEqual(self.client.session.get("boxes", []), [])
+
+    def test_box_vacio_no_se_agrega(self):
+        self.client.post(reverse("arma_tu_box"), data={})
+        self.assertEqual(self.client.session.get("boxes", []), [])
+
+    def test_sumar_y_restar_por_unidad_en_el_carrito(self):
+        self._armar_basico()
+        r = self.client.post(reverse("box_sumar_ajax", args=[0, self.negro])).json()
+        self.assertEqual((r["qty"], r["box_total"]), (4, 21070.0))
+        r = self.client.post(reverse("box_restar_ajax", args=[0, self.claro])).json()
+        self.assertEqual(r["qty"], 3)
+        r = self.client.post(reverse("box_restar_ajax", args=[0, self.claro])).json()
+        self.assertEqual(r["qty"], 0)  # bajo 3 sale la linea
+        self.assertTrue(r["recargar"])
+        self.assertNotIn(self.claro, self.client.session["boxes"][0])
+
+    def test_linea_ajena_al_box_responde_404(self):
+        self._armar_basico()
+        self.assertEqual(self.client.post(reverse("box_sumar_ajax", args=[5, self.negro])).status_code, 404)
+
+    def test_checkout_cobra_una_caja_por_box_y_marca_las_lineas(self):
+        self._armar_basico()
+        self._armar_basico()
+        response = self.client.post(reverse("checkout"), data={
+            "nombre": "Cliente", "email": "c@example.com", "telefono": "+56 9 1111 1111",
+            "tipo_entrega": "retiro", "comuna_sector": "Santiago", "direccion": "Ref"})
+        self.assertEqual(response.status_code, 302)
+        pedido = Pedido.objects.get()
+        self.assertEqual((pedido.cantidad_cajas, pedido.costo_caja, pedido.total), (2, 3000, 38140))
+        detalles = set(PedidoItem.objects.values_list("detalle", flat=True))
+        self.assertIn("Box #2 · Cobertura: Chocolate blanco", detalles)
+        self.assertIn("Box #1", detalles)
+        self.assertEqual(self.client.session["boxes"], [])
