@@ -114,19 +114,9 @@
     .lk-btn--box .lk-ico { background: rgba(255, 255, 255, .12); color: var(--rosa); }
     .lk-btn--box .lk-txt span, .lk-btn--box .lk-flecha { color: rgba(255, 255, 255, .8); }
 
-    /* Mas enlaces */
-    .lk-lista { list-style: none; margin: 0 1.1rem; padding: 0; border: 1px solid var(--linea); border-radius: var(--radio); overflow: hidden; }
-    .lk-lista li + li { border-top: 1px solid var(--linea); }
-    .lk-fila {
-      display: flex; align-items: center; gap: .8rem; width: 100%; min-height: 56px; padding: .6rem 1rem;
-      background: #fff; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer;
-    }
-    .lk-fila:hover { background: #f7f9fb; }
-    .lk-fila:focus-visible { outline: 3px solid var(--azul); outline-offset: -3px; }
-    .lk-fila i:first-child { font-size: 1.15rem; color: var(--azul); width: 1.4rem; text-align: center; }
-    .lk-fila span { flex: 1; font-weight: 600; }
-    .lk-fila small { color: var(--tinta-suave); font-weight: 500; }
-    .lk-ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); -webkit-background-clip: text; background-clip: text; color: transparent !important; }
+    /* Instagram con su degradado oficial; el boton de compartir es <button> */
+    .lk-ico--ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); color: #fff; }
+    button.lk-btn { width: 100%; font: inherit; color: inherit; text-align: left; cursor: pointer; }
 
     .lk-pie { text-align: center; margin: 1.6rem 1rem 0; font-size: .82rem; color: var(--tinta-suave); }
     .lk-pie a { font-weight: 700; color: var(--azul); }
@@ -181,18 +171,35 @@
         <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
       </a>
       {% endif %}
+      {% if destinos.corporativo %}
+      <a class="lk-btn lk-anim" style="--i:7" href="{% url 'links_ir' 'corporativo' %}">
+        <span class="lk-ico"><i class="bi bi-building" aria-hidden="true"></i></span>
+        <span class="lk-txt"><b>Corporativos para empresa</b><span>Regalos y coffee breaks con tu marca</span></span>
+        <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
+      </a>
+      {% endif %}
+      {% if destinos.delivery %}
+      <a class="lk-btn lk-anim" style="--i:8" href="{% url 'links_ir' 'delivery' %}">
+        <span class="lk-ico"><i class="bi bi-truck" aria-hidden="true"></i></span>
+        <span class="lk-txt"><b>Despacho y retiro</b><span>A todo Chile por Paket</span></span>
+        <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
+      </a>
+      {% endif %}
+      {% if destinos.instagram %}
+      <a class="lk-btn lk-anim" style="--i:9" href="{% url 'links_ir' 'instagram' %}" target="_blank" rel="noopener">
+        <span class="lk-ico lk-ico--ig"><i class="bi bi-instagram" aria-hidden="true"></i></span>
+        <span class="lk-txt"><b>Instagram</b><span>@{{ usuario_ig }}</span></span>
+        <i class="bi bi-arrow-up-right lk-flecha" aria-hidden="true"></i>
+      </a>
+      {% endif %}
+      <button type="button" class="lk-btn lk-anim" style="--i:10" data-compartir>
+        <span class="lk-ico"><i class="bi bi-share" aria-hidden="true"></i></span>
+        <span class="lk-txt"><b>Compartir con alguien</b><span>Envía este enlace por WhatsApp</span></span>
+        <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
+      </button>
     </nav>
 
 
-    <section class="lk-seccion lk-anim" style="--i:7" aria-labelledby="lk-mas-titulo">
-      <h2 id="lk-mas-titulo">Más de {{ site_brand }}</h2>
-      <ul class="lk-lista">
-        {% if destinos.corporativo %}<li><a class="lk-fila" href="{% url 'links_ir' 'corporativo' %}"><i class="bi bi-building" aria-hidden="true"></i><span>Regalos para empresas</span><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>{% endif %}
-        {% if destinos.delivery %}<li><a class="lk-fila" href="{% url 'links_ir' 'delivery' %}"><i class="bi bi-geo-alt" aria-hidden="true"></i><span>Despacho y retiro</span><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>{% endif %}
-        {% if destinos.instagram %}<li><a class="lk-fila" href="{% url 'links_ir' 'instagram' %}" target="_blank" rel="noopener"><i class="bi bi-instagram lk-ig" aria-hidden="true"></i><span>Instagram <small>@{{ usuario_ig }}</small></span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></li>{% endif %}
-        <li><button type="button" class="lk-fila" data-compartir><i class="bi bi-share" aria-hidden="true"></i><span>Compartir con alguien</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button></li>
-      </ul>
-    </section>
 
     <p class="lk-pie"><a href="{% url 'home' %}">dulcecita.cl</a></p>
   </main>
