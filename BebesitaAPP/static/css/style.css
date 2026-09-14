@@ -2493,3 +2493,26 @@ a { color: var(--blanco); }
   color: var(--blanco) !important;
   border-color: var(--rosa) !important;
 }
+
+
+/* ============================================================
+   Venta corporativa: pagina en BLANCO para distinguirla del resto.
+   Todo lo escrito va en rosado (la regla de oro: sobre blanco,
+   rosado). Formato de dulcebarquillo.cl: texto + una sola foto.
+   ============================================================ */
+.corp-blanco { background: #fff; }
+.corp-seccion { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+.corp-blanco h1, .corp-blanco h2, .corp-blanco h3, .corp-blanco p,
+.corp-blanco li, .corp-blanco label, .corp-blanco .eyebrow, .corp-blanco a { color: var(--rosa) !important; }
+.corp-intro { display: grid; grid-template-columns: 1.05fr 1fr; gap: 3rem; align-items: start; margin-bottom: 4rem; }
+.corp-texto h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; margin: .2rem 0 1rem; text-transform: uppercase; }
+.corp-texto h2 { font-size: 1.3rem; font-weight: 700; margin: 1.6rem 0 .4rem; }
+.corp-texto p { font-size: 1rem; line-height: 1.65; margin: 0 0 .7rem; max-width: 60ch; }
+.corp-foto { margin: 0; position: sticky; top: 7rem; }
+.corp-foto img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: var(--radius-md); display: block; }
+.corp-blanco .form-shell, .corp-blanco .split-form-copy { background: #fff; }
+@media (max-width: 860px) {
+  .corp-intro { grid-template-columns: 1fr; gap: 1.6rem; }
+  .corp-foto { position: static; order: -1; }
+  .corp-foto img { aspect-ratio: 4 / 3; }
+}
