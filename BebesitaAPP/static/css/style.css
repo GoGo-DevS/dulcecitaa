@@ -2619,3 +2619,35 @@ a { color: var(--azul); }
 /* Fuera las manchas difuminadas del hero: con el azul se veian como un
    degradado sucio detras del logotipo. Hero en blanco limpio. */
 .ig-hero::before, .ig-hero::after { display: none !important; }
+
+/* ============================================================
+   Tipografia de venta corporativa en TODA la web (pedido de Diego).
+   Misma fuente (Manrope) que ya tenia el sitio; lo que se unifica
+   es el tratamiento: titulos en mayuscula y peso 800, subtitulos en
+   700 y el rotulo superior grande y espaciado. Antes cada pagina
+   usaba pesos distintos (500 en catalogo, delivery y contacto).
+   ============================================================ */
+h1, .page-hero h1, .ig-hero__claim {
+  font-family: 'Manrope', system-ui, sans-serif !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: -.02em !important;
+  line-height: 1.05 !important;
+  text-wrap: balance;
+}
+h1, .page-hero h1 { font-size: clamp(2rem, 4vw, 3rem) !important; }
+.ig-hero__claim { font-size: clamp(2.1rem, 4.4vw, 3.4rem) !important; }
+h2, .section-head h2, .dr-products-title, .ig-encargos__titulo, .dr-corp h2 {
+  font-family: 'Manrope', system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: -.025em !important;
+  text-transform: none !important;
+}
+h3 { font-family: 'Manrope', system-ui, sans-serif !important; font-weight: 700 !important; letter-spacing: -.01em; }
+.eyebrow, .ig-encargos__caso-tit {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: .16em !important;
+}
+main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
