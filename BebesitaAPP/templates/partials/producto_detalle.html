@@ -24,10 +24,10 @@
     {% endif %}
   </div>
 
-  <div class="product-detail-content">
+  <div class="product-detail-content" data-linea-scope data-pid="{{ p.id }}">
     <p class="eyebrow">Edición artesanal</p>
     <h2>{{ p.nombre }}</h2>
-    <p class="detail-price">${{ p.precio }}</p>
+    <p class="detail-price"><span data-precio="{{ p.precio }}">${{ p.precio }}</span></p>
     <p class="detail-description">{{ p.descripcion|linebreaksbr }}</p>
 
     <div class="detail-badges">
@@ -36,8 +36,10 @@
       <span>Ideal para regalo</span>
     </div>
 
+    {% include "partials/opciones.html" with p=p prefijo="m" %}
+
     <div class="detail-actions">
-      <div class="product-ctl" data-id="{{ p.id }}">
+      <div class="product-ctl" data-id="{{ p.clave_inicial }}">
         <button type="button" class="btn-add-only" aria-label="Agregar" title="Agregar">Agregar al carrito</button>
         <div class="qty-control d-none">
           <button class="btn-qty btn-trash" title="Quitar del carrito" aria-label="Quitar">Eliminar</button>
@@ -45,7 +47,7 @@
           <button class="btn-qty btn-plus" title="Agregar uno" aria-label="Agregar">+</button>
         </div>
       </div>
-      <a href="{% url 'agregar_al_carrito' p.id %}" class="btn-ghost">Agregar y ver carrito</a>
+      <a href="{% url 'agregar_al_carrito' p.clave_inicial %}" class="btn-ghost" data-agregar-ver>Agregar y ver carrito</a>
     </div>
   </div>
 </div>

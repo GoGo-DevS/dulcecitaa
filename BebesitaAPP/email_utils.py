@@ -81,10 +81,11 @@ def send_checkout_emails(pedido, items):
         subtotal += Decimal(item["subtotal"])
         line_items.append(
             {
-                "nombre": producto.nombre,
+                # La cobertura va pegada al nombre: la duena hornea segun esto.
+                "nombre": f"{producto.nombre} ({item['detalle']})" if item.get("detalle") else producto.nombre,
                 "cantidad": cantidad,
                 "subtotal": _format_money(item["subtotal"]),
-                "precio_unitario": _format_money(producto.precio),
+                "precio_unitario": _format_money(item.get("precio_unitario", producto.precio)),
             }
         )
 

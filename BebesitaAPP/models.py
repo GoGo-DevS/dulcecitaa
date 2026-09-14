@@ -16,6 +16,40 @@ class CategoriaProducto(models.Model):
     def __str__(self):
         return self.nombre
 
+class Opcion(models.Model):
+    """Lo que el cliente elige dentro de un producto: cobertura, relleno...
+
+    No es un producto aparte. Antes cada cobertura era un Producto propio y el
+    alfajor blanco se duplicaba en el catalogo; con relleno ademas de cobertura
+    habria que crear un producto por cada combinacion. Aca se carga UNA vez
+    ("Chocolate blanco") y se marca en los productos que la ofrecen.
+    """
+    TIPO_COBERTURA = "cobertura"
+    TIPO_RELLENO = "relleno"
+    TIPOS = [
+        (TIPO_COBERTURA, "Cobertura"),
+        (TIPO_RELLENO, "Relleno"),
+    ]
+
+    tipo = models.CharField(max_length=20, choices=TIPOS, default=TIPO_COBERTURA)
+    nombre = models.CharField(max_length=60)
+    color = models.CharField(
+        'Color de la muestra', max_length=7, default="#5b3a29",
+        help_text='Hex del circulito que se ve en la tarjeta. Ej: #5b3a29 chocolate.')
+    recargo = models.IntegerField(
+        default=0, help_text='Se suma al precio por unidad. 0 si cuesta lo mismo.')
+    orden = models.PositiveIntegerField(default=0)
+    activa = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ("tipo", "orden", "nombre")
+        verbose_name = "Opción"
+        verbose_name_plural = "Opciones (coberturas, rellenos)"
+
+    def __str__(self):
+        return f"{self.get_tipo_display()}: {self.nombre}"
+
+
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField()
@@ -43,12 +77,29 @@ class Producto(models.Model):
     unidades_por_pack = models.PositiveIntegerField(
         'Unidades por paquete', default=1,
         help_text='Ej: 4 si la bolsita trae 4. Se usa solo para explicarlo.')
+    opciones = models.ManyToManyField(
+        Opcion, blank=True, related_name='productos',
+        help_text='Coberturas y rellenos que el cliente puede elegir.')
 
     class Meta:
         ordering = ("orden", "nombre")
 
     def __str__(self):
         return self.nombre
+
+    def grupos_opciones(self):
+        """[(tipo, "Cobertura", [opciones])], un grupo por tipo, en orden."""
+        etiquetas = dict(Opcion.TIPOS)
+        grupos = {}
+        for op in self.opciones.all():
+            if op.activa:
+                grupos.setdefault(op.tipo, []).append(op)
+        return [(t, etiquetas[t], grupos[t]) for t, _ in Opcion.TIPOS if t in grupos]
+
+    def clave_inicial(self):
+        """La linea de carrito con la primera opcion de cada grupo: "15-1"."""
+        ids = sorted(opciones[0].id for _, _, opciones in self.grupos_opciones())
+        return "-".join(str(x) for x in [self.id, *ids])
 
 class Carrito(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True)
@@ -93,6 +144,9 @@ class PedidoItem(models.Model):
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad = models.PositiveIntegerField(default=1)
     precio = models.DecimalField(max_digits=10, decimal_places=2)  # precio unitario al momento de compra
+    # Texto y no FK: el pedido tiene que seguir diciendo "Chocolate blanco"
+    # aunque mañana esa cobertura se renombre o se borre.
+    detalle = models.CharField(max_length=200, blank=True, default="")
 
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre} (Pedido {self.pedido_id})"

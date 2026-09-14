@@ -1,0 +1,28 @@
+{% comment %}
+  Muestras de color para elegir cobertura (y relleno cuando exista).
+  Recibe `p` (producto) y `prefijo`: la tarjeta y la ficha abierta en el
+  modal conviven en la misma pagina, y dos radios con el mismo name son UN
+  solo grupo aunque esten en lugares distintos. Marcar en la ficha
+  desmarcaria la tarjeta.
+
+  Son radios de verdad, escondidos detras del circulo: asi se eligen con
+  teclado (flechas) y el lector de pantalla dice el nombre.
+{% endcomment %}
+{% for tipo, etiqueta, opciones in p.grupos_opciones %}
+<fieldset class="opciones" data-opciones>
+  <legend class="opciones__titulo">
+    {{ etiqueta }}: <b data-opcion-nombre>{{ opciones.0.nombre }}</b>
+  </legend>
+  <div class="opciones__muestras">
+    {% for op in opciones %}
+    <label class="muestra" title="{{ op.nombre }}">
+      <input type="radio" class="visually-hidden" name="{{ prefijo }}op-{{ p.id }}-{{ tipo }}"
+             value="{{ op.id }}" data-nombre="{{ op.nombre }}" data-recargo="{{ op.recargo }}"
+             {% if forloop.first %}checked{% endif %}>
+      <span class="muestra__color" style="--muestra: {{ op.color }}"></span>
+      <span class="visually-hidden">{{ op.nombre }}</span>
+    </label>
+    {% endfor %}
+  </div>
+</fieldset>
+{% endfor %}

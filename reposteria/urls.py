@@ -16,12 +16,12 @@ urlpatterns = [
 
     # Carrito (por sesion)
     path('carrito/', views.mostrar_carrito, name='carrito'),
-    path('carrito/agregar/<int:producto_id>/', views.agregar_al_carrito, name='agregar_al_carrito'),
-    path('carrito/quitar/<int:producto_id>/', views.quitar_carrito, name='quitar_carrito'),
-    path('carrito/agregar/<int:producto_id>/ajax/', views.agregar_carrito_ajax, name='agregar_carrito_ajax'),
+    path('carrito/agregar/<str:linea>/', views.agregar_al_carrito, name='agregar_al_carrito'),
+    path('carrito/quitar/<str:linea>/', views.quitar_carrito, name='quitar_carrito'),
+    path('carrito/agregar/<str:linea>/ajax/', views.agregar_carrito_ajax, name='agregar_carrito_ajax'),
     path('carrito/json/', views.carrito_json, name='carrito_json'),
-    path('carrito/eliminar/<int:producto_id>/ajax/', views.eliminar_carrito_ajax, name='eliminar_carrito_ajax'),
-    path('carrito/decrementar/<int:producto_id>/ajax/', views.decrementar_carrito_ajax, name='decrementar_carrito_ajax'),
+    path('carrito/eliminar/<str:linea>/ajax/', views.eliminar_carrito_ajax, name='eliminar_carrito_ajax'),
+    path('carrito/decrementar/<str:linea>/ajax/', views.decrementar_carrito_ajax, name='decrementar_carrito_ajax'),
 
     path('producto/<int:pk>/', views.producto_detalle, name='producto_detalle'),
 

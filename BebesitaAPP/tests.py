@@ -5,9 +5,10 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
-from .models import CategoriaProducto, Pedido, Producto
+from .models import CategoriaProducto, Opcion, Pedido, PedidoItem, Producto
 
 
+@override_settings(MINIMO_UNIDADES=10)
 class CarritoFlowTests(TestCase):
     def setUp(self):
         self.producto = Producto.objects.create(
@@ -25,18 +26,19 @@ class CarritoFlowTests(TestCase):
     def test_agregar_al_carrito_incrementa_cantidad(self):
         self.client.get(reverse("agregar_al_carrito", args=[self.producto.id]))
         session = self.client.session
-        self.assertEqual(session.get("cart", {}).get(str(self.producto.id)), 1)
+        # Entra con el minimo puesto, no de a uno.
+        self.assertEqual(session.get("cart", {}).get(str(self.producto.id)), 10)
 
     def test_decrementar_carrito_ajax_modifica_cantidad(self):
-        self._set_cart({str(self.producto.id): 2})
+        self._set_cart({str(self.producto.id): 11})
 
         response = self.client.post(reverse("decrementar_carrito_ajax", args=[self.producto.id]))
         payload = response.json()
 
         self.assertEqual(response.status_code, 200)
         self.assertTrue(payload["ok"])
-        self.assertEqual(payload["qty"], 1)
-        self.assertEqual(payload["cart_count"], 1)
+        self.assertEqual(payload["qty"], 10)
+        self.assertEqual(payload["cart_count"], 10)
 
     def test_eliminar_carrito_ajax_quita_producto_y_total(self):
         self._set_cart({str(self.producto.id): 2})
@@ -121,6 +123,7 @@ class CatalogoFiltroTests(TestCase):
     CONTACT_EMAIL="ventas@dulcecitaa.cl",
     DEFAULT_FROM_EMAIL="no-reply@dulcecitaa.cl",
     SHIPPING_COST=2500,
+    BOX_PRICE=0,
 )
 class FormulariosYCheckoutTests(TestCase):
     def setUp(self):
@@ -190,6 +193,8 @@ class FormulariosYCheckoutTests(TestCase):
                 "tipo_entrega": "despacho",
                 "comuna_sector": "Providencia",
                 "direccion": "Calle Falsa 123",
+                "cantidad_cajas": 1,
+                "comentario_ocasion": "Cumpleaños",
             },
         )
 
@@ -276,6 +281,8 @@ class FormulariosYCheckoutTests(TestCase):
                 "tipo_entrega": "retiro",
                 "comuna_sector": "Santiago Centro",
                 "direccion": "Calle Falsa 123",
+                "cantidad_cajas": 1,
+                "comentario_ocasion": "Cumpleaños",
             },
             follow=True,
         )
@@ -300,6 +307,8 @@ class FormulariosYCheckoutTests(TestCase):
                 "tipo_entrega": "retiro",
                 "comuna_sector": "Nunoa",
                 "direccion": "Referencia local 12",
+                "cantidad_cajas": 1,
+                "comentario_ocasion": "Cumpleaños",
             },
             follow=True,
         )
@@ -307,3 +316,85 @@ class FormulariosYCheckoutTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "wa.me")
         self.assertContains(response, "%231")
+
+
+@override_settings(
+    MINIMO_UNIDADES=10,
+    EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
+    CONTACT_EMAIL="ventas@dulcecitaa.cl",
+    BOX_PRICE=0,
+    SHIPPING_COST=0,
+)
+class CoberturasTests(TestCase):
+    """La cobertura se elige en la tarjeta y viaja hasta el pedido."""
+
+    def setUp(self):
+        self.chocolate = Opcion.objects.create(nombre="Chocolate", color="#5b3a29", orden=1)
+        self.blanco = Opcion.objects.create(nombre="Chocolate blanco", color="#f3ead9", orden=2)
+        self.alfajor = Producto.objects.create(
+            nombre="Alfajores", descripcion="x", precio=2000,
+            imagen=SimpleUploadedFile("a.jpg", b"img", content_type="image/jpeg"),
+        )
+        self.alfajor.opciones.add(self.chocolate, self.blanco)
+        self.otro = Producto.objects.create(
+            nombre="Otro", descripcion="x", precio=1000,
+            imagen=SimpleUploadedFile("b.jpg", b"img", content_type="image/jpeg"),
+        )
+
+    def _agregar(self, linea):
+        return self.client.post(reverse("agregar_carrito_ajax", args=[linea]))
+
+    def test_cada_cobertura_es_una_linea_propia(self):
+        self._agregar(f"{self.alfajor.id}-{self.chocolate.id}")
+        self._agregar(f"{self.alfajor.id}-{self.blanco.id}")
+        cart = self.client.session["cart"]
+        self.assertEqual(cart, {
+            f"{self.alfajor.id}-{self.chocolate.id}": 10,
+            f"{self.alfajor.id}-{self.blanco.id}": 10,
+        })
+
+    def test_sin_elegir_toma_la_primera_cobertura(self):
+        # El enlace "Agregar y ver carrito" y los carritos viejos no mandan cobertura.
+        payload = self._agregar(str(self.alfajor.id)).json()
+        self.assertEqual(payload["linea"], f"{self.alfajor.id}-{self.chocolate.id}")
+
+    def test_cobertura_que_el_producto_no_ofrece_se_rechaza(self):
+        response = self._agregar(f"{self.otro.id}-{self.blanco.id}")
+        self.assertEqual(response.status_code, 404)
+        self.assertEqual(self.client.session.get("cart", {}), {})
+
+    def test_dos_coberturas_en_la_misma_linea_se_rechaza(self):
+        response = self._agregar(f"{self.alfajor.id}-{self.chocolate.id}-{self.blanco.id}")
+        self.assertEqual(response.status_code, 404)
+
+    def test_clave_basura_no_revienta(self):
+        self.assertEqual(self._agregar("abc").status_code, 404)
+        self.assertEqual(self.client.post(reverse("eliminar_carrito_ajax", args=["x-1"])).status_code, 200)
+
+    def test_el_recargo_se_suma_al_precio(self):
+        self.blanco.recargo = 300
+        self.blanco.save()
+        payload = self._agregar(f"{self.alfajor.id}-{self.blanco.id}").json()
+        self.assertEqual(payload["total"], 23000.0)
+
+    def test_el_pedido_guarda_la_cobertura_y_el_correo_la_dice(self):
+        self._agregar(f"{self.alfajor.id}-{self.blanco.id}")
+        response = self.client.post(reverse("checkout"), data={
+            "nombre": "Cliente", "email": "c@example.com", "telefono": "+56 9 1111 1111",
+            "tipo_entrega": "retiro", "comuna_sector": "Santiago", "direccion": "Ref",
+            "cantidad_cajas": 1, "comentario_ocasion": "Regalo",
+        })
+        self.assertEqual(response.status_code, 302)
+        item = PedidoItem.objects.get()
+        self.assertEqual(item.detalle, "Cobertura: Chocolate blanco")
+        self.assertIn("Chocolate blanco", mail.outbox[-1].alternatives[0][0])
+
+    def test_catalogo_muestra_muestras_y_no_duplica_variantes(self):
+        variante = Producto.objects.create(
+            nombre="Alfajores", descripcion="x", precio=2000, variante_de=self.alfajor, visible=False,
+            imagen=SimpleUploadedFile("c.jpg", b"img", content_type="image/jpeg"),
+        )
+        response = self.client.get(reverse("productos"))
+        self.assertContains(response, 'data-opciones', count=1)
+        self.assertContains(response, f'data-id="{self.alfajor.id}-{self.chocolate.id}"')
+        self.assertNotContains(response, f'data-pid="{variante.id}"')

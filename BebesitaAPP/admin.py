@@ -5,6 +5,7 @@ from .models import (
     BeneficioDiferencial,
     CampanaEspecial,
     CategoriaProducto,
+    Opcion,
     Pedido,
     PedidoItem,
     PreguntaFrecuente,
@@ -56,6 +57,7 @@ class ProductoAdmin(admin.ModelAdmin):
     list_filter = ("categoria", "destacado", "visible", "disponible")
     ordering = ("orden", "nombre")
     autocomplete_fields = ("categoria",)
+    filter_horizontal = ("opciones",)
     inlines = [ProductoImagenInline]
 
     def preview(self, obj):
@@ -69,7 +71,7 @@ class ProductoAdmin(admin.ModelAdmin):
 class PedidoItemInline(admin.TabularInline):
     model = PedidoItem
     extra = 0
-    readonly_fields = ("producto", "cantidad", "precio")
+    readonly_fields = ("producto", "detalle", "cantidad", "precio")
     can_delete = False
 
 
@@ -97,10 +99,23 @@ class PedidoAdmin(admin.ModelAdmin):
 
 @admin.register(PedidoItem)
 class PedidoItemAdmin(admin.ModelAdmin):
-    list_display = ("pedido", "producto", "cantidad", "precio")
+    list_display = ("pedido", "producto", "detalle", "cantidad", "precio")
     search_fields = ("pedido__nombre_cliente", "producto__nombre")
     list_filter = ("pedido__creado",)
     ordering = ("-pedido__creado",)
+
+
+@admin.register(Opcion)
+class OpcionAdmin(admin.ModelAdmin):
+    list_display = ("muestra", "nombre", "tipo", "recargo", "orden", "activa")
+    list_editable = ("recargo", "orden", "activa")
+    list_filter = ("tipo", "activa")
+    ordering = ("tipo", "orden", "nombre")
+
+    def muestra(self, obj):
+        return format_html(
+            '<span style="display:inline-block;width:22px;height:22px;border-radius:50%;'
+            'background:{};border:1px solid #cfd6de;"></span>', obj.color)
 
 
 @admin.register(BeneficioDiferencial)

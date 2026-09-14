@@ -23,7 +23,7 @@
       <ul class="checkout-list">
         {% for item in productos %}
         <li>
-          <span>{{ item.producto.nombre }} x {{ item.cantidad }}</span>
+          <span>{{ item.producto.nombre }}{% if item.detalle %} <small class="checkout-detalle">({{ item.detalle }})</small>{% endif %} x {{ item.cantidad }}</span>
           <strong>${{ item.subtotal }}</strong>
         </li>
         {% endfor %}

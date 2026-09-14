@@ -79,6 +79,46 @@
     btn.classList.toggle('is-busy', busy);
   }
 
+  // Lo ultimo que se sabe del carrito, por linea ("15-1": 10). Lo usa el
+  // cambio de cobertura: al pasar de chocolate a blanco la tarjeta tiene que
+  // mostrar cuantos de ESA cobertura hay, sin preguntarle otra vez al servidor.
+  let cartCache = {};
+
+  function claveDe(scope) {
+    const ids = [...scope.querySelectorAll('[data-opciones] input:checked')]
+      .map((i) => parseInt(i.value, 10))
+      .sort((a, b) => a - b);
+    return [scope.dataset.pid, ...ids].join('-');
+  }
+
+  function aplicarSeleccion(scope) {
+    const clave = claveDe(scope);
+    let recargo = 0;
+    scope.querySelectorAll('[data-opciones]').forEach((grupo) => {
+      const elegida = grupo.querySelector('input:checked');
+      const nombre = grupo.querySelector('[data-opcion-nombre]');
+      if (elegida && nombre) nombre.textContent = elegida.dataset.nombre;
+      if (elegida) recargo += parseInt(elegida.dataset.recargo || '0', 10);
+    });
+    scope.querySelectorAll('[data-precio]').forEach((el) => {
+      el.textContent = '$' + (parseInt(el.dataset.precio, 10) + recargo);
+    });
+    scope.querySelectorAll('.product-ctl').forEach((ctl) => {
+      ctl.setAttribute('data-id', clave);
+      const qty = cartCache[clave] || 0;
+      if (qty > 0) switchToQty(ctl, qty);
+      else switchToAdd(ctl);
+    });
+    const link = scope.querySelector('[data-agregar-ver]');
+    if (link) link.setAttribute('href', `/carrito/agregar/${clave}/`);
+  }
+
+  document.addEventListener('change', (e) => {
+    const input = e.target.closest('[data-opciones] input');
+    const scope = input && input.closest('[data-linea-scope]');
+    if (scope) aplicarSeleccion(scope);
+  });
+
   async function initQuantities() {
     try {
       const resp = await fetch('/carrito/json/');
@@ -87,6 +127,7 @@
 
       setCartCount(data.cart_count || 0);
       const cart = data.cart || {};
+      cartCache = cart;
 
       document.querySelectorAll('.product-ctl').forEach((ctl) => {
         const pid = ctl.getAttribute('data-id');
@@ -127,10 +168,7 @@
 
     if (addOnly) {
       const ctl = addOnly.closest('.product-ctl');
-      // Si la tarjeta ofrece coberturas, se agrega la ELEGIDA, no la primera:
-      // cada cobertura es un producto distinto con su propio id.
-      const selector = addOnly.closest('.catalog-actions')?.querySelector('[data-variante]');
-      if (ctl && selector && selector.value) ctl.setAttribute('data-id', selector.value);
+      // data-id ya trae la cobertura elegida ("15-2"): la pone aplicarSeleccion.
       const pid = ctl.getAttribute('data-id');
       try {
         setButtonBusy(addOnly, true);
@@ -140,6 +178,7 @@
         });
         const data = await resp.json();
         if (data && data.ok) {
+          cartCache[data.linea || pid] = data.qty || MINIMO;
           setCartCount(data.cart_count || 0);
           switchToQty(ctl, data.qty || MINIMO);
           flashButton(addOnly);
@@ -168,6 +207,7 @@
         });
         const data = await resp.json();
         if (data && data.ok) {
+          cartCache[pid] = data.qty || 0;
           setCartCount(data.cart_count || 0);
           if (qtyEl) qtyEl.textContent = data.qty ?? (parseInt(qtyEl.textContent || '0', 10) + 1);
 
@@ -200,6 +240,7 @@
         });
         const data = await resp.json();
         if (data && data.ok) {
+          cartCache[pid] = data.qty || 0;
           setCartCount(data.cart_count || 0);
           if (qtyEl) qtyEl.textContent = data.qty || 0;
 
@@ -232,6 +273,7 @@
         });
         const data = await resp.json();
         if (data && data.ok) {
+          delete cartCache[pid];
           setCartCount(data.cart_count || 0);
           if (qtyEl) qtyEl.textContent = '0';
 

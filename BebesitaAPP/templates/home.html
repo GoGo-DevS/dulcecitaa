@@ -53,16 +53,15 @@
 
 <section class="ig-minimo">
   <b>Pedidos desde 10 unidades por producto</b>
-  <span class="ig-minimo__linea">
-    Despacho a todo Chile por
-    {% comment %}
-      Paket es marca de un tercero: va con sus colores, sin recolorear. Su
-      morado no contrasta contra la banda chocolate, asi que se apoya en un
-      chip claro en vez de tocarle el color al logotipo.
-    {% endcomment %}
-    <span class="ig-minimo__chip"><img src="{% static 'img/paket-logo.png' %}" alt="Paket"></span>
-    · Santiago con entrega coordinada
-  </span>
+  {% comment %}
+    Dos datos, dos renglones de lista: antes iban en una sola frase unida por
+    un "·", y en el telefono el punto quedaba solo al empezar la linea.
+    Paket es marca de un tercero: va con sus colores, sobre un chip claro.
+  {% endcomment %}
+  <ul class="ig-minimo__datos">
+    <li>Despacho a todo Chile por <span class="ig-minimo__chip"><img src="{% static 'img/paket-logo.png' %}" alt="Paket"></span></li>
+    <li>Entrega coordinada en Santiago</li>
+  </ul>
 </section>
 
 <!-- VIDEOS: el obrador en movimiento -->
@@ -79,28 +78,71 @@
     {% endcomment %}
     <div class="ig-videos" data-reveal-item>
       <figure class="ig-video">
-        <video muted loop playsinline autoplay preload="metadata"
-               poster="{% static 'img/galeria/rellenos-manjar-bandeja.jpg' %}">
-          <source src="{% static 'video/obrador-dulcecita.mp4' %}" type="video/mp4">
-        </video>
+        <div class="ig-video__marco">
+          <video muted loop playsinline autoplay preload="metadata"
+                 poster="{% static 'img/videos/obrador-dulcecita.jpg' %}">
+            <source src="{% static 'video/obrador-dulcecita.mp4' %}" type="video/mp4">
+          </video>
+          <button type="button" class="ig-video__play" aria-label="Reproducir: Alfajores de triple capa" hidden></button>
+        </div>
         <figcaption>Alfajores de triple capa</figcaption>
       </figure>
       <figure class="ig-video">
-        <video muted loop playsinline autoplay preload="metadata"
-               poster="{% static 'img/galeria/rellenos-manjar-fila.jpg' %}">
-          <source src="{% static 'video/barquillos-dulcecita.mp4' %}" type="video/mp4">
-        </video>
+        <div class="ig-video__marco">
+          <video muted loop playsinline autoplay preload="metadata"
+                 poster="{% static 'img/videos/barquillos-dulcecita.jpg' %}">
+            <source src="{% static 'video/barquillos-dulcecita.mp4' %}" type="video/mp4">
+          </video>
+          <button type="button" class="ig-video__play" aria-label="Reproducir: Barquillos recién bañados" hidden></button>
+        </div>
         <figcaption>Barquillos recién bañados</figcaption>
       </figure>
       <figure class="ig-video">
-        <video muted loop playsinline autoplay preload="metadata"
-               poster="{% static 'img/galeria/rellenos-manjar-bandeja.jpg' %}">
-          <source src="{% static 'video/rellenos-manjar.mp4' %}" type="video/mp4">
-        </video>
+        <div class="ig-video__marco">
+          <video muted loop playsinline autoplay preload="metadata"
+                 poster="{% static 'img/videos/rellenos-manjar.jpg' %}">
+            <source src="{% static 'video/rellenos-manjar.mp4' %}" type="video/mp4">
+          </video>
+          <button type="button" class="ig-video__play" aria-label="Reproducir: Rellenos de manjar" hidden></button>
+        </div>
         <figcaption>Rellenos de manjar</figcaption>
       </figure>
     </div>
   </div>
+  {% comment %}
+    El autoplay no basta en iPhone: con ahorro de bateria Safari no arranca
+    ningun video solo, ni siquiera muted. Se le da play al entrar en pantalla
+    y, si el telefono lo niega, aparece un boton: con el toque del usuario
+    si deja. Fuera de pantalla se pausan, para no gastar bateria en tres
+    videos a la vez.
+  {% endcomment %}
+  <script>
+    (function () {
+      var videos = document.querySelectorAll('.ig-video video');
+      if (!videos.length) return;
+      function intentar(video) {
+        var boton = video.parentNode.querySelector('.ig-video__play');
+        var p = video.play();
+        if (p && p.then) {
+          p.then(function () { boton.hidden = true; })
+           .catch(function () { boton.hidden = false; });
+        }
+      }
+      videos.forEach(function (video) {
+        var boton = video.parentNode.querySelector('.ig-video__play');
+        boton.addEventListener('click', function () { intentar(video); });
+        video.addEventListener('playing', function () { boton.hidden = true; });
+      });
+      if (!('IntersectionObserver' in window)) { videos.forEach(intentar); return; }
+      var obs = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (e) {
+          if (e.isIntersecting) intentar(e.target);
+          else e.target.pause();
+        });
+      }, { threshold: 0.4 });
+      videos.forEach(function (v) { obs.observe(v); });
+    })();
+  </script>
 </section>
 
 <!-- ENCARGOS: el trabajo por caja, que es otra linea de venta -->

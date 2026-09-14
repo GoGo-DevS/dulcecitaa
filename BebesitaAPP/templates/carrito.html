@@ -19,7 +19,7 @@
   <div class="cart-layout">
     <div class="cart-list">
       {% for item in productos %}
-      <article class="cart-item" data-id="{{ item.producto.id }}">
+      <article class="cart-item" data-id="{{ item.linea }}">
         <div class="cart-item-main">
           <div class="cart-item-media">
             {% if item.producto.imagen %}
@@ -28,17 +28,22 @@
           </div>
           <div class="cart-item-copy">
             <h3>{{ item.producto.nombre }}</h3>
+            {% if item.opciones %}
+            <p class="cart-item-opciones">
+              {% for op in item.opciones %}<span><i class="muestra__color muestra__color--chica" style="--muestra: {{ op.color }}"></i>{{ op.nombre }}</span>{% endfor %}
+            </p>
+            {% endif %}
             <p class="cart-item-note">Elaborado a pedido con presentación premium.</p>
           </div>
         </div>
         <div class="cart-item-controls">
-          <div class="qty-control" data-id="{{ item.producto.id }}">
+          <div class="qty-control" data-id="{{ item.linea }}">
             <button class="btn-qty btn-minus" title="Restar uno" aria-label="Restar">-</button>
             <span class="qty">{{ item.cantidad }}</span>
             <button class="btn-qty btn-plus" title="Sumar uno" aria-label="Sumar">+</button>
           </div>
-          <span class="line-subtotal" data-id="{{ item.producto.id }}">${{ item.subtotal }}</span>
-          <a href="{% url 'quitar_carrito' item.producto.id %}" class="btn-linkline">Quitar</a>
+          <span class="line-subtotal" data-id="{{ item.linea }}">${{ item.subtotal }}</span>
+          <a href="{% url 'quitar_carrito' item.linea %}" class="btn-linkline">Quitar</a>
         </div>
       </article>
       {% endfor %}

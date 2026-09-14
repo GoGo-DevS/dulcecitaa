@@ -3,7 +3,7 @@ from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from django.conf import settings
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
@@ -14,6 +14,7 @@ from .models import (
     BeneficioDiferencial,
     CampanaEspecial,
     CategoriaProducto,
+    Opcion,
     Pedido,
     PedidoItem,
     PreguntaFrecuente,
@@ -22,18 +23,71 @@ from .models import (
 )
 
 
+def _parse_linea(linea):
+    """'15-3-8' -> (15, (3, 8)): producto 15 con las opciones 3 y 8.
+
+    El carrito se indexa por LINEA y no por producto: diez alfajores de
+    chocolate y diez de chocolate blanco son dos lineas del mismo producto.
+    Un carrito viejo, con claves "15", sigue valiendo (linea sin opciones).
+    """
+    try:
+        partes = [int(x) for x in str(linea).split("-")]
+    except (TypeError, ValueError):
+        return None
+    if not partes or any(x <= 0 for x in partes):
+        return None
+    return partes[0], tuple(sorted(set(partes[1:])))
+
+
+def _clave_linea(pid, opcion_ids=()):
+    return "-".join(str(x) for x in [pid, *sorted(opcion_ids)])
+
+
+def _resolver_linea(linea):
+    """Valida lo que pide el cliente contra lo que el producto ofrece.
+
+    Devuelve (producto, clave normalizada) o (None, None). Una opcion que el
+    producto no ofrece invalida la linea; un grupo sin elegir (el enlace
+    "Agregar y ver carrito" no manda nada) toma la primera opcion del grupo,
+    que es la misma que la tarjeta muestra marcada.
+    """
+    parsed = _parse_linea(linea)
+    if not parsed:
+        return None, None
+    pid, pedidas = parsed
+    producto = Producto.objects.filter(pk=pid).prefetch_related("opciones").first()
+    if not producto:
+        return None, None
+    ofrecidas = {op.id: op for op in producto.opciones.all() if op.activa}
+    if any(oid not in ofrecidas for oid in pedidas):
+        return None, None
+    elegidas = [ofrecidas[oid] for oid in pedidas]
+    tipos = [op.tipo for op in elegidas]
+    if len(tipos) != len(set(tipos)):
+        return None, None  # dos coberturas en la misma linea
+    for tipo, _etiqueta, opciones in producto.grupos_opciones():
+        if tipo not in tipos:
+            elegidas.append(opciones[0])
+    return producto, _clave_linea(pid, [op.id for op in elegidas])
+
+
+def _clave_o_vacia(linea):
+    parsed = _parse_linea(linea)
+    return _clave_linea(*parsed) if parsed else ""
+
+
 def _get_cart(request):
     """Obtiene el carrito de sesion con cantidades enteras positivas."""
     raw_cart = request.session.get("cart", {})
     cart = {}
-    for pid, qty in raw_cart.items():
+    for linea, qty in raw_cart.items():
+        parsed = _parse_linea(linea)
         try:
-            pid_str = str(int(pid))
             qty_int = int(qty)
         except (TypeError, ValueError):
             continue
-        if qty_int > 0:
-            cart[pid_str] = qty_int
+        if parsed and qty_int > 0:
+            cart[_clave_linea(*parsed)] = qty_int
     return cart
 
 
@@ -70,31 +124,39 @@ def _save_cart(request, cart):
     request.session.modified = True
 
 
-def _get_products_map(cart):
-    product_ids = [int(pid) for pid in cart.keys()]
-    return Producto.objects.in_bulk(product_ids)
-
-
 def _build_cart_items(cart):
-    products_map = _get_products_map(cart)
+    lineas = {clave: _parse_linea(clave) for clave in cart}
+    products_map = Producto.objects.in_bulk([pid for pid, _ in lineas.values()])
+    opciones_map = Opcion.objects.in_bulk([oid for _, ops in lineas.values() for oid in ops])
     items = []
     total = 0
 
-    for pid, cantidad in cart.items():
-        producto = products_map.get(int(pid))
-        if not producto:
+    for clave, cantidad in cart.items():
+        pid, opcion_ids = lineas[clave]
+        producto = products_map.get(pid)
+        opciones = [opciones_map[oid] for oid in opcion_ids if oid in opciones_map]
+        if not producto or len(opciones) != len(opcion_ids):
             continue
-        subtotal = producto.precio * cantidad
+        precio_unitario = producto.precio + sum(op.recargo for op in opciones)
+        subtotal = precio_unitario * cantidad
         total += subtotal
         items.append(
             {
+                "linea": clave,
                 "producto": producto,
+                "opciones": opciones,
+                "detalle": " · ".join(f"{op.get_tipo_display()}: {op.nombre}" for op in opciones),
+                "precio_unitario": precio_unitario,
                 "cantidad": cantidad,
                 "subtotal": subtotal,
             }
         )
 
     return items, total
+
+
+def _subtotal_de(productos, clave):
+    return next((item["subtotal"] for item in productos if item["linea"] == clave), 0)
 
 
 def _format_money(value):
@@ -137,7 +199,7 @@ def home(request):
     # Slides del hero (carrusel): destacados con imagen
     hero_items = [p for p in destacados if p.imagen][:4]
     # Grilla "Nuestros productos"
-    grilla = Producto.objects.filter(visible=True).select_related("categoria")[:12]
+    grilla = Producto.objects.filter(visible=True, variante_de__isnull=True).select_related("categoria")[:12]
 
     beneficios = BeneficioDiferencial.objects.filter(activo=True)[:4]
     testimonios = Testimonio.objects.filter(activo=True, destacado=True)[:3]
@@ -166,7 +228,7 @@ def productos(request):
     # el mismo alfajor aparece dos veces en el catalogo.
     productos_qs = (Producto.objects.filter(visible=True, variante_de__isnull=True)
                     .select_related("categoria")
-                    .prefetch_related("variantes"))
+                    .prefetch_related("opciones"))
     categorias = CategoriaProducto.objects.filter(activa=True, productos__visible=True).distinct()
 
     query = (request.GET.get("q") or "").strip()
@@ -237,13 +299,15 @@ def contacto(request):
     return render(request, "contacto.html", {"form": form})
 
 
-def agregar_al_carrito(request, producto_id):
-    producto = get_object_or_404(Producto, pk=producto_id)
+def agregar_al_carrito(request, linea):
+    producto, clave = _resolver_linea(linea)
+    if not producto:
+        raise Http404("Producto no encontrado")
     if not producto.visible or not producto.disponible:
         messages.error(request, "Este producto no está disponible por ahora.")
         return redirect("productos")
     cart = _get_cart(request)
-    _sumar_al_carrito(cart, str(producto_id))
+    _sumar_al_carrito(cart, clave)
     _save_cart(request, cart)
     return redirect("carrito")
 
@@ -304,7 +368,8 @@ def checkout(request):
                     pedido=pedido,
                     producto=item["producto"],
                     cantidad=item["cantidad"],
-                    precio=item["producto"].precio,
+                    precio=item["precio_unitario"],
+                    detalle=item["detalle"],
                 )
 
             delivery = send_checkout_emails(pedido=pedido, items=productos)
@@ -348,9 +413,9 @@ def checkout_exito(request, pedido_id):
     return render(request, "checkout_exito.html", context)
 
 
-def quitar_carrito(request, producto_id):
+def quitar_carrito(request, linea):
     cart = _get_cart(request)
-    pid = str(producto_id)
+    pid = _clave_o_vacia(linea)
     if pid in cart:
         _restar_del_carrito(cart, pid)
         _save_cart(request, cart)
@@ -358,26 +423,24 @@ def quitar_carrito(request, producto_id):
 
 
 @require_POST
-def agregar_carrito_ajax(request, producto_id):
-    producto = get_object_or_404(Producto, pk=producto_id)
+def agregar_carrito_ajax(request, linea):
+    producto, pid = _resolver_linea(linea)
+    if not producto:
+        return JsonResponse({"ok": False, "error": "Producto no encontrado"}, status=404)
     if not producto.visible or not producto.disponible:
         return JsonResponse({"ok": False, "error": "Producto no disponible"}, status=400)
     cart = _get_cart(request)
-    pid = str(producto_id)
     _sumar_al_carrito(cart, pid)
     _save_cart(request, cart)
 
     productos, total = _build_cart_items(cart)
-    item_subtotal = 0
+    item_subtotal = _subtotal_de(productos, pid)
     qty = cart.get(pid, 0)
-    for item in productos:
-        if item["producto"].id == producto_id:
-            item_subtotal = item["subtotal"]
-            break
 
     return JsonResponse(
         {
             "ok": True,
+            "linea": pid,
             "cart_count": sum(cart.values()),
             "qty": qty,
             "item_subtotal": float(item_subtotal),
@@ -387,20 +450,16 @@ def agregar_carrito_ajax(request, producto_id):
 
 
 @require_POST
-def decrementar_carrito_ajax(request, producto_id):
+def decrementar_carrito_ajax(request, linea):
     cart = _get_cart(request)
-    pid = str(producto_id)
+    pid = _clave_o_vacia(linea)
     if pid in cart:
         _restar_del_carrito(cart, pid)
         _save_cart(request, cart)
 
     productos, total = _build_cart_items(cart)
     qty = cart.get(pid, 0)
-    item_subtotal = 0
-    for item in productos:
-        if item["producto"].id == producto_id:
-            item_subtotal = item["subtotal"]
-            break
+    item_subtotal = _subtotal_de(productos, pid)
 
     return JsonResponse(
         {
@@ -419,9 +478,9 @@ def carrito_json(request):
 
 
 @require_POST
-def eliminar_carrito_ajax(request, producto_id):
+def eliminar_carrito_ajax(request, linea):
     cart = _get_cart(request)
-    cart.pop(str(producto_id), None)
+    cart.pop(_clave_o_vacia(linea), None)
     _save_cart(request, cart)
 
     _, total = _build_cart_items(cart)
@@ -438,7 +497,7 @@ def eliminar_carrito_ajax(request, producto_id):
 
 @ensure_csrf_cookie
 def producto_detalle(request, pk):
-    producto = get_object_or_404(Producto, pk=pk)
+    producto = get_object_or_404(Producto.objects.prefetch_related("opciones"), pk=pk)
     imagenes = getattr(producto, "imagenes", None)
     ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else []}
 

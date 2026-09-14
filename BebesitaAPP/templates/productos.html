@@ -55,7 +55,7 @@
   <form method="get" class="catalog-filter-bar surface-card mb-4">
     <div class="catalog-filter-main">
       <label for="filtro-q" class="form-label">Buscar</label>
-      <input id="filtro-q" type="search" name="q" class="field-input" placeholder="Ej: brownie, caja, alfajor..." value="{{ filtro_q }}">
+      <input id="filtro-q" type="search" name="q" class="field-input" placeholder="Ej: alfajor, barquillo, cuchuflí..." value="{{ filtro_q }}">
     </div>
     <div>
       <label for="filtro-categoria" class="form-label">Categoría</label>
@@ -85,7 +85,7 @@
       detalle" compitiendo con "Agregar". Va como <button> y no como <div>
       clickeable para que se pueda llegar con el teclado.
     {% endcomment %}
-    <article class="catalog-card" data-catalog-card>
+    <article class="catalog-card" data-catalog-card data-linea-scope data-pid="{{ p.id }}">
       <button type="button" class="catalog-card__abrir btn-view" data-id="{{ p.id }}"
               aria-label="Ver detalle de {{ p.nombre }}">
         <span class="catalog-media">
@@ -95,30 +95,15 @@
         </span>
         <span class="catalog-card__pie">
           <span class="catalog-card__nombre">{{ p.nombre }}</span>
-          <span class="catalog-price">${{ p.precio|floatformat:0 }}<small> c/u</small></span>
+          <span class="catalog-price"><span data-precio="{{ p.precio }}">${{ p.precio|floatformat:0 }}</span><small> c/u</small></span>
         </span>
       </button>
       <div class="catalog-actions">
-        {% if p.variantes.all %}
-          {% comment %}
-            Cada cobertura es un producto propio: el selector cambia el id que
-            recibe el boton Agregar. Asi el carrito no necesita saber nada de
-            variantes y cada una conserva su precio y su foto.
-          {% endcomment %}
-          <label class="catalog-variante">
-            <span>Cobertura</span>
-            <select data-variante>
-              <option value="{{ p.id }}">{{ p.variante_nombre|default:"Opción 1" }}</option>
-              {% for v in p.variantes.all %}
-                <option value="{{ v.id }}">{{ v.variante_nombre }}</option>
-              {% endfor %}
-            </select>
-          </label>
-        {% endif %}
+        {% include "partials/opciones.html" with p=p prefijo="c" %}
         {% if p.unidades_por_pack > 1 %}
           <p class="catalog-pack">Bolsita de {{ p.unidades_por_pack }} unidades</p>
         {% endif %}
-        <div class="product-ctl" data-id="{{ p.id }}">
+        <div class="product-ctl" data-id="{{ p.clave_inicial }}">
           <button type="button" class="btn-add-only catalog-cta" {% if not p.disponible %}disabled{% endif %}>
             Agregar {{ minimo_unidades }}
           </button>

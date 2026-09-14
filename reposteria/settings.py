@@ -72,6 +72,10 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    # WhiteNoise sirve los estaticos tambien en runserver. El servidor de
+    # desarrollo de Django no responde pedidos por tramos (Range) y Safari de
+    # iPhone NO reproduce un video sin eso: en local se veia solo el poster.
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "BebesitaAPP",
