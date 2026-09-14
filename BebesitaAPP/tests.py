@@ -452,3 +452,26 @@ class CatalogoInicialTests(TestCase):
         self._correr()
         alfajor.refresh_from_db()
         self.assertTrue(alfajor.imagen.storage.exists(alfajor.imagen.name))
+
+
+@override_settings(MINIMO_UNIDADES=10, BOX_PRICE=1500, SHIPPING_COST=0,
+                   EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+class PedidoSinCajaTests(TestCase):
+    """El pedido normal va en bolsa: la caja no se cobra (se cobra en Arma tu box)."""
+
+    def test_checkout_normal_no_cobra_caja_ni_pide_ocasion(self):
+        producto = Producto.objects.create(
+            nombre="Barquillos", descripcion="x", precio=1500,
+            imagen=SimpleUploadedFile("b.jpg", b"img", content_type="image/jpeg"),
+        )
+        self.client.post(reverse("agregar_carrito_ajax", args=[producto.id]))
+        pagina = self.client.get(reverse("checkout"))
+        self.assertNotContains(pagina, "cantidad_cajas")
+        response = self.client.post(reverse("checkout"), data={
+            "nombre": "Cliente", "email": "c@example.com", "telefono": "+56 9 1111 1111",
+            "tipo_entrega": "retiro", "comuna_sector": "Santiago", "direccion": "Ref",
+        })
+        self.assertEqual(response.status_code, 302)
+        pedido = Pedido.objects.get()
+        self.assertEqual((pedido.cantidad_cajas, pedido.costo_caja, pedido.total), (0, 0, 15000))
+        self.assertNotIn("Cajas (", mail.outbox[0].body)

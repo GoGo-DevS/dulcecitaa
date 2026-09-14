@@ -331,24 +331,18 @@ def checkout(request):
         return redirect("carrito")
 
     current_delivery_type = CheckoutForm.TIPO_ENTREGA_RETIRO
-    current_cantidad_cajas = 1
     if request.method == "POST":
         current_delivery_type = request.POST.get("tipo_entrega") or CheckoutForm.TIPO_ENTREGA_RETIRO
-        try:
-            current_cantidad_cajas = max(1, int(request.POST.get("cantidad_cajas") or 1))
-        except ValueError:
-            current_cantidad_cajas = 1
     shipping_cost = _shipping_cost_for_delivery(current_delivery_type)
-    box_cost = _box_cost_for(current_cantidad_cajas)
-    total = subtotal + shipping_cost + box_cost
+    # El pedido normal no paga caja: va en bolsa (lo pidio la duena el 14-09).
+    total = subtotal + shipping_cost
 
     if request.method == "POST":
         form = CheckoutForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
             shipping_cost = _shipping_cost_for_delivery(data["tipo_entrega"])
-            box_cost = _box_cost_for(data["cantidad_cajas"])
-            total = subtotal + shipping_cost + box_cost
+            total = subtotal + shipping_cost
             pedido = Pedido.objects.create(
                 nombre_cliente=data["nombre"],
                 email_cliente=data["email"],
@@ -357,8 +351,8 @@ def checkout(request):
                 comuna_sector=data["comuna_sector"],
                 direccion=data["direccion"],
                 costo_despacho=shipping_cost,
-                cantidad_cajas=data["cantidad_cajas"],
-                costo_caja=box_cost,
+                cantidad_cajas=0,
+                costo_caja=0,
                 comentario_ocasion=data["comentario_ocasion"],
                 total=total,
             )
@@ -389,8 +383,6 @@ def checkout(request):
             "productos": productos,
             "subtotal": subtotal,
             "shipping_cost": shipping_cost,
-            "box_cost": box_cost,
-            "box_price": getattr(settings, "BOX_PRICE", 0),
             "total": total,
             "pickup_point_label": getattr(settings, "PICKUP_POINT_LABEL", ""),
             "form": form,

@@ -33,11 +33,11 @@
       Despacho: <strong style="color:#4a2f34;">{{ shipping_formatted }}</strong>
     </td>
   </tr>
-  <tr>
+  {% if pedido.cantidad_cajas %}<tr>
     <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#6f5a60;padding:2px 2px;">
       Cajas ({{ pedido.cantidad_cajas }}): <strong style="color:#4a2f34;">{{ box_formatted }}</strong>
     </td>
-  </tr>
+  </tr>{% endif %}
   <tr>
     <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:19px;color:#4a2f34;padding:6px 2px 0;">
       Total: <strong style="color:#b1245e;">{{ total_formatted }}</strong>
