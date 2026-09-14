@@ -2525,3 +2525,97 @@ a { color: var(--blanco); }
 .dr-foot .footer-title, .dr-foot .footer-legal, .dr-foot p, .dr-foot a { color: var(--rosa) !important; }
 .dr-foot .footer-legal { border-top-color: rgba(245, 167, 214, .5) !important; }
 .dr-foot .footer-link:hover { text-decoration: underline; }
+
+/* ============================================================
+   AZUL + ROSADO + BLANCO (14-09-2026)
+   Pedido de Diego: "todo muy rosado es poco profesional, se puede
+   catalogar infantil". Se suma el azul de dulcebarquillo.cl
+   (#2a4057, medido de su barra) como color SERIO, y el rosado de
+   la marca queda como ACENTO.
+
+     blanco  #ffffff  fondo
+     azul    #2a4057  texto, franja, pie, botones principales
+     rosado  #f5a7d6  logo, cinta de fotos, chips, detalles
+
+   Contraste medido: azul/blanco 10,66:1 · azul/rosado 5,78:1.
+   Todas las combinaciones pasan AA, a diferencia del rosado solo.
+   Este bloque va al final y con !important porque las capas de
+   paleta anteriores tambien lo usaban.
+   ============================================================ */
+:root {
+  --azul: #2a4057;
+  --azul-900: #1d2e40;
+  --tinta-rosa: var(--azul);
+  --fondo: #ffffff;
+  --crema: #ffffff;
+  --superficie: #ffffff;
+  --rosa-lavado: rgba(245, 167, 214, .16);
+}
+body { background: #fff !important; color: var(--azul) !important; }
+h1, h2, h3, h4, .eyebrow, p, li, label, .ig-hero__claim, .ig-hero__claim em,
+.ig-hero__bajada, .ig-encargos__titulo, .ig-encargos__texto, .section-head h2,
+.section-head p, .dr-products-title, .dr-products-sub, .ig-video figcaption { color: var(--azul) !important; }
+a { color: var(--azul); }
+.ig-hero__logo { filter: none !important; }
+
+/* Franja superior: azul con letra blanca */
+.dr-topbar { background: var(--azul) !important; color: #fff !important; border-bottom: 0 !important; }
+
+/* Barra de navegacion: blanca, links azules, boton rosado */
+.site-navbar.dr-nav { background: #fff !important; }
+.dr-nav .nav-link { color: var(--azul) !important; }
+.dr-nav .nav-link:hover { color: var(--azul-900) !important; }
+.dr-nav .nav-link:not(.dr-pedido)::after { background: var(--rosa) !important; }
+.dr-pedido, .dr-nav .nav-link.dr-pedido { background: var(--rosa) !important; color: var(--azul) !important; }
+.dr-pedido:hover { background: #f3b6db !important; }
+
+/* Hero y secciones: blanco; las que alternan, un lavado rosado muy suave */
+.ig-hero { background: #fff !important; }
+.ig-encargos, .dr-work-video, .section-soft { background: var(--rosa-lavado) !important; }
+.corp-blanco { background: #fff !important; }
+.corp-blanco h1, .corp-blanco h2, .corp-blanco h3, .corp-blanco p,
+.corp-blanco li, .corp-blanco label, .corp-blanco .eyebrow, .corp-blanco a { color: var(--azul) !important; }
+
+/* La cinta de fotos queda rosada: es el toque de marca */
+.ig-cinta { background: var(--rosa) !important; }
+
+/* Banda del minimo: azul */
+.ig-minimo { background: var(--azul) !important; }
+.ig-minimo, .ig-minimo b, .ig-minimo span { color: #fff !important; }
+
+/* Botones: principal azul, secundario con borde azul */
+.dr-btn-wine, .btn-main, .dr-hero-btn, .btn-add-only,
+.catalog-card .btn-add-only, .surface-card .btn-main, .tarjeta .btn-main,
+.dr-corp .dr-btn-wine {
+  background: var(--azul) !important; color: #fff !important; border-color: var(--azul) !important;
+}
+.dr-btn-wine:hover, .btn-main:hover, .btn-add-only:hover { background: var(--azul-900) !important; color: #fff !important; }
+.btn-ghost, a.btn-ghost, .hero-actions .btn-ghost, .ig-hero__acciones .btn-ghost, .dr-corp .btn-ghost,
+.catalog-filter-bar .btn-ghost, .surface-card .btn-ghost, .tarjeta .btn-ghost {
+  background: transparent !important; color: var(--azul) !important; border: 1px solid var(--azul) !important;
+}
+.btn-ghost:hover { background: var(--rosa-lavado) !important; }
+
+/* Tarjetas y catalogo: blancas, texto azul */
+.catalog-card *, .surface-card *, .tarjeta *, .entrega__via *, .ig-encargos__caso *,
+.catalog-filter-bar *, .cart-item *, .check-list li, .dr-corp h2, .dr-corp p, .dr-corp .eyebrow { color: var(--azul) !important; }
+.catalog-card .btn-add-only { color: #fff !important; }
+.catalog-price { color: var(--azul) !important; }
+.catalog-card, .surface-card, .tarjeta, .entrega__via, .ig-encargos__caso { border-color: rgba(42, 64, 87, .12) !important; }
+
+/* Chips y etiquetas: rosado con letra azul (5,78:1) */
+.catalog-tag, .sutil-minimo, .catalog-tag--flota, .pildora, .marca-estado { background: var(--rosa) !important; color: var(--azul) !important; }
+.ig-encargos__lista li::before { background: var(--rosa) !important; }
+
+/* Pie: azul con letra blanca y logotipo blanco */
+.site-footer.dr-foot { background: var(--azul) !important; border-top: 0 !important; }
+.dr-foot, .dr-foot *, .dr-foot .footer-copy, .dr-foot .footer-link,
+.dr-foot .footer-title, .dr-foot .footer-legal, .dr-foot p, .dr-foot a { color: #fff !important; }
+.dr-foot .footer-link:hover { color: var(--rosa) !important; }
+.dr-foot .footer-legal { border-top-color: rgba(255, 255, 255, .25) !important; }
+/* El boton dentro de una tarjeta hereda "texto azul" de la tarjeta y quedaba
+   azul sobre azul (Coordinar por WhatsApp, en delivery). */
+.entrega__via .btn-main, .surface-card .btn-main, .tarjeta .btn-main, .ig-encargos__caso .btn-main { color: #fff !important; }
+/* Fuera las manchas difuminadas del hero: con el azul se veian como un
+   degradado sucio detras del logotipo. Hero en blanco limpio. */
+.ig-hero::before, .ig-hero::after { display: none !important; }
