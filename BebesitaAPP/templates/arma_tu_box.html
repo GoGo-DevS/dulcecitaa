@@ -5,15 +5,11 @@
 
 {% block content %}
 <section class="container py-5 box-armar">
-  <div class="box-cabeza mb-4">
-    <div class="section-head mb-0">
-      <p class="eyebrow">Arma tu box</p>
-      <h1>Tu caja, a tu gusto</h1>
-      <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. La caja cuesta ${{ precio_caja }}.</p>
-      <p class="box-cabeza__texto">Elige cuántos quieres de cada uno y con qué cobertura. Te lo entregamos en caja blanca con cinta, lista para regalar.</p>
-    </div>
-    <img src="{% static 'img/galeria/box-regalo-aza.jpg' %}" class="box-cabeza__foto"
-         alt="Caja blanca de regalo con cinta negra y tarjeta de Día del Padre, entregada por Dulcecita">
+  <div class="section-head mb-4">
+    <p class="eyebrow">Arma tu box</p>
+    <h1>Tu caja, a tu gusto</h1>
+    <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. La caja cuesta ${{ precio_caja }}.</p>
+    <p class="box-cabeza__texto">Elige cuántos quieres de cada uno y con qué cobertura.</p>
   </div>
 
   {% if messages %}

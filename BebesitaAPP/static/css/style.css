@@ -2957,3 +2957,14 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
 @media (max-width: 860px) {
   body:has(.box-resumen) .dr-social-float { bottom: 6.8rem; }
 }
+
+/* Venta corporativa: la caja grande (mejor foto) y los cuchuflís al lado */
+.corp-foto--doble { display: grid; grid-template-columns: 1.7fr 1fr; gap: .8rem; align-items: end; }
+.corp-foto--doble img { aspect-ratio: auto; }
+.corp-foto--doble .corp-foto__principal { aspect-ratio: 3 / 4; }
+.corp-foto--doble .corp-foto__segunda { aspect-ratio: 9 / 16; }
+.corp-foto--doble .corp-foto__pie { grid-column: 1 / -1; }
+@media (max-width: 860px) {
+  .corp-foto--doble img, .corp-foto--doble .corp-foto__principal { aspect-ratio: 3 / 4; }
+  .corp-foto--doble .corp-foto__segunda { aspect-ratio: 9 / 16; }
+}

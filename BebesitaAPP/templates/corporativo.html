@@ -34,9 +34,14 @@
       <h2>¿Listo para un regalo que se recuerde?</h2>
       <p>Completa el formulario de abajo{% if contact_email %} o escríbenos a <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% endif %}. Te respondemos en menos de 24 horas hábiles.</p>
     </div>
-    <figure class="corp-foto" data-reveal-item>
-      <img src="{% static 'img/galeria/corporativo-empaques-aza.jpg' %}" alt="Cuchuflís bañados embolsados con el sticker de agradecimiento de AZA, listos para entregar a sus trabajadores" loading="lazy">
-      <figcaption class="corp-foto__pie">Pedido corporativo para AZA, con sticker de la empresa.</figcaption>
+    {% comment %}
+      Dos trabajos reales personalizados para AZA. La caja va grande porque
+      es la foto de mejor calidad; los cuchuflis con sticker, al lado.
+    {% endcomment %}
+    <figure class="corp-foto corp-foto--doble" data-reveal-item>
+      <img class="corp-foto__principal" src="{% static 'img/galeria/box-regalo-aza.jpg' %}" alt="Caja blanca de regalo con cinta negra y tarjeta personalizada de Día del Padre para AZA" loading="lazy">
+      <img class="corp-foto__segunda" src="{% static 'img/galeria/corporativo-empaques-aza.jpg' %}" alt="Cuchuflís bañados embolsados con el sticker de agradecimiento de AZA" loading="lazy">
+      <figcaption class="corp-foto__pie">Regalos personalizados para AZA: caja del Día del Padre y cuchuflís con su sticker.</figcaption>
     </figure>
   </div>
 
