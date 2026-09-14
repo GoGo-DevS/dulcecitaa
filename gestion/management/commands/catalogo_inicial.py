@@ -38,7 +38,7 @@ CATALOGO = [
             "Alfajor de triple capa: galletas suaves, relleno cremoso de manjar y cobertura "
             "de chocolate. Elige la cobertura al pedir."
         ),
-        "precio": 2000, "orden": 1, "unidades_por_pack": 1, "foto": "alfajor-chocolate-negro.jpg",
+        "precio": 1590, "orden": 1, "unidades_por_pack": 1, "foto": "alfajor-chocolate-negro.jpg",
     },
     {
         "nombre": "Cuchuflís bañados",
