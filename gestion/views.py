@@ -457,3 +457,92 @@ def compra_granel(request):
         return redirect("gestion:pedidos")
 
     return render(request, "gestion/compra_granel.html", {"pedidos": pedidos, "hoy": timezone.localdate()})
+
+
+# ----------------------------------------------------------------------------
+# Web: como le va a la tienda online
+# ----------------------------------------------------------------------------
+def web(request):
+    """Numeros de la tienda web en el panel, sin tener que abrir Analytics.
+
+    Todo sale de lo que la web ya guarda (pedidos, lineas, clics de /links):
+    es exacto y en tiempo real. Las visitas, el origen y los mapas de calor
+    viven en GA4 y Clarity; aqui van los accesos directos y si estan
+    configurados.
+    """
+    from datetime import timedelta
+
+    from django.conf import settings
+    from django.db.models import Count, F, Sum
+
+    from BebesitaAPP.links import resumen_clics
+    from BebesitaAPP.models import ClicEnlace
+    from BebesitaAPP.models import Pedido as PedidoWeb
+    from BebesitaAPP.models import PedidoItem as PedidoItemWeb
+
+    try:
+        dias = int(request.GET.get("dias", 7))
+    except ValueError:
+        dias = 7
+    if dias not in (1, 7, 30, 90):
+        dias = 7
+    ahora = timezone.now()
+    desde = ahora - timedelta(days=dias)
+
+    pedidos = PedidoWeb.objects.filter(creado__gte=desde)
+    n_pedidos = pedidos.count()
+    ventas = int(pedidos.aggregate(t=Sum("total"))["t"] or 0)
+    cajas_box = int(pedidos.aggregate(c=Sum("cantidad_cajas"))["c"] or 0)
+
+    top = (PedidoItemWeb.objects.filter(pedido__creado__gte=desde)
+           .values("producto__nombre", "detalle")
+           .annotate(unidades=Sum("cantidad"), monto=Sum(F("cantidad") * F("precio")))
+           .order_by("-unidades")[:6])
+
+    clics = resumen_clics(dias)
+    total_clics = sum(n for _, n in clics)
+    nombres = {"pedido": "Haz tu pedido", "whatsapp": "WhatsApp", "box": "Arma tu box",
+               "corporativo": "Corporativos", "delivery": "Despacho y retiro", "instagram": "Instagram"}
+    clics_filas = []
+    for slug, n in clics:
+        if slug.startswith("p") and slug[1:].isdigit():
+            prod = Producto.objects.filter(pk=int(slug[1:])).first()
+            etiqueta = prod.nombre if prod else slug
+        else:
+            etiqueta = nombres.get(slug, slug)
+        clics_filas.append({"etiqueta": etiqueta, "n": n, "pct": round(n * 100 / total_clics) if total_clics else 0})
+
+    sitio = getattr(settings, "SITE_URL", "https://dulcecita.cl")
+    herramientas = [
+        {"nombre": "Google Analytics 4", "para": "Visitas en tiempo real, de dónde llegan y qué compran",
+         "ok": bool(settings.GA4_ID), "url": "https://analytics.google.com/analytics/web/#/realtime", "falta": "GA4_ID"},
+        {"nombre": "Microsoft Clarity", "para": "Mapas de calor y grabaciones de cómo navegan",
+         "ok": bool(settings.CLARITY_ID), "url": "https://clarity.microsoft.com/projects", "falta": "CLARITY_ID"},
+        {"nombre": "Google Search Console", "para": "Qué buscan en Google para llegar y en qué posición sale",
+         "ok": bool(settings.GOOGLE_SITE_VERIFICATION),
+         "url": f"https://search.google.com/search-console?resource_id={quote(sitio + '/', safe='')}", "falta": "GOOGLE_SITE_VERIFICATION"},
+        {"nombre": "Pixel de Meta", "para": "Ventas y contactos que vienen de anuncios en Instagram",
+         "ok": bool(settings.META_PIXEL_ID), "url": "https://business.facebook.com/events_manager2", "falta": "META_PIXEL_ID"},
+        {"nombre": "PageSpeed Insights", "para": "Velocidad del sitio en celular (Core Web Vitals)",
+         "ok": True, "url": f"https://pagespeed.web.dev/analysis?url={quote(sitio + '/', safe='')}", "falta": ""},
+        {"nombre": "Prueba de resultados enriquecidos", "para": "Que Google lea bien productos y precios",
+         "ok": True, "url": f"https://search.google.com/test/rich-results?url={quote(sitio + '/productos/', safe='')}", "falta": ""},
+    ]
+
+    context = {
+        "dias": dias,
+        "opciones_dias": [(1, "Hoy"), (7, "7 días"), (30, "30 días"), (90, "90 días")],
+        "n_pedidos": n_pedidos,
+        "ventas": ventas,
+        "ticket": round(ventas / n_pedidos) if n_pedidos else 0,
+        "cajas_box": cajas_box,
+        "pedidos_hoy": PedidoWeb.objects.filter(creado__date=timezone.localdate()).count(),
+        "top": top,
+        "clics_filas": clics_filas,
+        "total_clics": total_clics,
+        "clics_hoy": ClicEnlace.objects.filter(creado__date=timezone.localdate()).count(),
+        "ultimos": PedidoWeb.objects.order_by("-creado")[:6],
+        "herramientas": herramientas,
+        "sitio": sitio,
+    }
+    return render(request, "gestion/web.html", context)

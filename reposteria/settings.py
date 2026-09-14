@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    "django.contrib.sitemaps",
     "BebesitaAPP",
     "gestion",
 ]
@@ -132,6 +133,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "BebesitaAPP.context_processors.cart_count",
                 "BebesitaAPP.context_processors.site_config",
+                "BebesitaAPP.context_processors.seo",
             ],
         },
     },
@@ -192,6 +194,12 @@ STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
 }
+# En produccion, nombres con huella (style.abc123.css): el navegador los guarda
+# un año sin volver a pedirlos, y un cambio genera otro nombre. Es lo que mas
+# pesa en la velocidad de la segunda visita (Core Web Vitals). En local no:
+# obligaria a correr collectstatic tras cada cambio.
+if not DEBUG:
+    STORAGES["staticfiles"] = {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"}
 
 # Si hay Cloudinary, las imágenes subidas (MEDIA) se guardan ahí de forma permanente.
 # Los estáticos siguen en WhiteNoise. La librería cloudinary lee CLOUDINARY_URL sola.
@@ -255,6 +263,22 @@ TRANSFERENCIA = {
 }
 BUSINESS_HOURS = os.getenv("BUSINESS_HOURS", "Lunes a sábado de 09:00 a 19:00")
 DEFAULT_OG_IMAGE = os.getenv("DEFAULT_OG_IMAGE", "/static/img/sello-dulcecita.jpg")
+
+# --- SEO y medicion -----------------------------------------------------
+# Dominio oficial: canonical, sitemap y datos estructurados usan SIEMPRE este,
+# aunque la visita llegue por dulcecitaa.onrender.com o con ?utm=. Si no, Google
+# ve dos sitios iguales compitiendo entre si.
+SITE_URL = (os.getenv("SITE_URL") or "https://dulcecita.cl").rstrip("/")
+
+# IDs de medicion. Vacios = no se carga nada (en local y en tests no se mide).
+# Todos se pegan en Render > Environment; ninguno es secreto, pero asi se
+# cambian sin tocar codigo.
+GA4_ID = os.getenv("GA4_ID", "")                          # G-XXXXXXXXXX (Google Analytics 4)
+GTM_ID = os.getenv("GTM_ID", "")                          # GTM-XXXXXXX (opcional, Tag Manager)
+CLARITY_ID = os.getenv("CLARITY_ID", "")                  # Microsoft Clarity: mapas de calor y grabaciones
+META_PIXEL_ID = os.getenv("META_PIXEL_ID", "")            # Pixel de Meta, para medir anuncios de Instagram
+GOOGLE_SITE_VERIFICATION = os.getenv("GOOGLE_SITE_VERIFICATION", "")  # Search Console (metodo etiqueta HTML)
+BING_SITE_VERIFICATION = os.getenv("BING_SITE_VERIFICATION", "")      # Bing Webmaster Tools
 
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

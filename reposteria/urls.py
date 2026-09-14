@@ -3,13 +3,22 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.static import serve as media_serve
 
+from django.contrib.sitemaps.views import sitemap
+
 from BebesitaAPP import links as links_views
+from BebesitaAPP import seo
 from BebesitaAPP import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('panel/', include('gestion.urls')),
     path('', views.home, name='home'),
+
+    # SEO tecnico
+    path('robots.txt', seo.robots_txt, name='robots_txt'),
+    path('sitemap.xml', sitemap, {'sitemaps': seo.SITEMAPS}, name='django.contrib.sitemaps.views.sitemap'),
+    path('manifest.webmanifest', seo.manifest, name='manifest'),
+
     path('productos/', views.productos, name='productos'),
     path('corporativo/', views.corporativo, name='corporativo'),
     path('contacto/', views.contacto, name='contacto'),
@@ -35,6 +44,7 @@ urlpatterns = [
     path('links/ir/<slug:slug>/', links_views.links_ir, name='links_ir'),
 
     path('producto/<int:pk>/', views.producto_detalle, name='producto_detalle'),
+    path('productos/<slug:slug>/', views.producto_ficha, name='producto_ficha'),
 
     # Checkout
     path('checkout/', views.checkout, name='checkout'),

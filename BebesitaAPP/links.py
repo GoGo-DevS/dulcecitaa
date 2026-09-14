@@ -67,7 +67,7 @@ def links_ir(request, slug):
         producto = Producto.objects.filter(pk=int(slug[1:]), visible=True).first()
         if not producto:
             raise Http404("Producto no encontrado")
-        url, externo = reverse("producto_detalle", args=[producto.pk]), False
+        url, externo = producto.get_absolute_url(), False
     else:
         raise Http404("Enlace no encontrado")
 

@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 {% load humanize %}
-{% block title %}{{ site_brand }} | Repostería artesanal premium{% endblock %}
-{% block meta_description %}Descubre {{ site_brand }}, repostería artesanal premium para regalos, celebraciones y pedidos corporativos.{% endblock %}
-{% block og_title %}{{ site_brand }} | Repostería artesanal premium{% endblock %}
-{% block og_description %}Dulces artesanales con enfoque boutique para celebrar, regalar y sorprender.{% endblock %}
+{% block title %}Alfajores, barquillos y cuchuflís artesanales | {{ site_brand }}{% endblock %}
+{% block meta_description %}Repostería artesanal hecha a mano: alfajores, barquillos y cuchuflís bañados en chocolate. Pedidos por volumen, box para regalar y despacho a todo Chile.{% endblock %}
+{% block og_title %}{{ site_brand }} | La felicidad en cajita{% endblock %}
+{% block og_description %}Alfajores, barquillos y cuchuflís hechos a mano. Box para regalar y regalos corporativos con despacho a todo Chile.{% endblock %}
 
 {% block content %}
 
@@ -214,7 +214,7 @@
 
     <div class="dr-grid">
       {% for p in grilla %}
-        <a class="dr-tile" href="{% url 'producto_detalle' p.id %}">
+        <a class="dr-tile" href="{{ p.get_absolute_url }}">
           {% if p.imagen %}<img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" loading="lazy">{% endif %}
           <span class="dr-tile-overlay">
             <span class="dr-tile-name">{{ p.nombre }}</span>

@@ -1,8 +1,21 @@
 {% extends 'base.html' %}
+{% block robots %}noindex, follow{% endblock %}
 {% block title %}Pedido confirmado | {{ site_brand }}{% endblock %}
 {% block meta_description %}Tu pedido en {{ site_brand }} fue confirmado correctamente. Revisa los siguientes pasos de contacto y entrega.{% endblock %}
 
 {% block content %}
+{% comment %}
+  purchase se manda UNA vez por pedido: si recarga la pagina de exito, no
+  se duplica la venta en Analytics ni en Meta.
+{% endcomment %}
+<script>
+  (function () {
+    var clave = 'dc-compra-{{ pedido_id }}';
+    try { if (localStorage.getItem(clave)) return; localStorage.setItem(clave, '1'); } catch (e) {}
+    window.dcMedir('purchase', { transaction_id: '{{ pedido_id }}', currency: 'CLP', value: {{ pedido.total|floatformat:0 }},
+      items: [{% for it in pedido.items.all %}{ item_id: '{{ it.producto_id }}', item_name: '{{ it.producto.nombre|escapejs }}', quantity: {{ it.cantidad }}, price: {{ it.precio|floatformat:0 }} }{% if not forloop.last %},{% endif %}{% endfor %}] });
+  })();
+</script>
 <section class="container py-5">
   {% if messages %}
     {% for m in messages %}

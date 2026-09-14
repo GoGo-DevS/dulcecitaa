@@ -1,0 +1,45 @@
+{% load static %}{% comment %}
+  Medicion. Cada herramienta se carga SOLO si su ID esta en el entorno
+  (Render > Environment): en local y en tests no se mide nada. El panel y el
+  admin nunca cargan esto (context processor `seo`, variable `medir`).
+
+  window.dcMedir(evento, datos) es la unica puerta: la llaman cart.js, el
+  checkout y los formularios, y ella reparte a GA4, Meta y Clarity con el
+  nombre que cada una entiende. Existe siempre, aunque no haya IDs, para que
+  llamarla nunca rompa la pagina.
+{% endcomment %}
+<script>
+  window.dataLayer = window.dataLayer || [];
+  window.dcMedir = function (evento, datos) {
+    datos = datos || {};
+    try {
+      window.dataLayer.push(Object.assign({ event: evento }, datos));
+      if (window.gtag) window.gtag('event', evento, datos);
+      if (window.clarity) window.clarity('event', evento);
+      var meta = { view_item: 'ViewContent', add_to_cart: 'AddToCart', begin_checkout: 'InitiateCheckout',
+                   purchase: 'Purchase', generate_lead: 'Lead', click_whatsapp: 'Contact' }[evento];
+      if (meta && window.fbq) window.fbq('track', meta, datos.value ? { value: datos.value, currency: 'CLP' } : {});
+    } catch (e) { /* medir nunca debe romper una compra */ }
+  };
+</script>
+{% if medir %}
+{% if gtm_id %}
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','{{ gtm_id|escapejs }}');</script>
+{% endif %}
+{% if ga4_id %}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ ga4_id|urlencode }}"></script>
+<script>
+  function gtag(){ dataLayer.push(arguments); }
+  window.gtag = gtag;
+  gtag('js', new Date());
+  gtag('config', '{{ ga4_id|escapejs }}', { page_location: '{{ canonical_url|escapejs }}' + window.location.search });
+</script>
+{% endif %}
+{% if clarity_id %}
+<script>(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","{{ clarity_id|escapejs }}");</script>
+{% endif %}
+{% if meta_pixel_id %}
+<script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','{{ meta_pixel_id|escapejs }}');fbq('track','PageView');</script>
+{% endif %}
+{% endif %}
+<script src="{% static 'js/medicion.js' %}?v=20260914" defer></script>

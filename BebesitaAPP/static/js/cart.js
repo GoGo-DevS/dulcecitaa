@@ -192,6 +192,7 @@
         });
         const data = await resp.json();
         if (data && data.ok) {
+          if (window.dcMedir) window.dcMedir('add_to_cart', { currency: 'CLP', items: [{ item_id: data.linea || pid, quantity: data.qty || MINIMO }] });
           cartCache[data.linea || pid] = data.qty || MINIMO;
           setCartCount(data.cart_count || 0);
           switchToQty(ctl, data.qty || MINIMO);

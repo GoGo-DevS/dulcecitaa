@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
+{% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
-{% block title %}Corporativo | {{ site_brand }}{% endblock %}
-{% block meta_description %}Soluciones corporativas de {{ site_brand }} para eventos, regalos empresariales y coffee breaks premium.{% endblock %}
+{% block title %}Regalos corporativos dulces para empresas | {{ site_brand }}{% endblock %}
+{% block meta_description %}Regalos corporativos con tu marca: cajas de alfajores y cuchuflís personalizadas, coffee breaks y pedidos por volumen para empresas en todo Chile.{% endblock %}
 
 {% block content %}
+{% for m in messages %}{% if m.level_tag == 'success' %}<script>window.dcMedir('generate_lead', { formulario: 'corporativo' });</script>{% endif %}{% endfor %}
 {% comment %}
   Venta corporativa en BLANCO, para que se distinga del resto del sitio
   (rosado). Formato de dulcebarquillo.cl, pedido de Diego: texto a la

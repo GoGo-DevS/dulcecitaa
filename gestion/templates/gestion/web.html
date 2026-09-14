@@ -1,0 +1,137 @@
+{% extends "gestion/base.html" %}
+{% load humanize %}
+
+{% block title %}Web | Gestión Dulcecita{% endblock %}
+{% block nav_web %}active{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Tienda web</h1>
+<p class="page-lead">Pedidos y clics de dulcecita.cl, al momento. Las visitas y los mapas de calor están en las herramientas de abajo.</p>
+
+<nav class="chip-row" aria-label="Periodo">
+    {% for valor, etiqueta in opciones_dias %}
+        <a href="?dias={{ valor }}" class="btn btn-sm {% if dias == valor %}btn-dc{% else %}btn-outline-secondary{% endif %}"{% if dias == valor %} aria-current="true"{% endif %}>{{ etiqueta }}</a>
+    {% endfor %}
+</nav>
+
+<section class="card surface-rose kpi-hero mb-3" aria-label="Ventas web">
+    <div class="card-body text-center py-4">
+        <div class="kpi-label">Ventas web {% if dias == 1 %}de hoy{% else %}últimos {{ dias }} días{% endif %}</div>
+        <div class="kpi-value">${{ ventas|intcomma }}</div>
+        <div class="kpi-split">
+            <span class="kpi-chip num"><span>Pedidos</span>{{ n_pedidos }}</span>
+            <span class="kpi-chip num"><span>Ticket promedio</span>${{ ticket|intcomma }}</span>
+        </div>
+    </div>
+</section>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card h-100"><div class="card-body">
+            <div class="stat-value">{{ pedidos_hoy }}</div>
+            <div class="stat-label">Pedidos hoy</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card h-100"><div class="card-body">
+            <div class="stat-value">{{ cajas_box }}</div>
+            <div class="stat-label">Box vendidos</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card h-100"><div class="card-body">
+            <div class="stat-value">{{ total_clics }}</div>
+            <div class="stat-label">Clics en /links</div>
+        </div></div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card stat-card h-100"><div class="card-body">
+            <div class="stat-value">{{ clics_hoy }}</div>
+            <div class="stat-label">Clics hoy</div>
+        </div></div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card mb-3">
+            <div class="card-header"><i class="bi bi-bag-heart"></i> Lo más pedido</div>
+            <div class="list-group list-group-flush">
+                {% for fila in top %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                        <span class="min-w-0">
+                            <span class="item-title d-block">{{ fila.producto__nombre }}</span>
+                            {% if fila.detalle %}<span class="item-meta d-block">{{ fila.detalle }}</span>{% endif %}
+                        </span>
+                        <span class="text-end flex-shrink-0">
+                            <span class="item-title d-block num">{{ fila.unidades }} u.</span>
+                            <span class="item-meta d-block num">${{ fila.monto|floatformat:0|intcomma }}</span>
+                        </span>
+                    </div>
+                {% empty %}
+                    <div class="list-group-item item-meta">Todavía no hay pedidos web en este periodo.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card mb-3">
+            <div class="card-header"><i class="bi bi-hand-index"></i> Qué tocan en dulcecita.cl/links</div>
+            <div class="list-group list-group-flush">
+                {% for fila in clics_filas %}
+                    <div class="list-group-item">
+                        <div class="d-flex justify-content-between gap-2">
+                            <span class="item-title">{{ fila.etiqueta }}</span>
+                            <span class="item-title num">{{ fila.n }} <span class="item-meta">({{ fila.pct }}%)</span></span>
+                        </div>
+                        <div class="web-barra" aria-hidden="true"><span style="width: {{ fila.pct }}%"></span></div>
+                    </div>
+                {% empty %}
+                    <div class="list-group-item item-meta">Sin clics en este periodo. Pon dulcecita.cl/links en la bio de Instagram.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-receipt"></i> Últimos pedidos web</div>
+    <div class="list-group list-group-flush">
+        {% for p in ultimos %}
+            <a href="{% url 'admin:BebesitaAPP_pedido_change' p.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2">
+                <span class="min-w-0">
+                    <span class="item-title d-block">#{{ p.pk }} {{ p.nombre_cliente }}</span>
+                    <span class="item-meta d-block">{{ p.creado|date:"d M, H:i" }} {{ p.get_tipo_entrega_display|lower }}{% if p.cantidad_cajas %}, {{ p.cantidad_cajas }} box{% endif %}</span>
+                </span>
+                <span class="item-title num flex-shrink-0">${{ p.total|floatformat:0|intcomma }}</span>
+            </a>
+        {% empty %}
+            <div class="list-group-item item-meta">Aún no llegan pedidos por la web.</div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-tools"></i> Herramientas de medición</div>
+    <div class="list-group list-group-flush">
+        {% for h in herramientas %}
+            <a href="{{ h.url }}" target="_blank" rel="noopener" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2">
+                <span class="min-w-0">
+                    <span class="item-title d-block">{{ h.nombre }}</span>
+                    <span class="item-meta d-block">{{ h.para }}</span>
+                </span>
+                <span class="flex-shrink-0">
+                    {% if not h.falta %}<span class="badge bg-secondary">Abrir</span>{% elif h.ok %}<span class="badge bg-success">Activo</span>{% else %}<span class="badge bg-secondary" title="Falta la variable {{ h.falta }} en Render">Falta configurar</span>{% endif %}
+                </span>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .web-barra { height: 6px; border-radius: 999px; margin-top: .45rem; overflow: hidden; }
+    .web-barra span { display: block; height: 100%; border-radius: 999px; background: var(--pink, #f5a7d6); min-width: 4px; }
+    .num { font-variant-numeric: tabular-nums; }
+</style>
+{% endblock %}

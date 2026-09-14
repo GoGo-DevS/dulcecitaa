@@ -20,7 +20,7 @@ class Cliente(models.Model):
 
     def __str__(self):
         base = self.empresa or self.nombre
-        return f"{base} · {self.area}" if self.area else base
+        return f"{base} - {self.area}" if self.area else base
 
     @property
     def titulo(self):
@@ -65,7 +65,7 @@ class Pedido(models.Model):
         verbose_name_plural = "Pedidos"
 
     def __str__(self):
-        return f"Pedido #{self.id} · {self.cliente}"
+        return f"Pedido #{self.id} - {self.cliente}"
 
     @property
     def badge(self):
@@ -207,7 +207,7 @@ class Compra(models.Model):
         verbose_name_plural = "Compras"
 
     def __str__(self):
-        return f"${self.monto:,} · {self.proveedor or self.detalle}"
+        return f"${self.monto:,} - {self.proveedor or self.detalle}"
 
 
 class CostoProducto(models.Model):

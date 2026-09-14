@@ -80,12 +80,33 @@ class Producto(models.Model):
     opciones = models.ManyToManyField(
         Opcion, blank=True, related_name='productos',
         help_text='Coberturas y rellenos que el cliente puede elegir.')
+    # La direccion de la ficha: /productos/alfajores/ se entiende y posiciona;
+    # /producto/15/ no dice nada. Se arma sola desde el nombre si queda vacia.
+    slug = models.SlugField(
+        'Dirección web', max_length=120, blank=True, db_index=True,
+        help_text='Se completa sola desde el nombre. Cambiarla rompe los enlaces ya compartidos.')
 
     class Meta:
         ordering = ("orden", "nombre")
 
     def __str__(self):
         return self.nombre
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            from django.utils.text import slugify
+            base = slugify(self.nombre)[:110] or "producto"
+            slug, n = base, 2
+            while Producto.objects.filter(slug=slug).exclude(pk=self.pk).exists():
+                slug, n = f"{base}-{n}", n + 1
+            self.slug = slug
+        super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        from django.urls import reverse
+        if self.slug:
+            return reverse("producto_ficha", args=[self.slug])
+        return reverse("producto_detalle", args=[self.pk])
 
     def grupos_opciones(self):
         """[(tipo, "Cobertura", [opciones])], un grupo por tipo, en orden."""

@@ -1,54 +1,51 @@
 {% extends "gestion/base.html" %}
 
-{% block title %}Compra a granel · Dulcecita{% endblock %}
+{% block title %}Compra a granel | Gestión Dulcecita{% endblock %}
 {% block nav_pedidos %}active{% endblock %}
 
 {% block content %}
-<div class="d-flex align-items-center mb-2">
-    <a href="{% url 'gestion:pedidos' %}" class="btn btn-sm btn-link text-muted ps-0"><i class="bi bi-arrow-left"></i> Pedidos</a>
-</div>
-<h5 class="mb-1">Compra a granel</h5>
-<p class="small text-muted">Registras una compra grande y se reparte entre los pedidos que elijas, según cuántas unidades produce cada uno. Crea una compra en cada pedido.</p>
+<a href="{% url 'gestion:pedidos' %}" class="btn btn-sm btn-link text-muted ps-0 mb-1"><i class="bi bi-arrow-left"></i> Pedidos</a>
+<h1 class="page-title">Compra a granel</h1>
+<p class="page-lead">Registras una compra grande y se reparte entre los pedidos que elijas, según cuántas unidades produce cada uno. Crea una compra en cada pedido.</p>
 
 <form method="post">
     {% csrf_token %}
     <div class="card mb-3"><div class="card-body">
-        <div class="row g-2">
-            <div class="col-7">
-                <label class="form-label small mb-0">Detalle</label>
-                <input name="detalle" class="form-control" placeholder="Ej: manjar + galletas + chocolate">
+        <div class="row g-3">
+            <div class="col-12 col-sm-7">
+                <label class="form-label" for="granelDetalle">Detalle</label>
+                <input name="detalle" id="granelDetalle" class="form-control" placeholder="Ej: manjar, galletas y chocolate">
             </div>
-            <div class="col-5">
-                <label class="form-label small mb-0">Monto total $</label>
-                <input type="number" min="0" name="monto" class="form-control" placeholder="0" required>
+            <div class="col-12 col-sm-5">
+                <label class="form-label" for="granelMonto">Monto total $</label>
+                <input type="number" min="0" name="monto" id="granelMonto" class="form-control" placeholder="0" inputmode="numeric" required>
             </div>
-            <div class="col-7">
-                <label class="form-label small mb-0">Proveedor</label>
-                <input name="proveedor" class="form-control" placeholder="La Vega / Líder…">
+            <div class="col-12 col-sm-7">
+                <label class="form-label" for="granelProveedor">Proveedor</label>
+                <input name="proveedor" id="granelProveedor" class="form-control" placeholder="La Vega, Líder…">
             </div>
-            <div class="col-5">
-                <label class="form-label small mb-0">Fecha</label>
-                <input type="date" name="fecha" value="{{ hoy|date:'Y-m-d' }}" class="form-control">
+            <div class="col-12 col-sm-5">
+                <label class="form-label" for="granelFecha">Fecha</label>
+                <input type="date" name="fecha" id="granelFecha" value="{{ hoy|date:'Y-m-d' }}" class="form-control">
             </div>
         </div>
     </div></div>
 
     <div class="card mb-3">
-        <div class="card-header fw-semibold"><i class="bi bi-receipt text-dc"></i> ¿Para qué pedidos?</div>
+        <div class="card-header"><i class="bi bi-receipt"></i> ¿Para qué pedidos?</div>
         <div class="list-group list-group-flush">
             {% for p in pedidos %}
-                <label class="list-group-item d-flex align-items-center gap-2">
+                <label class="list-group-item d-flex align-items-center gap-3">
                     <input type="checkbox" name="pedidos" value="{{ p.pk }}" class="form-check-input mt-0">
-                    <span class="flex-grow-1">
-                        <span class="fw-semibold">{{ p.cliente }}</span>
-                        <span class="small text-muted d-block">
-                            {{ p.descripcion|default:"Pedido" }} · {{ p.total_unidades }} unidad{{ p.total_unidades|pluralize:"es" }}
-                        </span>
+                    <span class="flex-grow-1 min-w-0">
+                        <span class="item-title d-block">{{ p.cliente }}</span>
+                        <span class="item-meta d-block">{{ p.descripcion|default:"Pedido" }}</span>
+                        <span class="item-meta d-block">{{ p.total_unidades }} unidad{{ p.total_unidades|pluralize:"es" }}</span>
                     </span>
-                    <span class="badge bg-{{ p.badge }}">{{ p.get_estado_display }}</span>
+                    <span class="badge bg-{{ p.badge }} flex-shrink-0">{{ p.get_estado_display }}</span>
                 </label>
             {% empty %}
-                <div class="list-group-item text-muted">No hay pedidos.</div>
+                <div class="list-group-item item-meta">No hay pedidos.</div>
             {% endfor %}
         </div>
     </div>

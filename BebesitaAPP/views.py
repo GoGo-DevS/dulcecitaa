@@ -5,10 +5,12 @@ from django.conf import settings
 from django.contrib import messages
 from django.http import Http404, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
 from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
 from . import box as arma_box
+from . import seo
 from .email_utils import send_checkout_emails, send_contact_email, send_corporate_email
 from .forms import CheckoutForm, ContactoForm, CorporativoForm
 from .models import (
@@ -245,6 +247,7 @@ def productos(request):
         productos_qs = productos_qs.filter(destacado=True)
 
     productos_qs = productos_qs.order_by("orden", "nombre")
+    schema = seo.schema_catalogo(list(productos_qs))
 
     return render(
         request,
@@ -255,6 +258,7 @@ def productos(request):
             "filtro_q": query,
             "filtro_categoria": categoria_slug,
             "filtro_destacados": solo_destacados,
+            "schema": schema,
             "minimo_box": arma_box.minimo_box(),
             "precio_caja": arma_box.precio_caja(),
         },
@@ -279,7 +283,7 @@ def corporativo(request):
     else:
         form = CorporativoForm()
 
-    return render(request, "corporativo.html", {"form": form})
+    return render(request, "corporativo.html", {"form": form, "schema_migas": seo.schema_migas(("Venta corporativa", reverse("corporativo")))})
 
 
 def contacto(request):
@@ -300,7 +304,7 @@ def contacto(request):
     else:
         form = ContactoForm()
 
-    return render(request, "contacto.html", {"form": form})
+    return render(request, "contacto.html", {"form": form, "schema_migas": seo.schema_migas(("Contacto", reverse("contacto")))})
 
 
 def agregar_al_carrito(request, linea):
@@ -514,10 +518,26 @@ def eliminar_carrito_ajax(request, linea):
 def producto_detalle(request, pk):
     producto = get_object_or_404(Producto.objects.prefetch_related("opciones"), pk=pk)
     imagenes = getattr(producto, "imagenes", None)
-    ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else []}
+    ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto)}
 
     if request.GET.get("modal") == "1":
         return render(request, "partials/producto_detalle.html", ctx)
+    # La ficha vive en /productos/<slug>/. La direccion vieja con numero
+    # redirige para siempre (301): Google traspasa lo que ya tenia ganado.
+    if producto.slug:
+        destino = producto.get_absolute_url()
+        if request.META.get("QUERY_STRING"):
+            destino += "?" + request.META["QUERY_STRING"]
+        return redirect(destino, permanent=True)
+    return render(request, "producto_detalle_page.html", ctx)
+
+
+@ensure_csrf_cookie
+def producto_ficha(request, slug):
+    producto = get_object_or_404(
+        Producto.objects.prefetch_related("opciones"), slug=slug, variante_de__isnull=True)
+    imagenes = getattr(producto, "imagenes", None)
+    ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto)}
     return render(request, "producto_detalle_page.html", ctx)
 
 
@@ -527,7 +547,7 @@ def delivery(request):
     El menu tenia "Delivery y retiro" y "Contacto" apuntando los DOS a la
     misma pagina: dos opciones distintas que llevaban al mismo lugar.
     """
-    return render(request, 'delivery.html')
+    return render(request, 'delivery.html', {"schema_migas": seo.schema_migas(("Delivery y retiro", reverse("delivery")))})
 
 
 @ensure_csrf_cookie
@@ -566,6 +586,7 @@ def arma_tu_box(request):
         "filas": filas,
         "minimo_box": minimo,
         "precio_caja": arma_box.precio_caja(),
+        "schema_migas": seo.schema_migas(("Arma tu box", reverse("arma_tu_box"))),
     })
 
 

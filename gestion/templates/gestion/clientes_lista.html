@@ -1,20 +1,21 @@
 {% extends "gestion/base.html" %}
 
-{% block title %}Clientes · Dulcecita{% endblock %}
+{% block title %}Clientes | Gestión Dulcecita{% endblock %}
 {% block nav_clientes %}active{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0">Clientes</h5>
+<div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="page-title">Clientes</h1>
     <a href="{% url 'gestion:cliente_nuevo' %}" class="btn btn-dc btn-sm">
         <i class="bi bi-person-plus"></i> Nuevo
     </a>
 </div>
 
-<form method="get" class="mb-3">
+<form method="get" class="mb-3" role="search">
+    <label class="visually-hidden" for="buscarCliente">Buscar cliente</label>
     <div class="input-group">
-        <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Buscar nombre, empresa o WhatsApp">
-        <button class="btn btn-outline-secondary" type="submit"><i class="bi bi-search"></i></button>
+        <input type="search" id="buscarCliente" name="q" value="{{ q }}" class="form-control" placeholder="Nombre, empresa o WhatsApp">
+        <button class="btn btn-dc" type="submit" aria-label="Buscar"><i class="bi bi-search"></i></button>
     </div>
 </form>
 
@@ -22,29 +23,29 @@
     <div class="list-group">
         {% for cliente in clientes %}
             <div class="list-group-item">
-                <div class="d-flex justify-content-between align-items-start gap-2">
-                    <div class="flex-grow-1">
-                        <div class="fw-semibold">
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <div class="flex-grow-1 min-w-0">
+                        <div class="item-title">
                             {{ cliente.titulo }}
-                            {% if cliente.area %}<span class="text-muted fw-normal">· {{ cliente.area }}</span>{% endif %}
                             {% if not cliente.activo %}<span class="badge bg-secondary ms-1">Inactivo</span>{% endif %}
                         </div>
+                        {% if cliente.area %}<div class="item-meta">{{ cliente.area }}</div>{% endif %}
                         {% if cliente.empresa and cliente.nombre %}
-                            <div class="small text-muted"><i class="bi bi-person"></i> {{ cliente.nombre }}</div>
+                            <div class="item-meta"><i class="bi bi-person"></i> {{ cliente.nombre }}</div>
                         {% endif %}
                         {% if cliente.whatsapp %}
-                            <div class="small text-muted"><i class="bi bi-whatsapp text-success"></i> {{ cliente.whatsapp }}</div>
+                            <div class="item-meta"><i class="bi bi-whatsapp icon-wa"></i> {{ cliente.whatsapp }}</div>
                         {% endif %}
                     </div>
-                    <div class="text-end d-flex flex-column gap-1 flex-shrink-0">
+                    <div class="d-flex align-items-center gap-1 flex-shrink-0">
                         <a href="{% url 'gestion:cliente_editar' cliente.pk %}" class="btn btn-sm btn-outline-dc">
                             <i class="bi bi-pencil"></i> Editar
                         </a>
                         <form method="post" action="{% url 'gestion:cliente_eliminar' cliente.pk %}"
                               onsubmit="return confirm('¿Eliminar este cliente? No se puede deshacer.');" class="m-0">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-sm btn-link text-danger p-0">
-                                <i class="bi bi-trash"></i> Eliminar
+                            <button type="submit" class="btn btn-link text-danger btn-icon" aria-label="Eliminar cliente" title="Eliminar cliente">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
                     </div>
@@ -54,8 +55,8 @@
     </div>
 {% else %}
     <div class="card">
-        <div class="card-body text-center text-muted py-5">
-            <i class="bi bi-people display-6 d-block mb-2"></i>
+        <div class="empty-state">
+            <i class="bi bi-people"></i>
             {% if q %}
                 No hay clientes para «{{ q }}».
             {% else %}

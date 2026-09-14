@@ -44,4 +44,5 @@ urlpatterns = [
 
     # Costos por unidad
     path("costos/", views.costos, name="costos"),
+    path("web/", views.web, name="web"),
 ]

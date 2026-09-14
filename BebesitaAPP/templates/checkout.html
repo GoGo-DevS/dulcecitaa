@@ -1,9 +1,13 @@
 {% extends 'base.html' %}
+{% block robots %}noindex, follow{% endblock %}
 {% block body_class %}sin-fab{% endblock %}
 {% block title %}Checkout | {{ site_brand }}{% endblock %}
 {% block meta_description %}Completa tus datos en {{ site_brand }} para confirmar tu pedido y coordinar la entrega.{% endblock %}
 
 {% block content %}
+{% if productos and request.method == 'GET' %}
+<script>window.dcMedir('begin_checkout', { currency: 'CLP', value: {{ total }}, items: [{% for item in productos %}{ item_id: '{{ item.linea }}', item_name: '{{ item.producto.nombre|escapejs }}', quantity: {{ item.cantidad }}, price: {{ item.precio_unitario }} }{% if not forloop.last %},{% endif %}{% endfor %}] });</script>
+{% endif %}
 <section class="container py-5">
   <div class="section-head mb-4">
     <p class="eyebrow">Paso final</p>

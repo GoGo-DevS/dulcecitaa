@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
+{% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
-{% block title %}Contacto | {{ site_brand }}{% endblock %}
-{% block meta_description %}Contacta a {{ site_brand }} para pedidos personalizados, regalos especiales y consultas de compra.{% endblock %}
+{% block title %}Contacto y pedidos por WhatsApp | {{ site_brand }}{% endblock %}
+{% block meta_description %}Escríbenos para pedidos de repostería artesanal, box para regalar o regalos corporativos. Respondemos por WhatsApp y correo.{% endblock %}
 
 {% block content %}
+{% for m in messages %}{% if m.level_tag == 'success' %}<script>window.dcMedir('generate_lead', { formulario: 'contacto' });</script>{% endif %}{% endfor %}
 <section class="container py-5">
   <div class="split-form-layout" data-reveal-group>
     <div class="split-form-copy" data-reveal-item>

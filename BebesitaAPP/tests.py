@@ -657,3 +657,64 @@ class LinksBioTests(TestCase):
         r = self.client.get("/admin/BebesitaAPP/clicenlace/")
         self.assertContains(r, "Últimos 30 días")
         self.assertContains(r, "Haz tu pedido")
+
+
+@override_settings(SITE_URL="https://dulcecita.cl", GA4_ID="", CLARITY_ID="", META_PIXEL_ID="", GTM_ID="")
+class SeoTecnicoTests(TestCase):
+    """Lo que Google lee: robots, sitemap, canonical, noindex y datos estructurados."""
+
+    def setUp(self):
+        self.producto = Producto.objects.create(
+            nombre="Alfajores", descripcion="Alfajor de triple capa", precio=1590,
+            imagen=SimpleUploadedFile("a.jpg", b"img", content_type="image/jpeg"))
+
+    def _ld(self, html):
+        import json, re
+        tipos = []
+        for bloque in re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.S):
+            data = json.loads(bloque)
+            tipos += [n.get("@type") for n in data.get("@graph", [data])]
+        return tipos
+
+    def test_robots_y_sitemap_apuntan_al_dominio_oficial(self):
+        robots = self.client.get("/robots.txt").content.decode()
+        self.assertIn("Sitemap: https://dulcecita.cl/sitemap.xml", robots)
+        self.assertIn("Disallow: /checkout/", robots)
+        sitemap = self.client.get("/sitemap.xml").content.decode()
+        self.assertIn("https://dulcecita.cl/productos/alfajores/", sitemap)
+        self.assertNotIn("/carrito/", sitemap)
+
+    def test_ficha_con_slug_y_la_direccion_vieja_redirige_301(self):
+        self.assertEqual(self.producto.slug, "alfajores")
+        r = self.client.get(f"/producto/{self.producto.pk}/")
+        self.assertEqual(r.status_code, 301)
+        self.assertEqual(r["Location"], "/productos/alfajores/")
+        ficha = self.client.get("/productos/alfajores/").content.decode()
+        self.assertIn('<link rel="canonical" href="https://dulcecita.cl/productos/alfajores/">', ficha)
+        self.assertIn("Product", self._ld(ficha))
+        self.assertIn("BreadcrumbList", self._ld(ficha))
+
+    def test_canonical_ignora_utm_y_la_compra_no_se_indexa(self):
+        catalogo = self.client.get("/productos/?utm_source=instagram").content.decode()
+        self.assertIn('<link rel="canonical" href="https://dulcecita.cl/productos/">', catalogo)
+        self.assertIn("ItemList", self._ld(catalogo))
+        self.assertIn('content="noindex, follow"', self.client.get("/carrito/").content.decode())
+
+    def test_home_describe_el_negocio(self):
+        home = self.client.get("/").content.decode()
+        self.assertIn("Bakery", self._ld(home))
+        self.assertIn('lang="es-CL"', home)
+
+    def test_sin_ids_no_carga_ninguna_herramienta_de_medicion(self):
+        home = self.client.get("/").content.decode()
+        self.assertNotIn("googletagmanager.com", home)
+        self.assertNotIn("clarity.ms", home)
+        self.assertIn("window.dcMedir", home)
+
+    @override_settings(GA4_ID="G-TEST123", CLARITY_ID="abc123")
+    def test_con_ids_carga_medicion_pero_nunca_en_el_panel(self):
+        home = self.client.get("/").content.decode()
+        self.assertIn("gtag/js?id=G-TEST123", home)
+        self.assertIn("clarity.ms/tag/", home)
+        login = self.client.get("/panel/login/").content.decode()
+        self.assertNotIn("G-TEST123", login)

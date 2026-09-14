@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+{% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
-{% block title %}Arma tu box | {{ site_brand }}{% endblock %}
-{% block meta_description %}Arma tu box de {{ site_brand }}: elige alfajores, barquillos y cuchuflís con la cobertura que quieras, desde {{ minimo_box }} por producto.{% endblock %}
+{% block title %}Box de dulces personalizado para regalar | {{ site_brand }}{% endblock %}
+{% block meta_description %}Arma tu box de alfajores, barquillos y cuchuflís con la cobertura que quieras, desde {{ minimo_box }} por producto. Un regalo dulce hecho a mano, listo para entregar.{% endblock %}
 
 {% block content %}
 <section class="container py-5 box-armar">
@@ -99,6 +100,10 @@
       else q = q - 1 < MIN ? 0 : q - 1;
       input.value = q;
       recalcular();
+    });
+    form.addEventListener('submit', function () {
+      var total = parseInt(form.querySelector('[data-box-total]').textContent.replace(/\D/g, ''), 10) || 0;
+      if (window.dcMedir) window.dcMedir('add_to_cart', { currency: 'CLP', value: total, item_category: 'box' });
     });
     form.addEventListener('change', function (e) {
       if (!e.target.matches('input[type=number]')) return;

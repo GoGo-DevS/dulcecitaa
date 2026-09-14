@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+{% block schema %}<script type="application/ld+json">{{ schema }}</script>{% endblock %}
 {% load static %}
-{% block title %}Catálogo | {{ site_brand }}{% endblock %}
-{% block meta_description %}Explora el Catálogo de {{ site_brand }}: reposteria artesanal premium para regalar, celebrar y compartir.{% endblock %}
+{% block title %}Comprar alfajores y cuchuflís por mayor | {{ site_brand }}{% endblock %}
+{% block meta_description %}Catálogo con precios de alfajores, barquillos y cuchuflís artesanales. Elige chocolate o chocolate blanco, desde {{ minimo_unidades }} unidades, con despacho a todo Chile.{% endblock %}
 
 {% block content %}
 <section class="page-hero container reveal-ready">

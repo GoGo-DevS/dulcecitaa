@@ -1,116 +1,118 @@
 {% extends "gestion/base.html" %}
 {% load humanize %}
 
-{% block title %}Pedido #{{ pedido.id }} · Dulcecita{% endblock %}
+{% block title %}Pedido #{{ pedido.id }} | Gestión Dulcecita{% endblock %}
 {% block nav_pedidos %}active{% endblock %}
 
 {% block content %}
 {{ productos|json_script:"productos-data" }}
 
-<div class="d-flex align-items-center mb-2">
-    <a href="{% url 'gestion:pedidos' %}" class="btn btn-sm btn-link text-muted ps-0"><i class="bi bi-arrow-left"></i> Pedidos</a>
-</div>
+<a href="{% url 'gestion:pedidos' %}" class="btn btn-sm btn-link text-muted ps-0 mb-1"><i class="bi bi-arrow-left"></i> Pedidos</a>
 
-<!-- Nota / observaciones: siempre arriba y editable -->
-<div class="card mb-3" style="border-color: var(--dr-pink); background:#fdf2f8;">
-    <div class="card-body py-2">
+<!-- Cabecera -->
+<div class="card mb-3"><div class="card-body">
+    <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+        <div class="min-w-0">
+            <div class="eyebrow">Pedido #{{ pedido.id }}</div>
+            <h1 class="page-title mt-1">{{ pedido.descripcion|default:"Pedido" }}</h1>
+            {% if pedido.fecha_entrega %}<div class="item-meta mt-1"><i class="bi bi-calendar-event"></i> Entrega: {{ pedido.fecha_entrega|date:"d M Y" }}</div>{% endif %}
+        </div>
+        <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
+            <span class="badge bg-{{ pedido.badge }}">{{ pedido.get_estado_display }}</span>
+            {% if pedido.pagado %}<span class="badge bg-success-subtle"><i class="bi bi-check2"></i> Pagado</span>{% endif %}
+        </div>
+    </div>
+
+    <label class="form-label" for="{{ cliente_form.cliente.id_for_label }}"><i class="bi bi-person-badge"></i> Cliente del pedido</label>
+    <form method="post" action="{% url 'gestion:pedido_cliente' pedido.pk %}">
+        {% csrf_token %}
+        {{ cliente_form.cliente }}
+    </form>
+    <div class="item-meta mt-2">
+        <div><i class="bi bi-person-check"></i> <strong class="text-dc">Recibe:</strong> {{ pedido.cliente.nombre|default:"Sin nombre" }}{% if pedido.cliente.area %}, {{ pedido.cliente.area }}{% endif %}</div>
+        {% if pedido.cliente.whatsapp %}<div><i class="bi bi-whatsapp icon-wa"></i> {{ pedido.cliente.whatsapp }}</div>{% endif %}
+    </div>
+
+    <a href="{% url 'gestion:pedido_editar' pedido.pk %}" class="btn btn-sm btn-outline-dc mt-3">
+        <i class="bi bi-pencil"></i> Editar pedido
+    </a>
+
+    <!-- Controles de estado -->
+    <form method="post" action="{% url 'gestion:pedido_estado' pedido.pk %}" class="mt-3 pt-3 border-top">
+        {% csrf_token %}
+        <label class="form-label" for="estadoSel">Estado del pedido</label>
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            <select name="estado" id="estadoSel" class="form-select" style="max-width:180px">
+                {% for val, label in estados %}
+                    <option value="{{ val }}" {% if pedido.estado == val %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <div class="form-check form-switch m-0">
+                <input class="form-check-input" type="checkbox" name="pagado" value="1" id="pagSw" {% if pedido.pagado %}checked{% endif %}>
+                <label class="form-check-label fw-semibold" for="pagSw">Pagado</label>
+            </div>
+            <button class="btn btn-sm btn-outline-dark ms-auto"><i class="bi bi-check"></i> Guardar</button>
+        </div>
+    </form>
+</div></div>
+
+<!-- Nota / observaciones: siempre visible y editable -->
+<div class="card surface-wash mb-3">
+    <div class="card-body">
         <form method="post" action="{% url 'gestion:pedido_nota' pedido.pk %}">
             {% csrf_token %}
-            <label class="eyebrow d-block mb-1"><i class="bi bi-sticky"></i> Nota / observaciones</label>
-            <textarea name="notas" rows="2" class="form-control mb-2"
-                      placeholder="Ej: la recibe Juan de Mantención · llamar antes de entregar · pagó la mitad…">{{ pedido.notas }}</textarea>
+            <label class="form-label" for="notaPedido"><i class="bi bi-sticky"></i> Nota u observaciones</label>
+            <textarea name="notas" id="notaPedido" rows="2" class="form-control mb-2"
+                      placeholder="Ej: la recibe Juan de Mantención, llamar antes de entregar, pagó la mitad">{{ pedido.notas }}</textarea>
             <button class="btn btn-sm btn-dc"><i class="bi bi-check"></i> Guardar nota</button>
         </form>
     </div>
 </div>
 
-<!-- Cabecera -->
-<div class="card mb-3"><div class="card-body">
-    <div class="d-flex justify-content-between align-items-start mb-2">
-        <div class="flex-grow-1 me-2">
-            <label class="eyebrow mb-1 d-block"><i class="bi bi-person-badge"></i> Cliente del pedido</label>
-            <form method="post" action="{% url 'gestion:pedido_cliente' pedido.pk %}">
-                {% csrf_token %}
-                {{ cliente_form.cliente }}
-            </form>
-            <div class="small mt-1">
-                <i class="bi bi-person-check text-dc"></i> <strong>Recibe:</strong>
-                {{ pedido.cliente.nombre|default:"—" }}
-                {% if pedido.cliente.area %} · {{ pedido.cliente.area }}{% endif %}
-                {% if pedido.cliente.whatsapp %} · <i class="bi bi-whatsapp text-success"></i> {{ pedido.cliente.whatsapp }}{% endif %}
-            </div>
-        </div>
-        <span class="badge bg-{{ pedido.badge }}">{{ pedido.get_estado_display }}</span>
-    </div>
-    <div class="text-muted small">{{ pedido.descripcion|default:"Pedido" }}</div>
-    {% if pedido.fecha_entrega %}<div class="small"><i class="bi bi-calendar-event"></i> Entrega: {{ pedido.fecha_entrega|date:"d M Y" }}</div>{% endif %}
-
-    <a href="{% url 'gestion:pedido_editar' pedido.pk %}" class="btn btn-sm btn-outline-dc mt-2">
-        <i class="bi bi-pencil"></i> Editar pedido (descripción, fechas, cliente)
-    </a>
-
-    <!-- Controles de estado -->
-    <form method="post" action="{% url 'gestion:pedido_estado' pedido.pk %}" class="mt-3">
-        {% csrf_token %}
-        <div class="d-flex gap-2 align-items-center flex-wrap">
-            <select name="estado" class="form-select form-select-sm" style="max-width:160px">
-                {% for val, label in estados %}
-                    <option value="{{ val }}" {% if pedido.estado == val %}selected{% endif %}>{{ label }}</option>
-                {% endfor %}
-            </select>
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="pagado" value="1" id="pagSw" {% if pedido.pagado %}checked{% endif %}>
-                <label class="form-check-label small" for="pagSw">Pagado</label>
-            </div>
-            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-check"></i> Guardar</button>
-        </div>
-    </form>
-</div></div>
-
 <!-- Resumen de dinero -->
 <div class="card surface-rose mb-3">
     <div class="card-body">
-        <div class="row text-center">
-            <div class="col-4">
-                <div class="small opacity-75">Precio</div>
-                <div class="fw-bold">${{ pedido.precio_total|intcomma }}</div>
+        <div class="money-grid">
+            <div>
+                <div class="money-label">Precio</div>
+                <div class="money-value">${{ pedido.precio_total|intcomma }}</div>
             </div>
-            <div class="col-4">
-                <div class="small opacity-75">Costo {% if pedido.tiene_compras %}real{% elif pedido.costo_unidades %}× unidad{% else %}estim.{% endif %}</div>
-                <div class="fw-bold">${{ pedido.costo_aplicado|intcomma }}</div>
+            <div>
+                <div class="money-label">Costo {% if pedido.tiene_compras %}real{% elif pedido.costo_unidades %}por unidad{% else %}estimado{% endif %}</div>
+                <div class="money-value">${{ pedido.costo_aplicado|intcomma }}</div>
             </div>
-            <div class="col-4">
-                <div class="small opacity-75">Utilidad</div>
-                <div class="fw-bold fs-5">${{ pedido.utilidad|intcomma }}</div>
-                <div class="small opacity-75">{{ pedido.margen_pct }}%</div>
+            <div>
+                <div class="money-label">Utilidad</div>
+                <div class="money-value lg">${{ pedido.utilidad|intcomma }}</div>
+                <span class="money-pct">{{ pedido.margen_pct }}%</span>
             </div>
         </div>
     </div>
 </div>
 
+<!-- WhatsApp -->
+<div class="d-grid mb-3">
+    <a href="{{ wa_url }}" target="_blank" rel="noopener" class="btn btn-wa">
+        <i class="bi bi-whatsapp"></i> Enviar cotización por WhatsApp
+    </a>
+</div>
+
 {% if pedido.tiene_componentes %}
 <!-- Resumen de producción -->
 <div class="card mb-3">
-    <div class="card-header fw-semibold"><i class="bi bi-clipboard-check text-dc"></i> A producir (total)</div>
+    <div class="card-header"><i class="bi bi-clipboard-check"></i> A producir (total)</div>
     <div class="card-body">
         <div class="row g-2 text-center">
             {% for p in pedido.produccion %}
                 <div class="col-4">
-                    <div class="h4 mb-0 text-dc">{{ p.total }}</div>
-                    <div class="small text-muted">{{ p.nombre }}</div>
+                    <div class="stat-value">{{ p.total }}</div>
+                    <div class="stat-label">{{ p.nombre }}</div>
                 </div>
             {% endfor %}
         </div>
     </div>
 </div>
 {% endif %}
-
-<!-- WhatsApp -->
-<div class="d-grid mb-3">
-    <a href="{{ wa_url }}" target="_blank" class="btn btn-dc">
-        <i class="bi bi-whatsapp"></i> Enviar cotización por WhatsApp
-    </a>
-</div>
 
 <!-- Datalist del catálogo para elegir/crear la caja -->
 <datalist id="catalogo-cajas">
@@ -119,119 +121,122 @@
 
 <!-- Cajas -->
 <div class="card mb-3">
-    <div class="card-header bg-white fw-semibold"><i class="bi bi-box-seam text-dc"></i> Cajas del pedido</div>
+    <div class="card-header"><i class="bi bi-box-seam"></i> Cajas del pedido</div>
     <div class="card-body">
         {% for it in pedido.items.all %}
-            <div class="border rounded-3 mb-3" style="border-color:var(--dr-pink-soft)!important;">
+            <div class="box-card">
                 <!-- Encabezado de la caja -->
-                <div class="d-flex justify-content-between align-items-center p-2 px-3" style="background:#fdf2f8;border-radius:.7rem .7rem 0 0;">
-                    <div>
-                        <span class="fw-semibold">{{ it.cantidad }} {% if it.cantidad == 1 %}caja{% else %}cajas{% endif %}</span>
-                        · {{ it.descripcion }}
-                        <div class="small text-muted">${{ it.precio_unitario|intcomma }} c/u · costo ${{ it.costo_unitario|intcomma }}</div>
+                <div class="box-card-head">
+                    <div class="min-w-0">
+                        <div class="item-title">{{ it.descripcion }}</div>
+                        <div class="item-meta">
+                            {{ it.cantidad }} {% if it.cantidad == 1 %}caja{% else %}cajas{% endif %} de ${{ it.precio_unitario|intcomma }} c/u
+                            <br>Costo ${{ it.costo_unitario|intcomma }} c/u
+                        </div>
                     </div>
-                    <div class="text-end d-flex align-items-center gap-2">
-                        <span class="fw-bold">${{ it.subtotal|intcomma }}</span>
+                    <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                        <span class="fw-bold num">${{ it.subtotal|intcomma }}</span>
                         <form method="post" action="{% url 'gestion:pedido_item_eliminar' pedido.pk it.pk %}" onsubmit="return confirm('¿Eliminar la caja completa?')">
                             {% csrf_token %}
-                            <button class="btn btn-sm btn-link text-danger p-0"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-link text-danger btn-icon" aria-label="Eliminar caja" title="Eliminar caja"><i class="bi bi-trash"></i></button>
                         </form>
                     </div>
                 </div>
                 <!-- Contenido de la caja -->
-                <div class="p-2 px-3">
-                    <div class="small text-muted mb-1">Cada caja lleva:</div>
+                <div class="box-card-body">
+                    <div class="eyebrow mb-1">Cada caja lleva</div>
                     {% for comp in it.componentes.all %}
-                        <div class="d-flex justify-content-between align-items-center py-1 border-bottom">
-                            <span><span class="badge rounded-pill bg-light text-dark border me-1">{{ comp.cantidad }}</span> {{ comp.nombre }}</span>
+                        <div class="box-line">
+                            <span><span class="badge badge-qty me-2">{{ comp.cantidad }}</span>{{ comp.nombre }}</span>
                             <form method="post" action="{% url 'gestion:componente_eliminar' pedido.pk it.pk comp.pk %}">
                                 {% csrf_token %}
-                                <button class="btn btn-sm btn-link text-danger p-0"><i class="bi bi-x-lg"></i></button>
+                                <button class="btn btn-link text-danger btn-icon" aria-label="Quitar {{ comp.nombre }}" title="Quitar"><i class="bi bi-x-lg"></i></button>
                             </form>
                         </div>
                     {% empty %}
-                        <div class="small text-warning"><i class="bi bi-exclamation-circle"></i> Esta caja aún no tiene productos.</div>
+                        <div class="small text-warning py-2"><i class="bi bi-exclamation-circle"></i> Esta caja aún no tiene productos.</div>
                     {% endfor %}
                     <!-- Agregar producto (del catálogo) a esta caja -->
-                    <form method="post" action="{% url 'gestion:componente_agregar' pedido.pk it.pk %}" class="row g-1 mt-2">
+                    <form method="post" action="{% url 'gestion:componente_agregar' pedido.pk it.pk %}" class="row g-2 mt-2 align-items-end">
                         {% csrf_token %}
-                        <div class="col-7">{{ componente_form.producto }}</div>
-                        <div class="col-3">{{ componente_form.cantidad }}</div>
-                        <div class="col-2 d-grid"><button class="btn btn-sm btn-outline-dc" title="Agregar a la caja"><i class="bi bi-plus-lg"></i></button></div>
+                        <div class="col-7"><span class="form-label small d-block">Producto</span>{{ componente_form.producto }}</div>
+                        <div class="col-3"><span class="form-label small d-block">Cant.</span>{{ componente_form.cantidad }}</div>
+                        <div class="col-2 d-grid"><button class="btn btn-outline-dc px-0" title="Agregar a la caja" aria-label="Agregar a la caja"><i class="bi bi-plus-lg"></i></button></div>
                     </form>
                     <div class="form-text">Solo eliges el producto y cuántos van por caja.</div>
                 </div>
             </div>
         {% empty %}
-            <div class="text-muted small mb-3">Aún no hay cajas. Define la primera abajo 👇</div>
+            <div class="item-meta mb-3">Aún no hay cajas. Define la primera abajo.</div>
         {% endfor %}
 
         <!-- Nueva caja (colapsada si ya existe una) -->
-        <details class="border-top pt-3" {% if not pedido.items.all %}open{% endif %}>
-            <summary class="eyebrow mb-2" style="cursor:pointer;list-style:none;">
+        <details class="border-top pt-2" {% if not pedido.items.all %}open{% endif %}>
+            <summary class="eyebrow">
                 <i class="bi bi-plus-circle"></i> {% if pedido.items.all %}Agregar otra caja{% else %}Nueva caja{% endif %}
             </summary>
             <form method="post" action="{% url 'gestion:pedido_item_agregar' pedido.pk %}" id="form-nueva-caja" class="mt-2">
                 {% csrf_token %}
-                <div class="mb-2">
-                    <label class="form-label small mb-0">Caja (elige del catálogo o escribe una nueva)</label>
+                <div class="mb-3">
+                    <label class="form-label" for="id_caja_nombre">Caja (elige del catálogo o escribe una nueva)</label>
                     {{ item_form.descripcion }}
                 </div>
-                <div class="row g-2 mb-2">
-                    <div class="col-4"><label class="form-label small mb-0">¿Cuántas cajas?</label>{{ item_form.cantidad }}</div>
-                    <div class="col-4"><label class="form-label small mb-0">Precio por caja</label>{{ item_form.precio_unitario }}</div>
-                    <div class="col-4"><label class="form-label small mb-0">Costo por caja</label>{{ item_form.costo_unitario }}</div>
+                <div class="row g-2 mb-3">
+                    <div class="col-12 col-sm-4"><span class="form-label small d-block">¿Cuántas cajas?</span>{{ item_form.cantidad }}</div>
+                    <div class="col-6 col-sm-4"><span class="form-label small d-block">Precio por caja</span>{{ item_form.precio_unitario }}</div>
+                    <div class="col-6 col-sm-4"><span class="form-label small d-block">Costo por caja</span>{{ item_form.costo_unitario }}</div>
                 </div>
-                <div class="alert alert-light border d-flex justify-content-between mb-2 py-2">
-                    <span class="small">Subtotal: <b id="pv-sub">$0</b></span>
-                    <span class="small">Utilidad: <b id="pv-util">$0</b> (<span id="pv-margen">0</span>%)</span>
+                <div class="preview-box mb-3">
+                    <span>Subtotal: <b id="pv-sub">$0</b></span>
+                    <span>Utilidad: <b id="pv-util">$0</b> (<span id="pv-margen">0</span>%)</span>
                 </div>
-                <div class="d-grid"><button class="btn btn-dc btn-sm"><i class="bi bi-plus-lg"></i> Agregar caja</button></div>
+                <div class="d-grid"><button class="btn btn-dc"><i class="bi bi-plus-lg"></i> Agregar caja</button></div>
             </form>
-            <div class="small text-muted mt-2"><i class="bi bi-info-circle"></i> La caja se guarda en el catálogo. Después le eliges los productos que lleva.</div>
+            <div class="item-meta mt-2"><i class="bi bi-info-circle"></i> La caja se guarda en el catálogo. Después le eliges los productos que lleva.</div>
         </details>
     </div>
 </div>
 
 <!-- Compras -->
 <div class="card mb-3">
-    <div class="card-header bg-white fw-semibold"><i class="bi bi-bag-check text-dc"></i> Compras (costo real)</div>
+    <div class="card-header"><i class="bi bi-bag-check"></i> Compras (costo real)</div>
     <ul class="list-group list-group-flush">
         {% for c in pedido.compras.all %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <div>
-                    <div>{{ c.proveedor|default:"Compra" }}</div>
-                    <small class="text-muted">{{ c.detalle }} · {{ c.fecha|date:"d M" }}</small>
-                    {% if c.boleta %}<a href="{{ c.boleta.url }}" target="_blank" class="small d-block"><i class="bi bi-image"></i> Ver boleta</a>{% endif %}
+            <li class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                <div class="min-w-0">
+                    <div class="item-title">{{ c.proveedor|default:"Compra" }}</div>
+                    <div class="item-meta">{% if c.detalle %}{{ c.detalle }}<br>{% endif %}{{ c.fecha|date:"d M" }}</div>
+                    {% if c.boleta %}<a href="{{ c.boleta.url }}" target="_blank" rel="noopener" class="small fw-semibold d-inline-flex align-items-center gap-1" style="min-height:44px;"><i class="bi bi-image"></i> Ver boleta</a>{% endif %}
                 </div>
-                <div class="text-end d-flex align-items-center gap-2">
-                    <span class="fw-semibold">${{ c.monto|intcomma }}</span>
+                <div class="d-flex align-items-center gap-1 flex-shrink-0">
+                    <span class="fw-bold num">${{ c.monto|intcomma }}</span>
                     <form method="post" action="{% url 'gestion:compra_eliminar' pedido.pk c.pk %}" onsubmit="return confirm('¿Eliminar esta compra?')">
                         {% csrf_token %}
-                        <button class="btn btn-sm btn-link text-danger p-0"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-link text-danger btn-icon" aria-label="Eliminar compra" title="Eliminar compra"><i class="bi bi-trash"></i></button>
                     </form>
                 </div>
             </li>
         {% empty %}
-            <li class="list-group-item text-muted small">Sin compras. Mientras tanto el costo es el estimado.</li>
+            <li class="list-group-item item-meta">Sin compras. Mientras tanto el costo es el estimado.</li>
         {% endfor %}
     </ul>
     <div class="card-body border-top">
+        <div class="eyebrow mb-2">Registrar compra</div>
         <form method="post" action="{% url 'gestion:compra_nueva' pedido.pk %}" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row g-2 mb-2">
-                <div class="col-7">{{ compra_form.proveedor }}</div>
-                <div class="col-5">{{ compra_form.monto }}</div>
+                <div class="col-7"><span class="form-label small d-block">Proveedor</span>{{ compra_form.proveedor }}</div>
+                <div class="col-5"><span class="form-label small d-block">Monto $</span>{{ compra_form.monto }}</div>
             </div>
-            <div class="mb-2">{{ compra_form.detalle }}</div>
-            <div class="row g-2 mb-2">
-                <div class="col-5">{{ compra_form.fecha }}</div>
-                <div class="col-7">
-                    <label class="form-label small mb-0"><i class="bi bi-camera"></i> Foto boleta</label>
+            <div class="mb-2"><span class="form-label small d-block">Detalle</span>{{ compra_form.detalle }}</div>
+            <div class="row g-2 mb-3">
+                <div class="col-12 col-sm-5"><span class="form-label small d-block">Fecha</span>{{ compra_form.fecha }}</div>
+                <div class="col-12 col-sm-7">
+                    <span class="form-label small d-block"><i class="bi bi-camera"></i> Foto boleta</span>
                     {{ compra_form.boleta }}
                 </div>
             </div>
-            <div class="d-grid"><button class="btn btn-outline-dark btn-sm"><i class="bi bi-plus-lg"></i> Registrar compra</button></div>
+            <div class="d-grid"><button class="btn btn-outline-dark"><i class="bi bi-plus-lg"></i> Registrar compra</button></div>
         </form>
     </div>
 </div>

@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+{% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
-{% block title %}Delivery y retiro | {{ site_brand }}{% endblock %}
-{% block meta_description %}Cómo llega tu pedido de {{ site_brand }}: despacho a todo Chile por Paket y entrega coordinada en Santiago.{% endblock %}
+{% block title %}Despacho de dulces a todo Chile y retiro | {{ site_brand }}{% endblock %}
+{% block meta_description %}Despacho de alfajores y cuchuflís a todo Chile por Paket y entrega coordinada en Santiago. Tu pedido sale {{ despacho_horas }} horas después del pago.{% endblock %}
 
 {% block content %}
 <section class="page-hero container reveal-ready">
