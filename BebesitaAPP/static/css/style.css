@@ -2929,3 +2929,31 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
   .box-stepper__num { width: 2.1rem; }
   .box-fila__nombre { font-size: .92rem; }
 }
+
+/* Fotos reales de box y corporativos */
+.corp-foto__pie { margin-top: .6rem; font-size: .85rem; color: var(--azul); opacity: .8; }
+.box-cabeza { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 2rem; align-items: center; }
+.box-cabeza__texto { margin: .2rem 0 0; max-width: 40rem; }
+.box-cabeza__foto { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; border-radius: var(--radius-md); box-shadow: var(--shadow-soft); }
+.box-invita__foto { width: 88px; height: 88px; object-fit: cover; border-radius: var(--radius-sm); flex-shrink: 0; }
+.box-invita__copia { flex: 1 1 18rem; }
+@media (max-width: 700px) {
+  .box-cabeza { grid-template-columns: minmax(0, 1fr) 110px; gap: 1rem; align-items: start; }
+  .box-cabeza__foto { aspect-ratio: 3 / 4; }
+  .box-invita__foto { width: 64px; height: 64px; }
+}
+@media (max-width: 860px) {
+  /* El resumen flota abajo mientras se elige: solo total y botón, para no
+     tapar media pantalla. El detalle se ve en el carrito. */
+  .box-resumen {
+    display: grid; grid-template-columns: auto 1fr; align-items: center; gap: .2rem 1rem;
+    padding: .7rem 1rem !important;
+  }
+  .box-resumen .cart-summary-label { grid-column: 1; margin: 0; font-size: .75rem; }
+  .box-resumen .cart-summary-total { grid-column: 1; margin: 0; font-size: 1.35rem; }
+  .box-resumen__lineas, .box-resumen .cart-summary-note { display: none; }
+  .box-resumen [data-box-enviar] { grid-column: 2; grid-row: 1 / span 2; }
+}
+@media (max-width: 860px) {
+  body:has(.box-resumen) .dr-social-float { bottom: 6.8rem; }
+}
