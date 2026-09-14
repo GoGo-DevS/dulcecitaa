@@ -608,3 +608,52 @@ class DominioPropioTests(TestCase):
         self.assertIn("www.dulcecita.cl", settings.ALLOWED_HOSTS)
         self.assertIn("https://dulcecita.cl", settings.CSRF_TRUSTED_ORIGINS)
         self.assertEqual(self.client.get("/", HTTP_HOST="dulcecita.cl").status_code, 200)
+
+
+class LinksBioTests(TestCase):
+    """dulcecita.cl/links: redirige solo a destinos conocidos y cuenta clics reales."""
+
+    def setUp(self):
+        self.producto = Producto.objects.create(
+            nombre="Alfajores", descripcion="x", precio=1590,
+            imagen=SimpleUploadedFile("a.jpg", b"img", content_type="image/jpeg"))
+
+    def test_pagina_muestra_botones_y_productos_con_precio(self):
+        r = self.client.get(reverse("links"))
+        self.assertContains(r, "Haz tu pedido")
+        self.assertContains(r, reverse("links_ir", args=[f"p{self.producto.id}"]))
+        self.assertContains(r, "Alfajores")
+
+    def test_redirige_con_utm_y_cuenta_el_clic(self):
+        from .models import ClicEnlace
+        r = self.client.get(reverse("links_ir", args=["pedido"]))
+        self.assertEqual(r.status_code, 302)
+        self.assertIn("utm_source=instagram", r["Location"])
+        self.assertEqual(ClicEnlace.objects.get().slug, "pedido")
+
+    @override_settings(WHATSAPP_URL="https://wa.me/56900000000")
+    def test_whatsapp_lleva_mensaje_y_no_utm(self):
+        r = self.client.get(reverse("links_ir", args=["whatsapp"]))
+        self.assertTrue(r["Location"].startswith("https://wa.me/56900000000?text="))
+        self.assertNotIn("utm_", r["Location"])
+
+    def test_slug_desconocido_no_redirige_a_ningun_lado(self):
+        from .models import ClicEnlace
+        self.assertEqual(self.client.get("/links/ir/evil/").status_code, 404)
+        self.assertEqual(self.client.get("/links/ir/p999999/").status_code, 404)
+        self.assertEqual(ClicEnlace.objects.count(), 0)
+
+    def test_bots_de_vista_previa_no_suman_clics(self):
+        from .models import ClicEnlace
+        self.client.get(reverse("links_ir", args=["pedido"]), HTTP_USER_AGENT="facebookexternalhit/1.1")
+        self.client.get(reverse("links_ir", args=["pedido"]), HTTP_USER_AGENT="WhatsApp/2.23")
+        self.assertEqual(ClicEnlace.objects.count(), 0)
+
+    def test_resumen_del_admin_carga(self):
+        from django.contrib.auth import get_user_model
+        admin = get_user_model().objects.create_superuser("jefa", "j@example.com", "clave-larga-123")
+        self.client.force_login(admin)
+        self.client.get(reverse("links_ir", args=["pedido"]))
+        r = self.client.get("/admin/BebesitaAPP/clicenlace/")
+        self.assertContains(r, "Últimos 30 días")
+        self.assertContains(r, "Haz tu pedido")

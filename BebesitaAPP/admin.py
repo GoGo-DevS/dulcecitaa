@@ -5,6 +5,7 @@ from .models import (
     BeneficioDiferencial,
     CampanaEspecial,
     CategoriaProducto,
+    ClicEnlace,
     Opcion,
     Pedido,
     PedidoItem,
@@ -103,6 +104,42 @@ class PedidoItemAdmin(admin.ModelAdmin):
     search_fields = ("pedido__nombre_cliente", "producto__nombre")
     list_filter = ("pedido__creado",)
     ordering = ("-pedido__creado",)
+
+
+@admin.register(ClicEnlace)
+class ClicEnlaceAdmin(admin.ModelAdmin):
+    """Que botones de dulcecita.cl/links usa la gente.
+
+    Arriba de la lista va el resumen de los ultimos 30 dias: es lo que la duena
+    quiere saber (cuantos entran a pedir vs. cuantos escriben por WhatsApp), no
+    cada clic suelto.
+    """
+    list_display = ("slug", "creado")
+    list_filter = ("slug",)
+    date_hierarchy = "creado"
+    change_list_template = "admin/clics_enlace.html"
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        from .links import resumen_clics
+        nombres = {"pedido": "Haz tu pedido", "whatsapp": "WhatsApp", "box": "Arma tu box",
+                   "corporativo": "Regalos para empresas", "delivery": "Despacho y retiro",
+                   "instagram": "Instagram"}
+        resumen = []
+        for slug, n in resumen_clics(30):
+            if slug.startswith("p") and slug[1:].isdigit():
+                producto = Producto.objects.filter(pk=int(slug[1:])).first()
+                etiqueta = f"Producto: {producto.nombre}" if producto else slug
+            else:
+                etiqueta = nombres.get(slug, slug)
+            resumen.append((etiqueta, n))
+        extra_context = {**(extra_context or {}), "resumen_clics": resumen}
+        return super().changelist_view(request, extra_context=extra_context)
 
 
 @admin.register(Opcion)

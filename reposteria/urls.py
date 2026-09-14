@@ -3,6 +3,7 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from django.views.static import serve as media_serve
 
+from BebesitaAPP import links as links_views
 from BebesitaAPP import views
 
 urlpatterns = [
@@ -28,6 +29,10 @@ urlpatterns = [
     path('carrito/box/<int:indice>/sumar/<str:linea>/', views.box_sumar_ajax, name='box_sumar_ajax'),
     path('carrito/box/<int:indice>/restar/<str:linea>/', views.box_restar_ajax, name='box_restar_ajax'),
     path('carrito/box/<int:indice>/quitar/', views.box_quitar, name='box_quitar'),
+
+    # Pagina de la bio de Instagram y sus enlaces contados
+    path('links/', links_views.links, name='links'),
+    path('links/ir/<slug:slug>/', links_views.links_ir, name='links_ir'),
 
     path('producto/<int:pk>/', views.producto_detalle, name='producto_detalle'),
 

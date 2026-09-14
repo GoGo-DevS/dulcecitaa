@@ -1,0 +1,270 @@
+{% load static humanize %}<!DOCTYPE html>
+{% comment %}
+  dulcecita.cl/links: la pagina de la bio de Instagram.
+
+  No hereda base.html a proposito: aqui no van menu, carrito flotante ni pie.
+  Quien llega desde la bio quiere UNA cosa (pedir, escribir, mirar precios) y
+  todo lo demas le quita el pulgar. Se abre casi siempre dentro del navegador
+  de Instagram, en telefono: se diseña para 390px y se centra en escritorio.
+
+  Cada boton va por /links/ir/<slug>/ para contar el clic (ver links.py).
+{% endcomment %}
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>{{ site_brand }} | Pedidos y links</title>
+  <meta name="description" content="Alfajores, barquillos y cuchuflís hechos a mano. Haz tu pedido, arma tu box o escríbenos por WhatsApp.">
+  <link rel="canonical" href="https://dulcecita.cl/links/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ site_brand }}">
+  <meta property="og:title" content="{{ site_brand }} | La felicidad en cajita">
+  <meta property="og:description" content="Haz tu pedido, arma tu box o escríbenos por WhatsApp. Despacho a todo Chile.">
+  <meta property="og:url" content="{{ request.build_absolute_uri }}">
+  <meta property="og:image" content="{{ default_og_image_url }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="#2a4057">
+  <link rel="icon" type="image/png" href="{% static 'img/favicon-dulcecita.png' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    :root {
+      --azul: #2a4057;
+      --azul-hondo: #1f3145;
+      --rosa: #f5a7d6;
+      --rosa-lavado: #fdeef7;
+      --tinta: #22354a;
+      --tinta-suave: #5a6b7e;
+      --linea: #e6eaf0;
+      --verde-wa: #25d366;
+      --radio: 18px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      margin: 0; background: #eef1f5; color: var(--tinta);
+      font-family: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 16px; line-height: 1.45; -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    .lk {
+      max-width: 460px; min-height: 100dvh; margin: 0 auto; background: #fff;
+      padding-bottom: calc(1.6rem + env(safe-area-inset-bottom));
+    }
+    @media (min-width: 520px) {
+      body { padding-block: 2.2rem; }
+      .lk { min-height: auto; border-radius: 28px; overflow: hidden; box-shadow: 0 24px 60px rgba(31, 49, 69, .16); }
+    }
+
+    /* Cabecera */
+    .lk-top {
+      position: relative; background: var(--azul); color: #fff; text-align: center;
+      padding: calc(2rem + env(safe-area-inset-top)) 1.4rem 1.7rem;
+      border-radius: 0 0 30px 30px; overflow: hidden;
+    }
+    .lk-top::after {
+      content: ""; position: absolute; inset: auto -20% -60% -20%; height: 70%;
+      background: radial-gradient(closest-side, rgba(245, 167, 214, .22), transparent);
+      pointer-events: none;
+    }
+    .lk-logo { width: 210px; max-width: 70%; height: auto; display: block; margin: 0 auto .9rem; }
+    .lk-titulo { margin: 0; font-size: 1.55rem; font-weight: 800; letter-spacing: -.02em; text-transform: uppercase; line-height: 1.1; }
+    .lk-bajada { margin: .45rem auto 0; max-width: 30ch; font-size: .98rem; color: rgba(255, 255, 255, .88); }
+    .lk-datos { position: relative; z-index: 1; list-style: none; margin: 1.1rem 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: .45rem; }
+    .lk-datos li {
+      display: inline-flex; align-items: center; gap: .35rem; font-size: .8rem; font-weight: 600;
+      padding: .38rem .7rem; border-radius: 999px; background: rgba(255, 255, 255, .1);
+      border: 1px solid rgba(255, 255, 255, .18);
+    }
+    .lk-datos i { color: var(--rosa); }
+
+    /* Botones */
+    .lk-acciones { display: grid; gap: .7rem; padding: 1.4rem 1.1rem .4rem; }
+    .lk-btn {
+      display: flex; align-items: center; gap: .9rem; min-height: 64px; padding: .7rem 1rem;
+      border-radius: var(--radio); border: 1px solid var(--linea); background: #fff;
+      box-shadow: 0 1px 2px rgba(31, 49, 69, .05);
+      transition: transform .18s cubic-bezier(.2, .8, .2, 1), box-shadow .18s ease, background-color .18s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .lk-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(31, 49, 69, .1); }
+    .lk-btn:active { transform: scale(.98); }
+    .lk-btn:focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; }
+    .lk-ico {
+      flex: 0 0 44px; height: 44px; border-radius: 14px; display: grid; place-items: center;
+      font-size: 1.3rem; background: var(--rosa-lavado); color: var(--azul);
+    }
+    .lk-txt { flex: 1; min-width: 0; }
+    .lk-txt b { display: block; font-size: 1.02rem; font-weight: 700; line-height: 1.2; }
+    .lk-txt span { display: block; font-size: .83rem; color: var(--tinta-suave); margin-top: .12rem; }
+    .lk-flecha { color: var(--tinta-suave); font-size: 1.05rem; }
+
+    .lk-btn--pedido { background: var(--rosa); border-color: var(--rosa); color: var(--azul-hondo); min-height: 72px; box-shadow: 0 10px 26px rgba(245, 167, 214, .45); }
+    .lk-btn--pedido .lk-ico { background: rgba(255, 255, 255, .55); color: var(--azul-hondo); }
+    .lk-btn--pedido .lk-txt span, .lk-btn--pedido .lk-flecha { color: rgba(31, 49, 69, .78); }
+    /* Verde oficial de WhatsApp con texto verde muy oscuro: el blanco sobre
+       #25d366 da 1,98:1 y a pleno sol no se lee. Este da 8:1. */
+    .lk-btn--wa { background: var(--verde-wa); border-color: var(--verde-wa); color: #062e19; }
+    .lk-btn--wa .lk-ico { background: rgba(255, 255, 255, .4); color: #062e19; }
+    .lk-btn--wa .lk-txt b, .lk-btn--wa .lk-flecha { color: #062e19; }
+    .lk-btn--wa .lk-txt span { color: #0b4426; }
+    .lk-btn--box { background: var(--azul); border-color: var(--azul); color: #fff; }
+    .lk-btn--box .lk-ico { background: rgba(255, 255, 255, .12); color: var(--rosa); }
+    .lk-btn--box .lk-txt span, .lk-btn--box .lk-flecha { color: rgba(255, 255, 255, .8); }
+
+    /* Productos */
+    .lk-seccion { padding: 1.4rem 0 .2rem; }
+    .lk-seccion h2 { margin: 0 1.2rem .7rem; font-size: 1.05rem; font-weight: 800; color: var(--azul); }
+    .lk-productos {
+      display: grid; grid-auto-flow: column; grid-auto-columns: 46%; gap: .7rem;
+      overflow-x: auto; padding: .1rem 1.1rem .8rem; scroll-snap-type: x mandatory; scroll-padding-inline: 1.1rem;
+      scrollbar-width: none; -webkit-overflow-scrolling: touch;
+    }
+    .lk-productos::-webkit-scrollbar { display: none; }
+    .lk-prod {
+      scroll-snap-align: start; border-radius: var(--radio); overflow: hidden; background: #fff;
+      border: 1px solid var(--linea); display: flex; flex-direction: column;
+      transition: transform .18s cubic-bezier(.2, .8, .2, 1);
+    }
+    .lk-prod:active { transform: scale(.98); }
+    .lk-prod:focus-visible { outline: 3px solid var(--azul); outline-offset: 2px; }
+    .lk-prod img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; background: var(--rosa-lavado); }
+    .lk-prod div { padding: .55rem .7rem .7rem; }
+    .lk-prod b { display: block; font-size: .88rem; line-height: 1.25; font-weight: 700; }
+    .lk-prod span { display: block; margin-top: .2rem; font-size: .95rem; font-weight: 800; color: var(--azul); }
+    .lk-prod small { font-weight: 600; font-size: .72rem; color: var(--tinta-suave); }
+    .lk-muestras { display: flex; gap: .25rem; margin-top: .35rem; }
+    .lk-muestras i { display: inline-block; width: 13px; height: 12px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 1px rgba(31, 49, 69, .2); }
+
+    /* Mas enlaces */
+    .lk-lista { list-style: none; margin: 0 1.1rem; padding: 0; border: 1px solid var(--linea); border-radius: var(--radio); overflow: hidden; }
+    .lk-lista li + li { border-top: 1px solid var(--linea); }
+    .lk-fila {
+      display: flex; align-items: center; gap: .8rem; width: 100%; min-height: 56px; padding: .6rem 1rem;
+      background: #fff; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer;
+    }
+    .lk-fila:hover { background: #f7f9fb; }
+    .lk-fila:focus-visible { outline: 3px solid var(--azul); outline-offset: -3px; }
+    .lk-fila i:first-child { font-size: 1.15rem; color: var(--azul); width: 1.4rem; text-align: center; }
+    .lk-fila span { flex: 1; font-weight: 600; }
+    .lk-fila small { color: var(--tinta-suave); font-weight: 500; }
+    .lk-ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); -webkit-background-clip: text; background-clip: text; color: transparent !important; }
+
+    .lk-pie { text-align: center; margin: 1.6rem 1rem 0; font-size: .82rem; color: var(--tinta-suave); }
+    .lk-pie a { font-weight: 700; color: var(--azul); }
+
+    .lk-aviso {
+      position: fixed; left: 50%; bottom: calc(1.2rem + env(safe-area-inset-bottom)); transform: translate(-50%, 1rem);
+      background: var(--azul); color: #fff; padding: .6rem 1rem; border-radius: 999px; font-size: .88rem; font-weight: 600;
+      opacity: 0; pointer-events: none; transition: opacity .2s ease, transform .2s ease;
+    }
+    .lk-aviso.is-visible { opacity: 1; transform: translate(-50%, 0); }
+
+    /* Entrada: los botones suben uno tras otro. Sirve para guiar el ojo al
+       boton principal primero; sin movimiento reducido no hay animacion. */
+    @media (prefers-reduced-motion: no-preference) {
+      .lk-anim { animation: lk-sube .5s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--i, 0) * 60ms); }
+      @keyframes lk-sube { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+    }
+  </style>
+</head>
+<body>
+  <main class="lk">
+    <header class="lk-top">
+      <img class="lk-logo lk-anim" src="{% static 'img/logo-dulcecita-rosado.png' %}" alt="{{ site_brand }} Bakery" width="420" height="200">
+      <h1 class="lk-titulo lk-anim" style="--i:1">La felicidad en cajita</h1>
+      <p class="lk-bajada lk-anim" style="--i:2">Alfajores, barquillos y cuchuflís hechos a mano, con amor.</p>
+      <ul class="lk-datos lk-anim" style="--i:3" aria-label="Cómo compramos">
+        <li><i class="bi bi-box-seam" aria-hidden="true"></i>Desde {{ minimo_unidades }} unidades</li>
+        <li><i class="bi bi-truck" aria-hidden="true"></i>Despacho a todo Chile</li>
+        <li><i class="bi bi-clock" aria-hidden="true"></i>Sale {{ despacho_horas }} h tras el pago</li>
+      </ul>
+    </header>
+
+    <nav class="lk-acciones" aria-label="Qué quieres hacer">
+      {% if destinos.pedido %}
+      <a class="lk-btn lk-btn--pedido lk-anim" style="--i:4" href="{% url 'links_ir' 'pedido' %}">
+        <span class="lk-ico"><i class="bi bi-bag-heart-fill" aria-hidden="true"></i></span>
+        <span class="lk-txt"><b>Haz tu pedido</b><span>Catálogo con precios</span></span>
+        <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
+      </a>
+      {% endif %}
+      {% if destinos.whatsapp %}
+      <a class="lk-btn lk-btn--wa lk-anim" style="--i:5" href="{% url 'links_ir' 'whatsapp' %}" target="_blank" rel="noopener">
+        <span class="lk-ico"><i class="bi bi-whatsapp" aria-hidden="true"></i></span>
+        <span class="lk-txt"><b>Escríbenos por WhatsApp</b><span>Consultas, pedidos y coordinación</span></span>
+        <i class="bi bi-arrow-up-right lk-flecha" aria-hidden="true"></i>
+      </a>
+      {% endif %}
+      {% if destinos.box %}
+      <a class="lk-btn lk-btn--box lk-anim" style="--i:6" href="{% url 'links_ir' 'box' %}">
+        <span class="lk-ico"><i class="bi bi-gift-fill" aria-hidden="true"></i></span>
+        <span class="lk-txt"><b>Arma tu box</b><span>Desde {{ minimo_box }} por producto, caja ${{ precio_caja|intcomma }}</span></span>
+        <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
+      </a>
+      {% endif %}
+    </nav>
+
+    {% if productos %}
+    <section class="lk-seccion lk-anim" style="--i:7" aria-labelledby="lk-prod-titulo">
+      <h2 id="lk-prod-titulo">Nuestros productos</h2>
+      <div class="lk-productos">
+        {% for p in productos %}
+        <a class="lk-prod" href="{% url 'links_ir' p.slug_link %}">
+          <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" loading="lazy" width="300" height="300">
+          <div>
+            <b>{{ p.nombre }}</b>
+            <span>${{ p.precio|intcomma }} <small>{% if p.unidades_por_pack > 1 %}bolsita de {{ p.unidades_por_pack }}{% else %}c/u{% endif %}</small></span>
+            {% with grupos=p.grupos_opciones %}{% if grupos %}
+            <span class="lk-muestras" aria-label="Coberturas disponibles">{% for tipo, etiqueta, opciones in grupos %}{% for op in opciones %}<i style="--c: {{ op.color }}" title="{{ op.nombre }}"></i>{% endfor %}{% endfor %}</span>
+            {% endif %}{% endwith %}
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+
+    <section class="lk-seccion lk-anim" style="--i:8" aria-labelledby="lk-mas-titulo">
+      <h2 id="lk-mas-titulo">Más de {{ site_brand }}</h2>
+      <ul class="lk-lista">
+        {% if destinos.corporativo %}<li><a class="lk-fila" href="{% url 'links_ir' 'corporativo' %}"><i class="bi bi-building" aria-hidden="true"></i><span>Regalos para empresas</span><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>{% endif %}
+        {% if destinos.delivery %}<li><a class="lk-fila" href="{% url 'links_ir' 'delivery' %}"><i class="bi bi-geo-alt" aria-hidden="true"></i><span>Despacho y retiro</span><i class="bi bi-chevron-right" aria-hidden="true"></i></a></li>{% endif %}
+        {% if destinos.instagram %}<li><a class="lk-fila" href="{% url 'links_ir' 'instagram' %}" target="_blank" rel="noopener"><i class="bi bi-instagram lk-ig" aria-hidden="true"></i><span>Instagram <small>@{{ usuario_ig }}</small></span><i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></li>{% endif %}
+        <li><button type="button" class="lk-fila" data-compartir><i class="bi bi-share" aria-hidden="true"></i><span>Compartir con alguien</span><i class="bi bi-chevron-right" aria-hidden="true"></i></button></li>
+      </ul>
+    </section>
+
+    <p class="lk-pie"><a href="{% url 'home' %}">dulcecita.cl</a></p>
+  </main>
+
+  <div class="lk-aviso" role="status" aria-live="polite" data-aviso></div>
+
+  <script>
+    (function () {
+      var boton = document.querySelector('[data-compartir]');
+      var aviso = document.querySelector('[data-aviso]');
+      if (!boton) return;
+      function avisar(texto) {
+        aviso.textContent = texto;
+        aviso.classList.add('is-visible');
+        setTimeout(function () { aviso.classList.remove('is-visible'); }, 2200);
+      }
+      // En el telefono abre el menu de compartir del sistema (WhatsApp, etc.);
+      // donde no existe, copia el enlace.
+      boton.addEventListener('click', function () {
+        var datos = { title: '{{ site_brand|escapejs }}', text: 'La felicidad en cajita', url: 'https://dulcecita.cl/links/' };
+        if (navigator.share) {
+          navigator.share(datos).catch(function () {});
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(datos.url).then(function () { avisar('Enlace copiado'); });
+        } else {
+          avisar('dulcecita.cl/links');
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

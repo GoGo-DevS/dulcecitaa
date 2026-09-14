@@ -221,3 +221,22 @@ class CampanaEspecial(models.Model):
     def __str__(self):
         return self.titulo
 
+
+
+class ClicEnlace(models.Model):
+    """Un toque en un boton de dulcecita.cl/links.
+
+    La pagina de links vive en la bio de Instagram: sin esto no hay forma de
+    saber si la gente entra a pedir, escribe por WhatsApp o solo mira. Se
+    guarda solo el boton y la hora; nada que identifique a la persona.
+    """
+    slug = models.CharField(max_length=40, db_index=True)
+    creado = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ("-creado",)
+        verbose_name = "Clic en links"
+        verbose_name_plural = "Clics en links (bio de Instagram)"
+
+    def __str__(self):
+        return f"{self.slug} · {self.creado:%d-%m %H:%M}"
