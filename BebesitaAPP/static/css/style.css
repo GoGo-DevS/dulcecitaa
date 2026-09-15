@@ -3148,3 +3148,16 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
 .dr-foot .footer-legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1.5rem; }
 .dr-foot .footer-credito a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
 .dr-foot .footer-credito a:hover { color: var(--rosa); }
+
+/* Modal con galería (torta): el carrusel llena la columna de la foto; si no,
+   la foto cuadrada dejaba una franja blanca abajo. */
+@media (min-width: 992px) {
+  #modalProducto .detail-carousel,
+  #modalProducto .detail-carousel .carousel-inner,
+  #modalProducto .detail-carousel .carousel-item { height: 100%; }
+  #modalProducto .detail-carousel .carousel-item img { height: 100%; object-fit: cover; object-position: center; }
+}
+/* Teléfono: la torta a lo ancho va cuadrada, para no cortarle la parte de arriba */
+@media (max-width: 1199.98px) {
+  .catalog-grid--n5 > .catalog-card:last-child .catalog-media { aspect-ratio: 1 / 1; }
+}
