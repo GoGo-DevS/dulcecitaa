@@ -171,6 +171,14 @@
         body.innerHTML = html;
         const modal = new bootstrap.Modal(document.getElementById('modalProducto'));
         modal.show();
+        // En el catalogo la ficha se abre en este modal, no como pagina: aqui
+        // es donde el cliente "ve el producto" para Analytics.
+        if (window.dcMedir) {
+          const nombre = body.querySelector('h1, h2');
+          const precio = body.querySelector('[data-precio]');
+          window.dcMedir('view_item', { currency: 'CLP', value: precio ? parseInt(precio.dataset.precio, 10) : undefined,
+            items: [{ item_id: id, item_name: nombre ? nombre.textContent.trim() : '' }] });
+        }
         setTimeout(initQuantities, 10);
       } catch {
         showToast('No se pudo cargar el producto.');

@@ -50,3 +50,29 @@ services:
         sync: false
       - key: CONTACT_EMAIL            # donde te llegan los pedidos
         sync: false
+      # ── Medicion y SEO ─────────────────────────────────────────────
+      # Declaradas con sync: false para que sincronizar el blueprint NO las
+      # borre: sin ellas el sitio deja de medir sin avisar. Valores en el panel.
+      - key: GA4_ID                   # G-Z43PVM60CH (Google Analytics 4)
+        sync: false
+      - key: CLARITY_ID               # Microsoft Clarity
+        sync: false
+      - key: GTM_ID                   # opcional, Google Tag Manager
+        sync: false
+      - key: META_PIXEL_ID            # opcional, anuncios de Instagram/Facebook
+        sync: false
+      - key: GOOGLE_SITE_VERIFICATION # no hace falta: dominio verificado por DNS
+        sync: false
+      # ── Pago por transferencia (datos de la duena, nunca en el codigo) ──
+      - key: TRANSFER_TITULAR
+        sync: false
+      - key: TRANSFER_RUT
+        sync: false
+      - key: TRANSFER_BANCO
+        sync: false
+      - key: TRANSFER_TIPO_CUENTA
+        sync: false
+      - key: TRANSFER_NUMERO
+        sync: false
+      - key: TRANSFER_EMAIL
+        sync: false
