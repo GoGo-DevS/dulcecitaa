@@ -45,7 +45,7 @@ def schema_negocio():
         "name": settings.BRAND_NAME,
         "url": _abs("/"),
         "logo": _abs(static("img/icono-512.png")),
-        "image": _abs(static("img/sello-dulcecita.jpg")),
+        "image": _abs(static("img/og-dulcecita.jpg")),
         "description": ("Repostería artesanal hecha a mano: alfajores, barquillos y cuchuflís "
                         "bañados en chocolate. Venta por volumen, box personalizados y regalos "
                         "corporativos con despacho a todo Chile."),

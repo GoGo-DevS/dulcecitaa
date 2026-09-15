@@ -262,7 +262,8 @@ TRANSFERENCIA = {
     "email": os.getenv("TRANSFER_EMAIL", ""),
 }
 BUSINESS_HOURS = os.getenv("BUSINESS_HOURS", "Lunes a sábado de 09:00 a 19:00")
-DEFAULT_OG_IMAGE = os.getenv("DEFAULT_OG_IMAGE", "/static/img/sello-dulcecita.jpg")
+# Imagen al compartir el enlace (WhatsApp, Instagram, Facebook): 1200x630, marca actual.
+DEFAULT_OG_IMAGE = os.getenv("DEFAULT_OG_IMAGE", "/static/img/og-dulcecita.jpg")
 
 # --- SEO y medicion -----------------------------------------------------
 # Dominio oficial: canonical, sitemap y datos estructurados usan SIEMPRE este,

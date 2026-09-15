@@ -2,6 +2,7 @@
 {% block title %}{{ p.nombre }} artesanales, ${{ p.precio }} | {{ site_brand }}{% endblock %}
 {% block meta_description %}{{ p.descripcion|striptags|truncatechars:150 }}{% endblock %}
 {% block og_type %}product{% endblock %}
+{% block og_image_meta %}{% endblock %}
 {% block og_title %}{{ p.nombre }} | {{ site_brand }}{% endblock %}
 {% block og_description %}{{ p.descripcion|striptags|truncatechars:150 }}{% endblock %}
 {% block og_image %}{% if p.imagen %}{{ p.imagen.url|default:default_og_image_url }}{% else %}{{ default_og_image_url }}{% endif %}{% endblock %}

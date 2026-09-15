@@ -21,6 +21,9 @@
   <meta property="og:description" content="{% block og_description %}Repostería artesanal premium para regalar y celebrar.{% endblock %}">
   <meta property="og:url" content="{{ canonical_url }}">
   <meta property="og:image" content="{% block og_image %}{{ default_og_image_url }}{% endblock %}">
+  {% block og_image_meta %}<meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Dulcecita Bakery: alfajores, barquillos y cuchuflís hechos a mano">{% endblock %}
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="{% block twitter_title %}{{ site_brand }}{% endblock %}">
   <meta name="twitter:description" content="{% block twitter_description %}Repostería artesanal premium para regalar y celebrar.{% endblock %}">
