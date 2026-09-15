@@ -83,7 +83,7 @@
       <div class="catalog-actions">
         {% include "partials/opciones.html" with p=p prefijo="c" %}
         {% if p.unidades_por_pack > 1 %}
-          <p class="catalog-pack">Bolsita de {{ p.unidades_por_pack }} unidades</p>
+          <p class="catalog-pack">{{ p.unidades_por_pack }} {{ p.nombre|lower }}</p>
         {% endif %}
         <div class="product-ctl" data-id="{{ p.clave_inicial }}">
           <button type="button" class="btn-add-only catalog-cta" {% if not p.disponible %}disabled{% endif %}>

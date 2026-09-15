@@ -31,7 +31,7 @@
         <img src="{{ grupo.grouper.imagen.url }}" alt="{{ grupo.grouper.nombre }}" class="box-producto__foto" loading="lazy">
         <div class="box-producto__cuerpo">
           <h2 class="box-producto__nombre">{{ grupo.grouper.nombre }}</h2>
-          {% if grupo.grouper.unidades_por_pack > 1 %}<p class="box-producto__pack">Bolsita de {{ grupo.grouper.unidades_por_pack }} unidades</p>{% endif %}
+          {% if grupo.grouper.unidades_por_pack > 1 %}<p class="box-producto__pack">{{ grupo.grouper.unidades_por_pack }} {{ grupo.grouper.nombre|lower }}</p>{% endif %}
           <ul class="box-filas">
             {% for fila in grupo.list %}
             <li class="box-fila" data-box-fila data-precio="{{ fila.precio }}">
