@@ -58,7 +58,7 @@
       <li><span>Método de entrega</span><strong>{{ delivery_label }}</strong></li>
       <li><span>Comuna o sector</span><strong>{{ pedido.comuna_sector }}</strong></li>
       <li><span>Costo de despacho</span><strong>{{ shipping_cost_formatted }}</strong></li>
-      {% if pedido.cantidad_cajas %}<li><span>Cajas ({{ pedido.cantidad_cajas }})</span><strong>{{ box_cost_formatted }}</strong></li>{% endif %}
+      {% if pedido.cantidad_cajas %}<li><span>Box ({{ pedido.cantidad_cajas }})</span><strong>{{ box_cost_formatted }}</strong></li>{% endif %}
       {% if pedido.comentario_ocasion %}<li><span>Ocasión</span><strong>{{ pedido.comentario_ocasion }}</strong></li>{% endif %}
       <li><span>Total confirmado</span><strong>{{ total_formatted }}</strong></li>
     </ul>

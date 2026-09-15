@@ -9,7 +9,7 @@ Resumen:
 {% endfor %}
 Subtotal: {{ subtotal_formatted }}
 Despacho: {{ shipping_formatted }}
-{% if pedido.cantidad_cajas %}Cajas ({{ pedido.cantidad_cajas }}): {{ box_formatted }}{% endif %}
+{% if pedido.cantidad_cajas %}Box ({{ pedido.cantidad_cajas }}): {{ box_formatted }}{% endif %}
 Total: {{ total_formatted }}
 
 Datos de entrega:

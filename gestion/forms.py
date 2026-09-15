@@ -42,7 +42,7 @@ class PedidoForm(forms.ModelForm):
         fields = ("cliente", "descripcion", "fecha_pedido", "fecha_entrega", "notas")
         widgets = {
             "cliente": forms.Select(attrs={"class": "form-select"}),
-            "descripcion": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ej: Cajas navidad empresa X"}),
+            "descripcion": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ej: Box navidad empresa X"}),
             "fecha_pedido": forms.DateInput(attrs={"class": "form-control", "type": "date"}, format="%Y-%m-%d"),
             "fecha_entrega": forms.DateInput(attrs={"class": "form-control", "type": "date"}, format="%Y-%m-%d"),
             "notas": forms.Textarea(attrs={"class": "form-control", "rows": 2, "placeholder": "Notas (opcional)"}),
@@ -61,12 +61,12 @@ class PedidoItemForm(forms.ModelForm):
         fields = ("descripcion", "cantidad", "precio_unitario", "costo_unitario")
         widgets = {
             "descripcion": forms.TextInput(attrs={
-                "class": "form-control", "placeholder": "Elige o escribe la caja…",
+                "class": "form-control", "placeholder": "Elige o escribe el box…",
                 "list": "catalogo-cajas", "id": "id_caja_nombre", "autocomplete": "off",
             }),
             "cantidad": forms.NumberInput(attrs={"class": "form-control", "min": 1, "value": 1}),
-            "precio_unitario": forms.NumberInput(attrs={"class": "form-control", "min": 0, "placeholder": "Precio caja"}),
-            "costo_unitario": forms.NumberInput(attrs={"class": "form-control", "min": 0, "placeholder": "Costo caja"}),
+            "precio_unitario": forms.NumberInput(attrs={"class": "form-control", "min": 0, "placeholder": "Precio box"}),
+            "costo_unitario": forms.NumberInput(attrs={"class": "form-control", "min": 0, "placeholder": "Costo box"}),
         }
 
 

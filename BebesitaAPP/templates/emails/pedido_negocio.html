@@ -20,8 +20,8 @@
   </tr>
   <tr>
     <td style="padding:16px 18px;border-top:1px solid #f4dcea;background:#fdeef7;">
-      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#6f5a60;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">{% if pedido.cantidad_cajas %}Cajas y ocasión{% else %}Ocasión{% endif %}</p>
-      {% if pedido.cantidad_cajas %}<p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;"><strong>Cantidad de cajas:</strong> {{ pedido.cantidad_cajas }} ({{ box_formatted }})</p>{% endif %}
+      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#6f5a60;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">{% if pedido.cantidad_cajas %}Box y ocasión{% else %}Ocasión{% endif %}</p>
+      {% if pedido.cantidad_cajas %}<p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;"><strong>Cantidad de box:</strong> {{ pedido.cantidad_cajas }} ({{ box_formatted }})</p>{% endif %}
       <p style="margin:0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;"><strong>Ocasión:</strong> {{ pedido.comentario_ocasion|default:"No indicada"|linebreaksbr }}</p>
     </td>
   </tr>

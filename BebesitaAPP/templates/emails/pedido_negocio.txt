@@ -8,8 +8,8 @@ Comuna/Sector: {{ pedido.comuna_sector }}
 Dirección: {{ pedido.direccion }}
 Fecha: {{ pedido.creado|date:"d/m/Y H:i" }}
 
-Cajas y ocasión (para decorar):
-{% if pedido.cantidad_cajas %}- Cantidad de cajas: {{ pedido.cantidad_cajas }} ({{ box_formatted }}){% endif %}
+Box y ocasión (para decorar):
+{% if pedido.cantidad_cajas %}- Cantidad de box: {{ pedido.cantidad_cajas }} ({{ box_formatted }}){% endif %}
 - Ocasión: {{ pedido.comentario_ocasion }}
 
 Detalle:

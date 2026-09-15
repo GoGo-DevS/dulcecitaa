@@ -8,8 +8,8 @@
 <section class="container py-5 box-armar">
   <div class="section-head mb-4">
     <p class="eyebrow">Arma tu box</p>
-    <h1>Tu caja, a tu gusto</h1>
-    <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. La caja cuesta ${{ precio_caja }}.</p>
+    <h1>Tu box, a tu gusto</h1>
+    <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. El empaque del box cuesta ${{ precio_caja }}.</p>
     <p class="box-cabeza__texto">Elige cuántos quieres de cada uno y con qué cobertura.</p>
   </div>
 
@@ -30,8 +30,7 @@
       <article class="box-producto">
         <img src="{{ grupo.grouper.imagen.url }}" alt="{{ grupo.grouper.nombre }}" class="box-producto__foto" loading="lazy">
         <div class="box-producto__cuerpo">
-          <h2 class="box-producto__nombre">{{ grupo.grouper.nombre }}</h2>
-          {% if grupo.grouper.unidades_por_pack > 1 %}<p class="box-producto__pack">{{ grupo.grouper.unidades_por_pack }} {{ grupo.grouper.nombre|lower }}</p>{% endif %}
+          <h2 class="box-producto__nombre">{% if grupo.grouper.unidades_por_pack > 1 %}{{ grupo.grouper.unidades_por_pack }} {{ grupo.grouper.nombre|lower }}{% else %}{{ grupo.grouper.nombre }}{% endif %}</h2>
           <ul class="box-filas">
             {% for fila in grupo.list %}
             <li class="box-fila" data-box-fila data-precio="{{ fila.precio }}">
@@ -57,7 +56,7 @@
       <p class="cart-summary-label">Tu box</p>
       <ul class="box-resumen__lineas">
         <li><span>Productos (<b data-box-unidades>0</b> u.)</span><strong data-box-subtotal>$0</strong></li>
-        <li><span>Caja</span><strong>${{ precio_caja }}</strong></li>
+        <li><span>Empaque del box</span><strong>${{ precio_caja }}</strong></li>
       </ul>
       <p class="cart-summary-total" data-box-total>${{ precio_caja }}</p>
       <button type="submit" class="btn-main w-100" data-box-enviar disabled>Agregar box al carrito</button>

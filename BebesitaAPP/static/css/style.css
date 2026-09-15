@@ -3143,3 +3143,8 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
 @media (min-width: 561px) and (max-width: 1199.98px) {
   .catalog-grid--n5 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Pie: derechos a la izquierda, credito a la derecha (en telefono, uno bajo otro) */
+.dr-foot .footer-legal { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .4rem 1.5rem; }
+.dr-foot .footer-credito a { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.dr-foot .footer-credito a:hover { color: var(--rosa); }

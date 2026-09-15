@@ -20,7 +20,7 @@
   <div class="box-invita__caja">
     <div class="box-invita__copia">
       <p class="box-invita__titulo">¿Quieres mezclar? Arma tu box</p>
-      <p class="box-invita__texto">Alfajores negros y blancos, barquillos, cuchuflís con o sin baño, desde {{ minimo_box }} por producto. La caja cuesta ${{ precio_caja }}.</p>
+      <p class="box-invita__texto">Alfajores negros y blancos, barquillos, cuchuflís con o sin baño, desde {{ minimo_box }} por producto. El empaque del box cuesta ${{ precio_caja }}.</p>
     </div>
     <a href="{% url 'arma_tu_box' %}" class="btn-main">Arma tu box</a>
   </div>
@@ -76,15 +76,12 @@
           {% if not p.disponible %}<span class="catalog-tag catalog-tag-muted catalog-tag--flota">No disponible</span>{% endif %}
         </span>
         <span class="catalog-card__pie">
-          <span class="catalog-card__nombre">{{ p.nombre }}</span>
+          <span class="catalog-card__nombre">{% if p.unidades_por_pack > 1 %}{{ p.unidades_por_pack }} {{ p.nombre|lower }}{% else %}{{ p.nombre }}{% endif %}</span>
           <span class="catalog-price"><span data-precio="{{ p.precio }}">${{ p.precio_desde|floatformat:0 }}</span><small> c/u</small></span>
         </span>
       </button>
       <div class="catalog-actions">
         {% include "partials/opciones.html" with p=p prefijo="c" %}
-        {% if p.unidades_por_pack > 1 %}
-          <p class="catalog-pack">{{ p.unidades_por_pack }} {{ p.nombre|lower }}</p>
-        {% endif %}
         <div class="product-ctl" data-id="{{ p.clave_inicial }}">
           <button type="button" class="btn-add-only catalog-cta" {% if not p.disponible %}disabled{% endif %}>
             {% if p.minimo == 1 %}Agregar al carrito{% else %}Agregar {{ p.minimo_efectivo }}{% endif %}
@@ -115,18 +112,18 @@
     <div class="ig-encargos__caja">
       <div class="ig-encargos__foto" data-reveal-item>
         <img src="{% static 'img/galeria/caja-diciochera.jpg' %}"
-             alt="Caja dieciochera con merenguitos, alfajores de maicena, alfajores mini, cachitos rellenos de manjar y chilenitos" loading="lazy">
+             alt="Box dieciochero con merenguitos, alfajores de maicena, alfajores mini, cachitos rellenos de manjar y chilenitos" loading="lazy">
       </div>
       <div data-reveal-item>
         <p class="eyebrow">Box y corporativos</p>
-        <h2 class="ig-encargos__titulo">¿Necesitas una caja armada?</h2>
+        <h2 class="ig-encargos__titulo">¿Necesitas un box armado?</h2>
         <p class="ig-encargos__texto">
-          Fuera del catálogo armamos cajas a pedido para empresas, fechas
+          Fuera del catálogo armamos box a pedido para empresas, fechas
           especiales y regalos: se define el surtido, la cantidad y la
           presentación según el pedido.
         </p>
         <div class="ig-encargos__caso">
-          <p class="ig-encargos__caso-tit">Caja dieciochera</p>
+          <p class="ig-encargos__caso-tit">Box dieciochero</p>
           <ul class="ig-encargos__lista">
             <li>Merenguitos rellenos de manjar</li>
             <li>Alfajores de maicena</li>
@@ -135,7 +132,7 @@
             <li>Chilenitos</li>
           </ul>
         </div>
-        <a href="{% url 'corporativo' %}" class="dr-btn-wine">Cotizar una caja</a>
+        <a href="{% url 'corporativo' %}" class="dr-btn-wine">Cotizar un box</a>
       </div>
     </div>
   </div>

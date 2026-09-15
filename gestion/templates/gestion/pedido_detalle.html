@@ -121,7 +121,7 @@
 
 <!-- Cajas -->
 <div class="card mb-3">
-    <div class="card-header"><i class="bi bi-box-seam"></i> Cajas del pedido</div>
+    <div class="card-header"><i class="bi bi-box-seam"></i> Box del pedido</div>
     <div class="card-body">
         {% for it in pedido.items.all %}
             <div class="box-card">
@@ -130,21 +130,21 @@
                     <div class="min-w-0">
                         <div class="item-title">{{ it.descripcion }}</div>
                         <div class="item-meta">
-                            {{ it.cantidad }} {% if it.cantidad == 1 %}caja{% else %}cajas{% endif %} de ${{ it.precio_unitario|intcomma }} c/u
+                            {{ it.cantidad }} box de ${{ it.precio_unitario|intcomma }} c/u
                             <br>Costo ${{ it.costo_unitario|intcomma }} c/u
                         </div>
                     </div>
                     <div class="d-flex align-items-center gap-1 flex-shrink-0">
                         <span class="fw-bold num">${{ it.subtotal|intcomma }}</span>
-                        <form method="post" action="{% url 'gestion:pedido_item_eliminar' pedido.pk it.pk %}" onsubmit="return confirm('¿Eliminar la caja completa?')">
+                        <form method="post" action="{% url 'gestion:pedido_item_eliminar' pedido.pk it.pk %}" onsubmit="return confirm('¿Eliminar el box completo?')">
                             {% csrf_token %}
-                            <button class="btn btn-link text-danger btn-icon" aria-label="Eliminar caja" title="Eliminar caja"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-link text-danger btn-icon" aria-label="Eliminar box" title="Eliminar box"><i class="bi bi-trash"></i></button>
                         </form>
                     </div>
                 </div>
                 <!-- Contenido de la caja -->
                 <div class="box-card-body">
-                    <div class="eyebrow mb-1">Cada caja lleva</div>
+                    <div class="eyebrow mb-1">Cada box lleva</div>
                     {% for comp in it.componentes.all %}
                         <div class="box-line">
                             <span><span class="badge badge-qty me-2">{{ comp.cantidad }}</span>{{ comp.nombre }}</span>
@@ -154,45 +154,45 @@
                             </form>
                         </div>
                     {% empty %}
-                        <div class="small text-warning py-2"><i class="bi bi-exclamation-circle"></i> Esta caja aún no tiene productos.</div>
+                        <div class="small text-warning py-2"><i class="bi bi-exclamation-circle"></i> Este box aún no tiene productos.</div>
                     {% endfor %}
                     <!-- Agregar producto (del catálogo) a esta caja -->
                     <form method="post" action="{% url 'gestion:componente_agregar' pedido.pk it.pk %}" class="row g-2 mt-2 align-items-end">
                         {% csrf_token %}
                         <div class="col-7"><span class="form-label small d-block">Producto</span>{{ componente_form.producto }}</div>
                         <div class="col-3"><span class="form-label small d-block">Cant.</span>{{ componente_form.cantidad }}</div>
-                        <div class="col-2 d-grid"><button class="btn btn-outline-dc px-0" title="Agregar a la caja" aria-label="Agregar a la caja"><i class="bi bi-plus-lg"></i></button></div>
+                        <div class="col-2 d-grid"><button class="btn btn-outline-dc px-0" title="Agregar al box" aria-label="Agregar al box"><i class="bi bi-plus-lg"></i></button></div>
                     </form>
-                    <div class="form-text">Solo eliges el producto y cuántos van por caja.</div>
+                    <div class="form-text">Solo eliges el producto y cuántos van por box.</div>
                 </div>
             </div>
         {% empty %}
-            <div class="item-meta mb-3">Aún no hay cajas. Define la primera abajo.</div>
+            <div class="item-meta mb-3">Aún no hay box. Define el primero abajo.</div>
         {% endfor %}
 
         <!-- Nueva caja (colapsada si ya existe una) -->
         <details class="border-top pt-2" {% if not pedido.items.all %}open{% endif %}>
             <summary class="eyebrow">
-                <i class="bi bi-plus-circle"></i> {% if pedido.items.all %}Agregar otra caja{% else %}Nueva caja{% endif %}
+                <i class="bi bi-plus-circle"></i> {% if pedido.items.all %}Agregar otro box{% else %}Nuevo box{% endif %}
             </summary>
             <form method="post" action="{% url 'gestion:pedido_item_agregar' pedido.pk %}" id="form-nueva-caja" class="mt-2">
                 {% csrf_token %}
                 <div class="mb-3">
-                    <label class="form-label" for="id_caja_nombre">Caja (elige del catálogo o escribe una nueva)</label>
+                    <label class="form-label" for="id_caja_nombre">Box (elige del catálogo o escribe uno nuevo)</label>
                     {{ item_form.descripcion }}
                 </div>
                 <div class="row g-2 mb-3">
-                    <div class="col-12 col-sm-4"><span class="form-label small d-block">¿Cuántas cajas?</span>{{ item_form.cantidad }}</div>
-                    <div class="col-6 col-sm-4"><span class="form-label small d-block">Precio por caja</span>{{ item_form.precio_unitario }}</div>
-                    <div class="col-6 col-sm-4"><span class="form-label small d-block">Costo por caja</span>{{ item_form.costo_unitario }}</div>
+                    <div class="col-12 col-sm-4"><span class="form-label small d-block">¿Cuántos box?</span>{{ item_form.cantidad }}</div>
+                    <div class="col-6 col-sm-4"><span class="form-label small d-block">Precio por box</span>{{ item_form.precio_unitario }}</div>
+                    <div class="col-6 col-sm-4"><span class="form-label small d-block">Costo por box</span>{{ item_form.costo_unitario }}</div>
                 </div>
                 <div class="preview-box mb-3">
                     <span>Subtotal: <b id="pv-sub">$0</b></span>
                     <span>Utilidad: <b id="pv-util">$0</b> (<span id="pv-margen">0</span>%)</span>
                 </div>
-                <div class="d-grid"><button class="btn btn-dc"><i class="bi bi-plus-lg"></i> Agregar caja</button></div>
+                <div class="d-grid"><button class="btn btn-dc"><i class="bi bi-plus-lg"></i> Agregar box</button></div>
             </form>
-            <div class="item-meta mt-2"><i class="bi bi-info-circle"></i> La caja se guarda en el catálogo. Después le eliges los productos que lleva.</div>
+            <div class="item-meta mt-2"><i class="bi bi-info-circle"></i> El box se guarda en el catálogo. Después le eliges los productos que lleva.</div>
         </details>
     </div>
 </div>
