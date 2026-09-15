@@ -99,6 +99,16 @@ def _minimo():
     return max(1, int(getattr(settings, "MINIMO_UNIDADES", 1)))
 
 
+def _minimo_linea(pid):
+    """Minimo de la linea: el del producto si lo tiene (tortas desde 1)."""
+    parsed = _parse_linea(pid)
+    if parsed:
+        minimo = Producto.objects.filter(pk=parsed[0]).values_list("minimo", flat=True).first()
+        if minimo:
+            return minimo
+    return _minimo()
+
+
 def _sumar_al_carrito(cart, pid):
     """Un producto entra al carrito CON el minimo puesto, no de a uno.
 
@@ -106,7 +116,7 @@ def _sumar_al_carrito(cart, pid):
     del minimo al pagar. Entrar ya en el minimo hace visible la regla en el
     momento en que agrega.
     """
-    minimo = _minimo()
+    minimo = _minimo_linea(pid)
     cart[pid] = max(minimo, cart.get(pid, 0) + 1)
     return cart[pid]
 
@@ -115,7 +125,7 @@ def _restar_del_carrito(cart, pid):
     """Bajar del minimo saca el producto: no existe un carrito con 9."""
     if pid not in cart:
         return 0
-    if cart[pid] - 1 >= _minimo():
+    if cart[pid] - 1 >= _minimo_linea(pid):
         cart[pid] -= 1
         return cart[pid]
     del cart[pid]
@@ -129,7 +139,8 @@ def _save_cart(request, cart):
 
 def _build_cart_items(cart):
     lineas = {clave: _parse_linea(clave) for clave in cart}
-    products_map = Producto.objects.in_bulk([pid for pid, _ in lineas.values()])
+    products_map = {p.pk: p for p in Producto.objects.filter(pk__in=[pid for pid, _ in lineas.values()])
+                    .prefetch_related("opciones", "precios_combinacion")}
     opciones_map = Opcion.objects.in_bulk([oid for _, ops in lineas.values() for oid in ops])
     items = []
     total = 0
@@ -140,7 +151,7 @@ def _build_cart_items(cart):
         opciones = [opciones_map[oid] for oid in opcion_ids if oid in opciones_map]
         if not producto or len(opciones) != len(opcion_ids):
             continue
-        precio_unitario = producto.precio + sum(op.recargo for op in opciones)
+        precio_unitario = producto.precio_para(opcion_ids)
         subtotal = precio_unitario * cantidad
         total += subtotal
         items.append(
@@ -149,6 +160,7 @@ def _build_cart_items(cart):
                 "producto": producto,
                 "opciones": opciones,
                 "detalle": " · ".join(f"{op.get_tipo_display()}: {op.nombre}" for op in opciones),
+                "pide_nota": producto.pide_nota,
                 "precio_unitario": precio_unitario,
                 "cantidad": cantidad,
                 "subtotal": subtotal,
@@ -232,7 +244,7 @@ def productos(request):
     # el mismo alfajor aparece dos veces en el catalogo.
     productos_qs = (Producto.objects.filter(visible=True, variante_de__isnull=True)
                     .select_related("categoria")
-                    .prefetch_related("opciones"))
+                    .prefetch_related("opciones", "precios_combinacion"))
     categorias = CategoriaProducto.objects.filter(activa=True, productos__visible=True).distinct()
 
     query = (request.GET.get("q") or "").strip()
@@ -320,10 +332,17 @@ def agregar_al_carrito(request, linea):
     return redirect("carrito")
 
 
+def _notas(request):
+    return dict(request.session.get("notas_linea", {}) or {})
+
+
 @ensure_csrf_cookie
 def mostrar_carrito(request):
     cart = _get_cart(request)
     productos, total = _build_cart_items(cart)
+    notas = _notas(request)
+    for item in productos:
+        item["nota"] = notas.get(item["linea"], "")
     boxes = arma_box.build_boxes(arma_box.get_boxes(request))
     total += sum(caja["total"] for caja in boxes)
     return render(request, "carrito.html", {
@@ -380,14 +399,19 @@ def checkout(request):
                 total=total,
             )
 
+            notas = _notas(request)
             for item in productos:
+                nota = notas.get(item.get("linea"), "").strip() if item.get("pide_nota") else ""
+                if nota:
+                    item["detalle"] = f"{item['detalle']} · Nota: {nota}" if item["detalle"] else f"Nota: {nota}"
                 PedidoItem.objects.create(
                     pedido=pedido,
                     producto=item["producto"],
                     cantidad=item["cantidad"],
                     precio=item["precio_unitario"],
-                    detalle=item["detalle"],
+                    detalle=item["detalle"][:200],
                 )
+            request.session["notas_linea"] = {}
 
             delivery = send_checkout_emails(pedido=pedido, items=productos)
             if not (delivery["customer_ok"] and delivery["internal_ok"]):
@@ -642,3 +666,20 @@ def box_quitar(request, indice):
         boxes.pop(indice)
         arma_box.save_boxes(request, boxes)
     return redirect("carrito")
+
+
+@require_POST
+def carrito_nota_ajax(request, linea):
+    """Guarda la nota de una linea (color de cinta, decoracion de la torta)."""
+    clave = _clave_o_vacia(linea)
+    if clave not in _get_cart(request):
+        return JsonResponse({"ok": False, "error": "Línea no encontrada"}, status=404)
+    notas = _notas(request)
+    texto = (request.POST.get("nota") or "").strip()[:160]
+    if texto:
+        notas[clave] = texto
+    else:
+        notas.pop(clave, None)
+    request.session["notas_linea"] = notas
+    request.session.modified = True
+    return JsonResponse({"ok": True, "nota": texto})

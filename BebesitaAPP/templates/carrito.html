@@ -36,10 +36,23 @@
             <h3>{{ item.producto.nombre }}</h3>
             {% if item.opciones %}
             <p class="cart-item-opciones">
-              {% for op in item.opciones %}<span><i class="muestra__color muestra__color--chica" style="--muestra: {{ op.color }}"></i>{{ op.nombre }}</span>{% endfor %}
+              {% for op in item.opciones %}<span>{% if op.tipo != "tamano" %}<i class="muestra__color muestra__color--chica" style="--muestra: {{ op.color }}"></i>{% endif %}{{ op.nombre }}</span>{% endfor %}
             </p>
             {% endif %}
+            {% if item.pide_nota %}
+            {% comment %}
+              Se guarda sola al escribir (sin boton): quien personaliza una
+              torta no deberia perder lo que escribio por no apretar "guardar".
+            {% endcomment %}
+            <label class="cart-nota" for="nota-{{ item.linea }}">
+              <span>Color de cinta y decoración</span>
+              <textarea id="nota-{{ item.linea }}" rows="2" maxlength="160" data-nota-linea="{{ item.linea }}"
+                        placeholder="Ej: cinta rosada, confites de colores y tarjeta de cumpleaños">{{ item.nota }}</textarea>
+              <small data-nota-estado aria-live="polite"></small>
+            </label>
+            {% else %}
             <p class="cart-item-note">Elaborado a pedido con presentación premium.</p>
+            {% endif %}
           </div>
         </div>
         <div class="cart-item-controls">

@@ -7,6 +7,7 @@ from .models import (
     CategoriaProducto,
     ClicEnlace,
     Opcion,
+    PrecioCombinacion,
     Pedido,
     PedidoItem,
     PreguntaFrecuente,
@@ -40,6 +41,14 @@ class CategoriaProductoAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("nombre",)}
 
 
+class PrecioCombinacionInline(admin.TabularInline):
+    model = PrecioCombinacion
+    extra = 0
+    filter_horizontal = ("opciones",)
+    fields = ("opciones", "precio", "clave")
+    readonly_fields = ("clave",)
+
+
 @admin.register(Producto)
 class ProductoAdmin(admin.ModelAdmin):
     list_display = (
@@ -59,7 +68,7 @@ class ProductoAdmin(admin.ModelAdmin):
     ordering = ("orden", "nombre")
     autocomplete_fields = ("categoria",)
     filter_horizontal = ("opciones",)
-    inlines = [ProductoImagenInline]
+    inlines = [ProductoImagenInline, PrecioCombinacionInline]
 
     def preview(self, obj):
         if not obj.imagen:
@@ -189,3 +198,13 @@ class CampanaEspecialAdmin(admin.ModelAdmin):
     search_fields = ("titulo", "descripcion", "cta_texto", "cta_url")
     list_filter = ("activa",)
     ordering = ("orden", "id")
+
+
+from django.db.models.signals import m2m_changed  # noqa: E402
+from django.dispatch import receiver  # noqa: E402
+
+
+@receiver(m2m_changed, sender=PrecioCombinacion.opciones.through)
+def _clave_precio(sender, instance, action, **kwargs):
+    if action in ("post_add", "post_remove", "post_clear"):
+        instance.actualizar_clave()

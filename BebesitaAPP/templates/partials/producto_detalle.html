@@ -24,10 +24,10 @@
     {% endif %}
   </div>
 
-  <div class="product-detail-content" data-linea-scope data-pid="{{ p.id }}">
+  <div class="product-detail-content" data-linea-scope data-pid="{{ p.id }}" data-precios='{{ p.precios_json }}'>
     <p class="eyebrow">Edición artesanal</p>
     {% if es_pagina %}<h1 class="detail-titulo">{{ p.nombre }}</h1>{% else %}<h2>{{ p.nombre }}</h2>{% endif %}
-    <p class="detail-price"><span data-precio="{{ p.precio }}">${{ p.precio }}</span></p>
+    <p class="detail-price"><span data-precio="{{ p.precio }}">${{ p.precio_desde }}</span></p>
     <p class="detail-description">{{ p.descripcion|linebreaksbr }}</p>
 
     <div class="detail-badges">

@@ -24,9 +24,12 @@ class Opcion(models.Model):
     habria que crear un producto por cada combinacion. Aca se carga UNA vez
     ("Chocolate blanco") y se marca en los productos que la ofrecen.
     """
+    TIPO_TAMANO = "tamano"
     TIPO_COBERTURA = "cobertura"
     TIPO_RELLENO = "relleno"
+    # El orden de TIPOS es el orden en pantalla: primero el tamaño.
     TIPOS = [
+        (TIPO_TAMANO, "Tamaño"),
         (TIPO_COBERTURA, "Cobertura"),
         (TIPO_RELLENO, "Relleno"),
     ]
@@ -80,6 +83,15 @@ class Producto(models.Model):
     opciones = models.ManyToManyField(
         Opcion, blank=True, related_name='productos',
         help_text='Coberturas y rellenos que el cliente puede elegir.')
+    minimo = models.PositiveIntegerField(
+        'Mínimo por pedido', default=0,
+        help_text='0 = el mínimo general de la tienda (10). Una torta se vende desde 1.')
+    en_box = models.BooleanField(
+        'Disponible en Arma tu box', default=True,
+        help_text='Desmarcar para productos que no caben en una caja (tortas).')
+    pide_nota = models.BooleanField(
+        'Pide nota al cliente', default=False,
+        help_text='En el carrito aparece un campo para describir cinta y decoración.')
     # La direccion de la ficha: /productos/alfajores/ se entiende y posiciona;
     # /producto/15/ no dice nada. Se arma sola desde el nombre si queda vacia.
     slug = models.SlugField(
@@ -116,6 +128,33 @@ class Producto(models.Model):
             if op.activa:
                 grupos.setdefault(op.tipo, []).append(op)
         return [(t, etiquetas[t], grupos[t]) for t, _ in Opcion.TIPOS if t in grupos]
+
+    def minimo_efectivo(self):
+        from django.conf import settings
+        return self.minimo or max(1, int(getattr(settings, "MINIMO_UNIDADES", 1)))
+
+    def precio_para(self, opcion_ids):
+        """Precio unitario de una combinacion de opciones.
+
+        Si la combinacion tiene precio fijo cargado (tortas: 50 con chocolate
+        no es 50 sin cobertura + un recargo parejo), manda ese. Si no, precio
+        base mas los recargos de cada opcion.
+        """
+        clave = "-".join(str(x) for x in sorted(opcion_ids))
+        fijos = {pc.clave: pc.precio for pc in self.precios_combinacion.all()}
+        if clave in fijos:
+            return fijos[clave]
+        opciones = [op for op in self.opciones.all() if op.id in set(opcion_ids)]
+        return self.precio + sum(op.recargo for op in opciones)
+
+    def precios_json(self):
+        """{"3-8": 17990} para que la tarjeta cambie el precio al elegir."""
+        import json
+        return json.dumps({pc.clave: pc.precio for pc in self.precios_combinacion.all()})
+
+    def precio_desde(self):
+        fijos = [pc.precio for pc in self.precios_combinacion.all()]
+        return min(fijos) if fijos else self.precio
 
     def clave_inicial(self):
         """La linea de carrito con la primera opcion de cada grupo: "15-1"."""
@@ -261,3 +300,27 @@ class ClicEnlace(models.Model):
 
     def __str__(self):
         return f"{self.slug} · {self.creado:%d-%m %H:%M}"
+
+
+class PrecioCombinacion(models.Model):
+    """Precio fijo de un producto para una combinacion de opciones.
+
+    `clave` son los ids de las opciones ordenados y unidos por guion ("3-8"),
+    igual que en la linea del carrito sin el id del producto.
+    """
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="precios_combinacion")
+    opciones = models.ManyToManyField(Opcion, related_name="+")
+    clave = models.CharField(max_length=60, editable=False, db_index=True)
+    precio = models.IntegerField()
+
+    class Meta:
+        verbose_name = "Precio por combinación"
+        verbose_name_plural = "Precios por combinación"
+        unique_together = ("producto", "clave")
+
+    def actualizar_clave(self):
+        self.clave = "-".join(str(x) for x in sorted(self.opciones.values_list("id", flat=True)))
+        PrecioCombinacion.objects.filter(pk=self.pk).update(clave=self.clave)
+
+    def __str__(self):
+        return f"{self.producto} {self.clave}: ${self.precio}"

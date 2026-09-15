@@ -425,8 +425,10 @@ class CatalogoInicialTests(TestCase):
     def test_carga_los_tres_con_coberturas_y_oculta_el_viejo(self):
         self._correr()
         visibles = Producto.objects.filter(visible=True)
-        self.assertEqual(visibles.count(), 4)
-        for p in visibles:
+        self.assertEqual(visibles.count(), 5)
+        torta = visibles.get(nombre="Torta de cuchuflís")
+        self.assertEqual((torta.minimo, torta.en_box, torta.pide_nota, torta.precios_combinacion.count()), (1, False, True, 6))
+        for p in visibles.exclude(pk=torta.pk):
             esperado = [] if p.nombre == "Cuchuflís rellenos" else ["Chocolate", "Chocolate blanco"]
             self.assertEqual([o.nombre for o in p.opciones.all()], esperado)
             self.assertTrue(p.imagen.storage.exists(p.imagen.name))
@@ -718,3 +720,62 @@ class SeoTecnicoTests(TestCase):
         self.assertIn("clarity.ms/tag/", home)
         login = self.client.get("/panel/login/").content.decode()
         self.assertNotIn("G-TEST123", login)
+
+
+
+@override_settings(MINIMO_UNIDADES=10, BOX_PRICE=1490, SHIPPING_COST=0,
+                   EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend")
+class TortaCuchuflisTests(TestCase):
+    """Torta: precio fijo por tamano y cobertura, desde 1, fuera del box y con nota."""
+
+    def setUp(self):
+        from .models import PrecioCombinacion
+        self.t50 = Opcion.objects.create(tipo="tamano", nombre="50 cuchuflís", orden=1)
+        self.t100 = Opcion.objects.create(tipo="tamano", nombre="100 cuchuflís", orden=2)
+        self.sin = Opcion.objects.create(nombre="Sin cobertura", color="#e8c98f", orden=0)
+        self.choc = Opcion.objects.create(nombre="Chocolate", orden=1)
+        self.torta = Producto.objects.create(
+            nombre="Torta de cuchuflís", descripcion="x", precio=14990, minimo=1, en_box=False, pide_nota=True,
+            imagen=SimpleUploadedFile("t.jpg", b"img", content_type="image/jpeg"))
+        self.torta.opciones.add(self.t50, self.t100, self.sin, self.choc)
+        for tam, cob, precio in [(self.t50, self.sin, 14990), (self.t50, self.choc, 17990),
+                                 (self.t100, self.sin, 29990), (self.t100, self.choc, 34990)]:
+            pc = PrecioCombinacion.objects.create(producto=self.torta, precio=precio)
+            pc.opciones.set([tam, cob]); pc.actualizar_clave()
+
+    def _linea(self, *ops):
+        return "-".join(str(x) for x in [self.torta.id, *sorted(o.id for o in ops)])
+
+    def test_precio_fijo_por_combinacion_y_minimo_uno(self):
+        r = self.client.post(reverse("agregar_carrito_ajax", args=[self._linea(self.t100, self.choc)])).json()
+        self.assertEqual((r["qty"], r["total"]), (1, 34990.0))
+        r = self.client.post(reverse("agregar_carrito_ajax", args=[self._linea(self.t50, self.sin)])).json()
+        self.assertEqual(r["qty"], 1)
+        self.assertEqual(r["total"], 34990.0 + 14990.0)
+
+    def test_restar_de_una_torta_la_saca(self):
+        linea = self._linea(self.t50, self.choc)
+        self.client.post(reverse("agregar_carrito_ajax", args=[linea]))
+        self.client.post(reverse("agregar_carrito_ajax", args=[linea]))
+        r = self.client.post(reverse("decrementar_carrito_ajax", args=[linea])).json()
+        self.assertEqual(r["qty"], 1)
+
+    def test_no_aparece_en_arma_tu_box(self):
+        self.assertNotContains(self.client.get(reverse("arma_tu_box")), "Torta de cuchuflís")
+
+    def test_nota_de_cinta_viaja_al_pedido(self):
+        linea = self._linea(self.t50, self.choc)
+        self.client.post(reverse("agregar_carrito_ajax", args=[linea]))
+        self.assertContains(self.client.get(reverse("carrito")), "Color de cinta y decoración")
+        r = self.client.post(reverse("carrito_nota_ajax", args=[linea]), {"nota": "Cinta rosada y confites"})
+        self.assertTrue(r.json()["ok"])
+        self.client.post(reverse("checkout"), data={
+            "nombre": "Cliente", "email": "c@example.com", "telefono": "+56 9 1111 1111",
+            "tipo_entrega": "retiro", "comuna_sector": "Santiago", "direccion": "Ref"})
+        item = PedidoItem.objects.get()
+        self.assertEqual(int(item.precio), 17990)
+        self.assertIn("Nota: Cinta rosada y confites", item.detalle)
+        self.assertIn("Tamaño: 50 cuchuflís", item.detalle)
+
+    def test_nota_de_linea_ajena_responde_404(self):
+        self.assertEqual(self.client.post(reverse("carrito_nota_ajax", args=[self._linea(self.t50, self.sin)]), {"nota": "x"}).status_code, 404)

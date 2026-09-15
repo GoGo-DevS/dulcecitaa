@@ -76,6 +76,50 @@ class Command(BaseCommand):
             self._cargar(nombres)
 
         self._reponer_fotos(principales.filter(nombre__in=nombres))
+        self._torta_cuchuflis()
+
+    @transaction.atomic
+    def _torta_cuchuflis(self):
+        """Torta de cuchuflis (15-09-2026): se crea una vez si no existe.
+
+        Precio fijo por tamaño y cobertura (no es base + recargo parejo):
+        50 sin cobertura 14.990 / con 17.990, 100 sin 29.990 / con 34.990.
+        """
+        from BebesitaAPP.models import PrecioCombinacion, ProductoImagen
+
+        nombre = "Torta de cuchuflís"
+        if Producto.objects.filter(nombre=nombre).exists():
+            return
+        categoria, _ = CategoriaProducto.objects.get_or_create(
+            slug="dulce", defaults={"nombre": "Dulce", "orden": 1, "activa": True})
+        t50 = Opcion.objects.get_or_create(tipo="tamano", nombre="50 cuchuflís", defaults={"orden": 1})[0]
+        t100 = Opcion.objects.get_or_create(tipo="tamano", nombre="100 cuchuflís", defaults={"orden": 2})[0]
+        sin = Opcion.objects.get_or_create(tipo="cobertura", nombre="Sin cobertura",
+                                           defaults={"color": "#e8c98f", "orden": 0})[0]
+        choc = Opcion.objects.get_or_create(tipo="cobertura", nombre="Chocolate",
+                                            defaults={"color": "#5b3a29", "orden": 1})[0]
+        blanco = Opcion.objects.get_or_create(tipo="cobertura", nombre="Chocolate blanco",
+                                              defaults={"color": "#f3ead9", "orden": 2})[0]
+        torta = Producto(
+            nombre=nombre, precio=14990, categoria=categoria, destacado=True, visible=True,
+            disponible=True, orden=5, unidades_por_pack=1, minimo=1, en_box=False, pide_nota=True,
+            descripcion=("Torta armada con cuchuflís rellenos de manjar, en 50 o 100 unidades, "
+                         "sin cobertura o bañados en chocolate. Terminada con cinta y decoración "
+                         "a tu gusto: cuéntanos los colores al hacer el pedido."),
+        )
+        self._poner_foto(torta, "torta-cuchuflis.jpg")
+        torta.save()
+        torta.opciones.add(t50, t100, sin, choc, blanco)
+        for tam, cob, precio in [(t50, sin, 14990), (t50, choc, 17990), (t50, blanco, 17990),
+                                 (t100, sin, 29990), (t100, choc, 34990), (t100, blanco, 34990)]:
+            pc = PrecioCombinacion.objects.create(producto=torta, precio=precio)
+            pc.opciones.set([tam, cob])
+            pc.actualizar_clave()
+        for extra in ["torta-cuchuflis-2.jpg", "torta-cuchuflis-3.jpg", "torta-cuchuflis-4.jpg"]:
+            img = ProductoImagen(producto=torta)
+            with open(FOTOS / extra, "rb") as archivo:
+                img.imagen.save(extra, File(archivo), save=True)
+        self.stdout.write(self.style.SUCCESS("Torta de cuchuflís creada con 6 precios."))
 
     @transaction.atomic
     def _cargar(self, nombres):

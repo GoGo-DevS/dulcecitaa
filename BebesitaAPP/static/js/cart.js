@@ -100,8 +100,13 @@
       if (elegida && nombre) nombre.textContent = elegida.dataset.nombre;
       if (elegida) recargo += parseInt(elegida.dataset.recargo || '0', 10);
     });
+    // Precio fijo por combinacion (tortas) si existe; si no, base + recargos.
+    let fijos = {};
+    try { fijos = JSON.parse(scope.dataset.precios || '{}'); } catch (e) { fijos = {}; }
+    const claveOpciones = clave.split('-').slice(1).join('-');
     scope.querySelectorAll('[data-precio]').forEach((el) => {
-      el.textContent = '$' + (parseInt(el.dataset.precio, 10) + recargo);
+      const precio = claveOpciones in fijos ? fijos[claveOpciones] : parseInt(el.dataset.precio, 10) + recargo;
+      el.textContent = '$' + precio;
     });
     scope.querySelectorAll('.product-ctl').forEach((ctl) => {
       ctl.setAttribute('data-id', clave);
@@ -112,6 +117,28 @@
     const link = scope.querySelector('[data-agregar-ver]');
     if (link) link.setAttribute('href', `/carrito/agregar/${clave}/`);
   }
+
+  // Nota de la linea (torta): se guarda sola 600 ms despues de dejar de escribir.
+  let notaTimer = null;
+  document.addEventListener('input', (e) => {
+    const campo = e.target.closest('[data-nota-linea]');
+    if (!campo) return;
+    const estado = campo.parentElement.querySelector('[data-nota-estado]');
+    clearTimeout(notaTimer);
+    if (estado) estado.textContent = '';
+    notaTimer = setTimeout(async () => {
+      try {
+        const body = new URLSearchParams({ nota: campo.value });
+        const resp = await fetch(`/carrito/nota/${campo.dataset.notaLinea}/`, {
+          method: 'POST', body,
+          headers: { 'X-Requested-With': 'XMLHttpRequest', 'X-CSRFToken': csrftoken }
+        });
+        if (estado) estado.textContent = resp.ok ? 'Guardado' : 'No se pudo guardar';
+      } catch (err) {
+        if (estado) estado.textContent = 'No se pudo guardar';
+      }
+    }, 600);
+  });
 
   document.addEventListener('change', (e) => {
     const input = e.target.closest('[data-opciones] input');

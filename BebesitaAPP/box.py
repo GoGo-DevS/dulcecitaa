@@ -35,8 +35,8 @@ def filas_para_armar():
     from .views import _clave_linea
 
     filas = []
-    productos = (Producto.objects.filter(visible=True, disponible=True, variante_de__isnull=True)
-                 .prefetch_related("opciones").order_by("orden", "nombre"))
+    productos = (Producto.objects.filter(visible=True, disponible=True, variante_de__isnull=True, en_box=True)
+                 .prefetch_related("opciones", "precios_combinacion").order_by("orden", "nombre"))
     for p in productos:
         grupos = [opciones for _tipo, _etiqueta, opciones in p.grupos_opciones()]
         for combinacion in (combinar(*grupos) if grupos else [()]):
@@ -44,7 +44,7 @@ def filas_para_armar():
                 "clave": _clave_linea(p.id, [op.id for op in combinacion]),
                 "producto": p,
                 "opciones": list(combinacion),
-                "precio": p.precio + sum(op.recargo for op in combinacion),
+                "precio": p.precio_para([op.id for op in combinacion]),
             })
     return filas
 

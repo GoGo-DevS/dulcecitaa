@@ -15,6 +15,15 @@
   </legend>
   <div class="opciones__muestras">
     {% for op in opciones %}
+    {% if tipo == "tamano" %}
+    {% comment %} El tamaño no tiene color: va como pastilla con texto. {% endcomment %}
+    <label class="muestra-texto">
+      <input type="radio" class="visually-hidden" name="{{ prefijo }}op-{{ p.id }}-{{ tipo }}"
+             value="{{ op.id }}" data-nombre="{{ op.nombre }}" data-recargo="{{ op.recargo }}"
+             {% if forloop.first %}checked{% endif %}>
+      <span>{{ op.nombre }}</span>
+    </label>
+    {% else %}
     <label class="muestra" title="{{ op.nombre }}">
       <input type="radio" class="visually-hidden" name="{{ prefijo }}op-{{ p.id }}-{{ tipo }}"
              value="{{ op.id }}" data-nombre="{{ op.nombre }}" data-recargo="{{ op.recargo }}"
@@ -22,6 +31,7 @@
       <span class="muestra__color" style="--muestra: {{ op.color }}"></span>
       <span class="visually-hidden">{{ op.nombre }}</span>
     </label>
+    {% endif %}
     {% endfor %}
   </div>
 </fieldset>
