@@ -62,6 +62,9 @@ CATALOGO = [
 
 COBERTURAS = [("Chocolate", "#5b3a29", 1), ("Chocolate blanco", "#f3ead9", 2)]
 
+# v2 (15-09-2026): recortes cuadrados con la torta al centro; las verticales la cortaban.
+FOTOS_TORTA_EXTRA = ["torta-cuchuflis-2-v2.jpg", "torta-cuchuflis-3-v2.jpg", "torta-cuchuflis-4-v2.jpg"]
+
 
 class Command(BaseCommand):
     help = "Carga una vez el catalogo de alfajores, barquillos y cuchuflis y oculta el viejo."
@@ -88,7 +91,9 @@ class Command(BaseCommand):
         from BebesitaAPP.models import PrecioCombinacion, ProductoImagen
 
         nombre = "Torta de cuchuflís"
-        if Producto.objects.filter(nombre=nombre).exists():
+        existente = Producto.objects.filter(nombre=nombre).first()
+        if existente:
+            self._fotos_torta_v2(existente)
             return
         categoria, _ = CategoriaProducto.objects.get_or_create(
             slug="dulce", defaults={"nombre": "Dulce", "orden": 1, "activa": True})
@@ -107,7 +112,7 @@ class Command(BaseCommand):
                          "sin cobertura o bañados en chocolate. Terminada con cinta y decoración "
                          "a tu gusto: cuéntanos los colores al hacer el pedido."),
         )
-        self._poner_foto(torta, "torta-cuchuflis.jpg")
+        self._poner_foto(torta, "torta-cuchuflis-v2.jpg")
         torta.save()
         torta.opciones.add(t50, t100, sin, choc, blanco)
         for tam, cob, precio in [(t50, sin, 14990), (t50, choc, 17990), (t50, blanco, 17990),
@@ -115,7 +120,7 @@ class Command(BaseCommand):
             pc = PrecioCombinacion.objects.create(producto=torta, precio=precio)
             pc.opciones.set([tam, cob])
             pc.actualizar_clave()
-        for extra in ["torta-cuchuflis-2.jpg", "torta-cuchuflis-3.jpg", "torta-cuchuflis-4.jpg"]:
+        for extra in FOTOS_TORTA_EXTRA:
             img = ProductoImagen(producto=torta)
             with open(FOTOS / extra, "rb") as archivo:
                 img.imagen.save(extra, File(archivo), save=True)
@@ -166,3 +171,26 @@ class Command(BaseCommand):
     def _poner_foto(producto, foto):
         with open(FOTOS / foto, "rb") as archivo:
             producto.imagen.save(foto, File(archivo), save=False)
+
+    def _fotos_torta_v2(self, torta):
+        """Cambia una vez las fotos verticales de la torta por los recortes centrados.
+
+        Solo toca fotos que sigan siendo las de fabrica (nombre torta-cuchuflis):
+        si la duena subio otra desde el admin, esa se respeta.
+        """
+        from BebesitaAPP.models import ProductoImagen
+
+        principal = (torta.imagen.name or "").rsplit("/", 1)[-1]
+        if principal.startswith("torta-cuchuflis") and "-v2" not in principal:
+            self._poner_foto(torta, "torta-cuchuflis-v2.jpg")
+            torta.save(update_fields=["imagen"])
+            viejas = [im for im in torta.imagenes.all()
+                      if (im.imagen.name or "").rsplit("/", 1)[-1].startswith("torta-cuchuflis") and "-v2" not in im.imagen.name]
+            for im in viejas:
+                im.delete()
+            if viejas:
+                for extra in FOTOS_TORTA_EXTRA:
+                    nueva = ProductoImagen(producto=torta)
+                    with open(FOTOS / extra, "rb") as archivo:
+                        nueva.imagen.save(extra, File(archivo), save=True)
+            self.stdout.write("Fotos de la torta reemplazadas por recortes centrados.")
