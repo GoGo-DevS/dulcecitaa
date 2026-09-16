@@ -813,3 +813,44 @@ class AvisoDePedidoTests(TestCase):
     def test_sin_la_variable_el_aviso_cae_al_correo_de_contacto(self):
         bandeja = self._pedido_de_prueba()
         self.assertEqual(bandeja[1].to, ["contacto@dulcecita.cl"])
+
+
+class ClaveDelPanelTests(TestCase):
+    """La clave de /panel no se puede ver, solo reemplazar (y Render Free no tiene consola)."""
+
+    def _correr(self, **entorno):
+        import os
+        from django.core.management import call_command
+        from io import StringIO
+        salida = StringIO()
+        with patch.dict(os.environ, entorno, clear=False):
+            for k in ("PANEL_USER", "PANEL_PASSWORD"):
+                if k not in entorno:
+                    os.environ.pop(k, None)
+            call_command("clave_panel", stdout=salida)
+        return salida.getvalue()
+
+    def test_crea_el_usuario_y_lo_deja_entrar_al_panel(self):
+        from django.contrib.auth import get_user_model
+        self._correr(PANEL_USER="Bbsita", PANEL_PASSWORD="clave-larga-de-prueba")
+        cuenta = get_user_model().objects.get(username="Bbsita")
+        self.assertTrue(cuenta.check_password("clave-larga-de-prueba"))
+        self.assertTrue(cuenta.is_staff and cuenta.is_superuser and cuenta.is_active)
+
+    def test_vuelve_a_correr_y_solo_cambia_la_clave(self):
+        from django.contrib.auth import get_user_model
+        self._correr(PANEL_USER="Bbsita", PANEL_PASSWORD="primera-clave-larga")
+        self._correr(PANEL_USER="Bbsita", PANEL_PASSWORD="segunda-clave-larga")
+        cuentas = get_user_model().objects.filter(username="Bbsita")
+        self.assertEqual(cuentas.count(), 1, "no puede duplicar el usuario en cada deploy")
+        self.assertTrue(cuentas.first().check_password("segunda-clave-larga"))
+
+    def test_sin_variables_no_toca_nada(self):
+        from django.contrib.auth import get_user_model
+        salida = self._correr()
+        self.assertIn("no estan", salida)
+        self.assertEqual(get_user_model().objects.count(), 0)
+
+    def test_la_clave_nunca_aparece_en_la_salida(self):
+        salida = self._correr(PANEL_USER="Bbsita", PANEL_PASSWORD="clave-secreta-larga")
+        self.assertNotIn("clave-secreta-larga", salida)
