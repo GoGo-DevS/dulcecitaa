@@ -226,6 +226,16 @@ EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "15"))
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", EMAIL_HOST_USER or "no-reply@dulcecitaa.local")
 # Correo de contacto público (se muestra en footer y formularios)
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL") or "contacto@dulcecita.cl"
+# A quien le avisa la web cuando entra un PEDIDO. Aparte de CONTACT_EMAIL, que
+# es el correo PUBLICO del pie de pagina: el 15-09-2026 CONTACT_EMAIL estaba en
+# el Gmail de Diego, asi que los avisos de pedido no le llegaban a la duena y
+# ademas su Gmail personal quedaba publicado en el sitio.
+# Acepta varios separados por coma (ej: la duena y Diego en copia).
+# Vacia si no se define: ahi el aviso cae a CONTACT_EMAIL, que es el
+# comportamiento de siempre.
+PEDIDOS_EMAILS = [
+    correo.strip() for correo in os.getenv("PEDIDOS_EMAIL", "").split(",") if correo.strip()
+]
 
 # Minimo de compra por producto. La venta es por volumen: no se despacha de a
 # una unidad. Va por variable de entorno para poder cambiarlo sin tocar codigo.

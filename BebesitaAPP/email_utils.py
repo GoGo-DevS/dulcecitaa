@@ -121,7 +121,7 @@ def send_checkout_emails(pedido, items):
     )
     internal_ok = send_templated_email(
         subject=internal_subject,
-        recipients=[getattr(settings, "CONTACT_EMAIL", "")],
+        recipients=getattr(settings, "PEDIDOS_EMAILS", None) or [getattr(settings, "CONTACT_EMAIL", "")],
         text_template="emails/pedido_negocio.txt",
         html_template="emails/pedido_negocio.html",
         context=context,

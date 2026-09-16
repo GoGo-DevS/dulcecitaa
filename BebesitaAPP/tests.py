@@ -779,3 +779,37 @@ class TortaCuchuflisTests(TestCase):
 
     def test_nota_de_linea_ajena_responde_404(self):
         self.assertEqual(self.client.post(reverse("carrito_nota_ajax", args=[self._linea(self.t50, self.sin)]), {"nota": "x"}).status_code, 404)
+
+
+class AvisoDePedidoTests(TestCase):
+    """El aviso del pedido tiene que llegarle a la DUENA, no al correo publico.
+
+    15-09-2026: se probo un pedido real (#17) y no le llego nada a Tamara. La
+    causa no era el envio (Brevo funcionaba) sino el destinatario: CONTACT_EMAIL
+    en Render estaba con el Gmail personal de Diego, que ademas se mostraba en
+    el pie del sitio. Por eso el aviso de pedidos ahora tiene su propia
+    variable y acepta varios correos.
+    """
+
+    def _pedido_de_prueba(self):
+        from BebesitaAPP.email_utils import send_checkout_emails
+        producto = Producto.objects.create(nombre="Alfajor", precio=1000, minimo=1)
+        pedido = Pedido.objects.create(
+            nombre_cliente="Cliente", email_cliente="cliente@ejemplo.cl",
+            telefono="+56911111111", direccion="Calle 1", total=1000)
+        send_checkout_emails(pedido=pedido, items=[{
+            "producto": producto, "cantidad": 1, "subtotal": 1000,
+            "precio_unitario": 1000, "detalle": "",
+        }])
+        return mail.outbox
+
+    @override_settings(PEDIDOS_EMAILS=["pedidos@dulcecita.cl", "diego@gogodevs.cl"],
+                       CONTACT_EMAIL="contacto@dulcecita.cl")
+    def test_el_aviso_va_a_los_correos_de_pedidos_no_al_publico(self):
+        bandeja = self._pedido_de_prueba()
+        self.assertEqual(bandeja[1].to, ["pedidos@dulcecita.cl", "diego@gogodevs.cl"])
+
+    @override_settings(PEDIDOS_EMAILS=[], CONTACT_EMAIL="contacto@dulcecita.cl")
+    def test_sin_la_variable_el_aviso_cae_al_correo_de_contacto(self):
+        bandeja = self._pedido_de_prueba()
+        self.assertEqual(bandeja[1].to, ["contacto@dulcecita.cl"])
