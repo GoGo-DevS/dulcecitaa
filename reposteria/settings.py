@@ -246,7 +246,7 @@ WEBSITE_URL = os.getenv("WEBSITE_URL", "")
 # Logo para los correos (URL absoluta publica; los clientes de email no leen estaticos relativos).
 # Usa el PNG (los clientes no soportan SVG). Se puede sobreescribir con EMAIL_LOGO_URL.
 EMAIL_LOGO_URL = os.getenv("EMAIL_LOGO_URL") or (
-    (WEBSITE_URL or "https://dulcecitaa.onrender.com").rstrip("/") + "/static/img/logo-dulcecita-mascota.jpg"
+    (WEBSITE_URL or "https://dulcecitaa.onrender.com").rstrip("/") + "/static/img/logo-email.png"
 )
 # Botones flotantes de redes
 WHATSAPP_URL = os.getenv("WHATSAPP_URL") or "https://wa.me/56961192192"

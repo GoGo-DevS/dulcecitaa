@@ -2,45 +2,45 @@
 {% block email_title %}Confirmación de pedido #{{ pedido.id }} | {{ site_brand }}{% endblock %}
 {% block heading %}¡Gracias por tu pedido, #{{ pedido.id }}!{% endblock %}
 {% block lead %}
-<p style="margin:0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;line-height:1.7;color:#6f5a60;">
-  Hola <strong style="color:#4a2f34;">{{ pedido.nombre_cliente }}</strong>, recibimos tu pedido y lo estamos preparando con mucho cariño. 🤍
+<p style="margin:0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;line-height:1.7;color:#5c6674;">
+  Hola <strong style="color:#2a4057;">{{ pedido.nombre_cliente }}</strong>, recibimos tu pedido y lo estamos preparando con mucho cariño. 🤍
 </p>
 {% endblock %}
 {% block content %}
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border:1px solid #f4dcea;border-radius:14px;overflow:hidden;">
-  <tr style="background:#fdeef7;">
-    <th align="left" style="padding:11px 14px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#6f5a60;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Producto</th>
-    <th align="center" style="padding:11px 14px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#6f5a60;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Cant.</th>
-    <th align="right" style="padding:11px 14px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#6f5a60;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Subtotal</th>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;border:1px solid #f3dcea;border-radius:14px;overflow:hidden;">
+  <tr style="background:#fdf0f7;">
+    <th align="left" style="padding:11px 14px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#5c6674;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Producto</th>
+    <th align="center" style="padding:11px 14px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#5c6674;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Cant.</th>
+    <th align="right" style="padding:11px 14px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#5c6674;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Subtotal</th>
   </tr>
   {% for item in line_items %}
   <tr>
-    <td style="padding:12px 14px;border-top:1px solid #f6e6ef;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;">{{ item.nombre }}</td>
-    <td align="center" style="padding:12px 14px;border-top:1px solid #f6e6ef;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#6f5a60;">{{ item.cantidad }}</td>
-    <td align="right" style="padding:12px 14px;border-top:1px solid #f6e6ef;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;font-weight:700;">{{ item.subtotal }}</td>
+    <td style="padding:12px 14px;border-top:1px solid #f3dcea;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#2a4057;">{{ item.nombre }}</td>
+    <td align="center" style="padding:12px 14px;border-top:1px solid #f3dcea;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#5c6674;">{{ item.cantidad }}</td>
+    <td align="right" style="padding:12px 14px;border-top:1px solid #f3dcea;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#2a4057;font-weight:700;">{{ item.subtotal }}</td>
   </tr>
   {% endfor %}
 </table>
 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:14px;">
   <tr>
-    <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#6f5a60;padding:2px 2px;">
-      Subtotal: <strong style="color:#4a2f34;">{{ subtotal_formatted }}</strong>
+    <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#5c6674;padding:2px 2px;">
+      Subtotal: <strong style="color:#2a4057;">{{ subtotal_formatted }}</strong>
     </td>
   </tr>
   <tr>
-    <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#6f5a60;padding:2px 2px;">
-      Despacho: <strong style="color:#4a2f34;">{{ shipping_formatted }}</strong>
+    <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#5c6674;padding:2px 2px;">
+      Despacho: <strong style="color:#2a4057;">{{ shipping_formatted }}</strong>
     </td>
   </tr>
   {% if pedido.cantidad_cajas %}<tr>
-    <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#6f5a60;padding:2px 2px;">
-      Box ({{ pedido.cantidad_cajas }}): <strong style="color:#4a2f34;">{{ box_formatted }}</strong>
+    <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#5c6674;padding:2px 2px;">
+      Box ({{ pedido.cantidad_cajas }}): <strong style="color:#2a4057;">{{ box_formatted }}</strong>
     </td>
   </tr>{% endif %}
   <tr>
-    <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:19px;color:#4a2f34;padding:6px 2px 0;">
-      Total: <strong style="color:#b1245e;">{{ total_formatted }}</strong>
+    <td align="right" style="font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:19px;color:#2a4057;padding:6px 2px 0;">
+      Total: <strong style="color:#2a4057;">{{ total_formatted }}</strong>
     </td>
   </tr>
 </table>
@@ -62,30 +62,30 @@
   </tr>
 </table>
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;border-collapse:separate;border-spacing:0;background:#fffafd;border:1px solid #f4dcea;border-radius:14px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;border-collapse:separate;border-spacing:0;background:#fdf7fb;border:1px solid #f3dcea;border-radius:14px;">
   <tr>
     <td style="padding:16px 18px;">
-      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#6f5a60;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Ocasión</p>
-      <p style="margin:0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;">{{ pedido.comentario_ocasion|linebreaksbr }}</p>
+      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#5c6674;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Ocasión</p>
+      <p style="margin:0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#2a4057;">{{ pedido.comentario_ocasion|linebreaksbr }}</p>
     </td>
   </tr>
 </table>
 
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;border-collapse:separate;border-spacing:0;background:#fffafd;border:1px solid #f4dcea;border-radius:14px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;border-collapse:separate;border-spacing:0;background:#fdf7fb;border:1px solid #f3dcea;border-radius:14px;">
   <tr>
     <td style="padding:16px 18px;">
-      <p style="margin:0 0 9px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#6f5a60;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Datos de entrega</p>
-      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;"><strong>Método:</strong> {{ delivery_label }}</p>
-      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;"><strong>Comuna/Sector:</strong> {{ pedido.comuna_sector }}</p>
-      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;"><strong>Dirección:</strong> {{ pedido.direccion }}</p>
-      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;"><strong>Teléfono:</strong> {{ pedido.telefono }}</p>
-      <p style="margin:0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#4a2f34;"><strong>Correo:</strong> {{ pedido.email_cliente }}</p>
+      <p style="margin:0 0 9px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:11px;color:#5c6674;text-transform:uppercase;letter-spacing:.06em;font-weight:700;">Datos de entrega</p>
+      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#2a4057;"><strong>Método:</strong> {{ delivery_label }}</p>
+      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#2a4057;"><strong>Comuna/Sector:</strong> {{ pedido.comuna_sector }}</p>
+      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#2a4057;"><strong>Dirección:</strong> {{ pedido.direccion }}</p>
+      <p style="margin:0 0 5px;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#2a4057;"><strong>Teléfono:</strong> {{ pedido.telefono }}</p>
+      <p style="margin:0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:14px;color:#2a4057;"><strong>Correo:</strong> {{ pedido.email_cliente }}</p>
     </td>
   </tr>
 </table>
 
-<p style="margin:16px 2px 0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;color:#6f5a60;">
+<p style="margin:16px 2px 0;font-family:'Manrope',Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;color:#5c6674;">
   Te contactaremos para coordinar la entrega final.
-  {% if contact_email %}Si necesitas ayuda, escríbenos a <a href="mailto:{{ contact_email }}" style="color:#b1245e;text-decoration:none;font-weight:600;">{{ contact_email }}</a>.{% endif %}
+  {% if contact_email %}Si necesitas ayuda, escríbenos a <a href="mailto:{{ contact_email }}" style="color:#2a4057;text-decoration:none;font-weight:600;">{{ contact_email }}</a>.{% endif %}
 </p>
 {% endblock %}
