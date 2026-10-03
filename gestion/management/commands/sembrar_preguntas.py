@@ -53,9 +53,16 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("--confirmar", action="store_true",
                             help="Sin esto solo muestra lo que haria.")
+        parser.add_argument("--solo-si-vacio", action="store_true",
+                            help="No hace nada si ya hay alguna pregunta cargada. "
+                                 "Es como corre en el build: si la duena borro una "
+                                 "a proposito, el siguiente deploy NO la revive.")
 
     def handle(self, *args, **opciones):
         confirmar = opciones["confirmar"]
+        if opciones["solo_si_vacio"] and PreguntaFrecuente.objects.exists():
+            self.stdout.write("  ya hay preguntas cargadas: no se toca nada.")
+            return
         nuevas = saltadas = 0
         for orden, pregunta, respuesta in preguntas():
             # se compara por la pregunta, no por el texto completo: la duena
