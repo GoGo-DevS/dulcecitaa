@@ -4,6 +4,15 @@
 {% load fotos %}
 {% block title %}Alfajores, barquillos y cuchuflís artesanales | {{ site_brand }}{% endblock %}
 {% block meta_description %}Repostería artesanal hecha a mano: alfajores, barquillos y cuchuflís bañados en chocolate. Pedidos por volumen, box para regalar y despacho a todo Chile.{% endblock %}
+{% block schema %}{% if schema_preguntas %}
+{% comment %}
+  FAQPage SOLO en la portada, que es donde las preguntas se muestran de verdad.
+  Repetirlo en las 12 paginas le diria a Google que hay 12 paginas de
+  preguntas. Y si no hay ninguna cargada, schema_preguntas viene vacio y aqui
+  no se dibuja nada: un FAQPage sin preguntas visibles es accion manual.
+{% endcomment %}
+<script type="application/ld+json">{{ schema_preguntas }}</script>
+{% endif %}{% endblock %}
 {% block og_title %}{{ site_brand }} | La felicidad en cajita{% endblock %}
 {% block og_description %}Alfajores, barquillos y cuchuflís hechos a mano. Box para regalar y regalos corporativos con despacho a todo Chile.{% endblock %}
 

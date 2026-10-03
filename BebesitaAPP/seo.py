@@ -215,3 +215,32 @@ def manifest(request):
             {"src": static("img/icono-maskable-512.png"), "sizes": "512x512", "type": "image/png", "purpose": "maskable"},
         ],
     }, json_dumps_params={"ensure_ascii": False}, content_type="application/manifest+json")
+
+def schema_preguntas():
+    """FAQPage con las preguntas cargadas en el panel, o nada.
+
+    Las preguntas ya existian en la base (PreguntaFrecuente) y la portada ya
+    las mostraba, pero no se declaraban como datos estructurados: Google no
+    podia desplegarlas bajo el resultado y un asistente no tenia de donde
+    citar una respuesta. La funcion existia y no se mostraba donde importa.
+
+    Devuelve cadena vacia si no hay ninguna activa. Declarar un FAQPage sin
+    preguntas visibles en la pagina es motivo de accion manual de Google.
+    """
+    from .models import PreguntaFrecuente
+    activas = list(PreguntaFrecuente.objects.filter(activa=True)[:10])
+    if not activas:
+        return ""
+    return json_ld({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "@id": _abs("/#preguntas"),
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": p.pregunta,
+                "acceptedAnswer": {"@type": "Answer", "text": strip_tags(p.respuesta).strip()},
+            }
+            for p in activas
+        ],
+    })
