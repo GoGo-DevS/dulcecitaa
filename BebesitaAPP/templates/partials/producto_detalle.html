@@ -1,14 +1,15 @@
-<div class="product-detail-wrap">
+
+{% load fotos %}<div class="product-detail-wrap">
   <div class="product-detail-media">
     {% if imagenes and imagenes|length > 0 %}
     <div id="carouselProd" class="carousel slide detail-carousel">
       <div class="carousel-inner">
         <div class="carousel-item active">
-          <img src="{{ p.imagen.url }}" class="d-block w-100" alt="{{ p.nombre }}">
+          <img src="{{ p.imagen.url|foto:900 }}" class="d-block w-100" alt="{{ p.nombre }}">
         </div>
         {% for img in imagenes %}
         <div class="carousel-item">
-          <img src="{{ img.imagen.url }}" class="d-block w-100" alt="{{ p.nombre }}">
+          <img src="{{ img.imagen.url|foto:900 }}" class="d-block w-100" alt="{{ p.nombre }}">
         </div>
         {% endfor %}
       </div>
@@ -20,7 +21,7 @@
       </button>
     </div>
     {% else %}
-    <img src="{{ p.imagen.url }}" class="single-detail-image" alt="{{ p.nombre }}">
+    <img src="{{ p.imagen.url|foto:900 }}" class="single-detail-image" alt="{{ p.nombre }}">
     {% endif %}
   </div>
 

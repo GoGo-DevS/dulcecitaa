@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block schema %}<script type="application/ld+json">{{ schema }}</script>{% endblock %}
 {% load static %}
+{% load fotos %}
 {% block title %}Comprar alfajores y cuchuflís por mayor | {{ site_brand }}{% endblock %}
 {% block meta_description %}Catálogo con precios de alfajores, barquillos y cuchuflís artesanales. Elige chocolate o chocolate blanco, desde {{ minimo_unidades }} unidades, con despacho a todo Chile.{% endblock %}
 
@@ -71,7 +72,7 @@
       <button type="button" class="catalog-card__abrir btn-view" data-id="{{ p.id }}"
               aria-label="Ver detalle de {{ p.nombre }}">
         <span class="catalog-media">
-          <img src="{{ p.imagen.url }}" alt="{{ p.nombre }}" class="catalog-image" loading="lazy">
+          <img src="{{ p.imagen.url|foto:500 }}" alt="{{ p.nombre }}" class="catalog-image" loading="lazy">
           {% if p.destacado %}<span class="catalog-tag catalog-tag--flota">Destacado</span>{% endif %}
           {% if not p.disponible %}<span class="catalog-tag catalog-tag-muted catalog-tag--flota">No disponible</span>{% endif %}
         </span>
@@ -111,8 +112,8 @@
   <div class="container">
     <div class="ig-encargos__caja">
       <div class="ig-encargos__foto" data-reveal-item>
-        <img src="{% static 'img/galeria/caja-diciochera.jpg' %}"
-             alt="Box dieciochero con merenguitos, alfajores de maicena, alfajores mini, cachitos rellenos de manjar y chilenitos" loading="lazy">
+        <img src="{% static 'img/galeria/caja-diciochera.webp' %}"
+             alt="Box dieciochero con merenguitos, alfajores de maicena, alfajores mini, cachitos rellenos de manjar y chilenitos" loading="lazy" width="675" height="900">
       </div>
       <div data-reveal-item>
         <p class="eyebrow">Box y corporativos</p>

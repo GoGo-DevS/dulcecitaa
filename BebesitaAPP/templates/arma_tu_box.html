@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
+{% load fotos %}
 {% block title %}Box de dulces personalizado para regalar | {{ site_brand }}{% endblock %}
 {% block meta_description %}Arma tu box de alfajores, barquillos y cuchuflís con la cobertura que quieras, desde {{ minimo_box }} por producto. Un regalo dulce hecho a mano, listo para entregar.{% endblock %}
 
@@ -28,7 +29,7 @@
       {% regroup filas by producto as por_producto %}
       {% for grupo in por_producto %}
       <article class="box-producto">
-        <img src="{{ grupo.grouper.imagen.url }}" alt="{{ grupo.grouper.nombre }}" class="box-producto__foto" loading="lazy">
+        <img src="{{ grupo.grouper.imagen.url|foto:420 }}" alt="{{ grupo.grouper.nombre }}" class="box-producto__foto" loading="lazy">
         <div class="box-producto__cuerpo">
           <h2 class="box-producto__nombre">{% if grupo.grouper.unidades_por_pack > 1 %}{{ grupo.grouper.unidades_por_pack }} {{ grupo.grouper.nombre|lower }}{% else %}{{ grupo.grouper.nombre }}{% endif %}</h2>
           <ul class="box-filas">
