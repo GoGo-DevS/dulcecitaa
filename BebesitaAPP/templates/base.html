@@ -58,8 +58,18 @@
     el calculo del desplazamiento se rompe cuando una se parte en dos lineas.
     Sin promocion vuelve sola al mensaje de siempre.
   {% endcomment %}
-  {% if promocion and promocion.mensaje %}
-  <a class="dr-topbar dr-topbar--promo" href="{% url 'arma_tu_box' %}">{{ promocion.mensaje }}</a>
+  {% comment %}
+    OJO: la franja NO puede depender de que el mensaje este escrito. Antes decia
+    `{% if promocion and promocion.mensaje %}` y el mensaje es un campo opcional
+    del formulario: al dejarlo vacio -- que es lo normal -- la campaña corria,
+    descontaba los precios y no la anunciaba en ninguna parte. El mensaje sirve
+    para personalizar la franja, no para decidir si existe.
+  {% endcomment %}
+  {% if promocion %}
+  <a class="dr-topbar dr-topbar--promo" href="{% url 'arma_tu_box' %}">
+    {% if promocion.mensaje %}{{ promocion.mensaje }}{% else %}{{ promocion.etiqueta }}: {{ promocion.porcentaje }}% de descuento en todos los productos{% endif %}
+    <span class="dr-topbar__ir">Arma tu box</span>
+  </a>
   {% else %}
   <div class="dr-topbar">Compra aquí · Entrega coordinada por WhatsApp</div>
   {% endif %}

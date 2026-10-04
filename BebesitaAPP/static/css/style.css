@@ -3204,3 +3204,39 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
    de enlace y deja de verse como franja. */
 a.dr-topbar--promo { text-decoration: none; display: block; }
 a.dr-topbar--promo:hover { filter: brightness(1.05); }
+
+
+/* ---- Que se note que hay oferta ----
+   La campaña descontaba los precios y no se anunciaba en ninguna parte:
+   la franja dependia de un campo opcional y el sello solo existia en la ficha
+   del producto. */
+.catalog-tag--oferta {
+  background: #B3144B;
+  color: #fff;
+  font-weight: 800;
+  letter-spacing: .02em;
+}
+.sello-promo--mini {
+  display: inline-block;
+  margin-left: .35rem;
+  padding: .1rem .4rem;
+  border-radius: 99px;
+  background: #B3144B;
+  color: #fff;
+  font-size: .72em;
+  font-weight: 800;
+  vertical-align: middle;
+}
+/* "Arma tu box" al final de la franja: dice que se puede apretar. En el
+   telefono se esconde para que el texto de la promocion no se parta en dos
+   lineas -- la franja desplaza la barra de navegacion y ese calculo se rompe
+   cuando crece. */
+.dr-topbar__ir {
+  display: none;
+  margin-left: .6rem;
+  padding: .08rem .55rem;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, .22);
+  font-weight: 800;
+}
+@media (min-width: 768px) { .dr-topbar__ir { display: inline-block; } }

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block schema %}<script type="application/ld+json">{{ schema }}</script>{% endblock %}
-{% load static %}
+{% load static plata %}
 {% load fotos %}
 {% block title %}Comprar alfajores y cuchuflís por mayor | {{ site_brand }}{% endblock %}
 {% block meta_description %}Catálogo con precios de alfajores, barquillos y cuchuflís artesanales. Elige chocolate o chocolate blanco, desde {{ minimo_unidades }} unidades, con despacho a todo Chile.{% endblock %}
@@ -73,12 +73,18 @@
               aria-label="Ver detalle de {{ p.nombre }}">
         <span class="catalog-media">
           <img src="{{ p.imagen.url|foto:500 }}" alt="{{ p.nombre }}" class="catalog-image" loading="lazy">
-          {% if p.destacado %}<span class="catalog-tag catalog-tag--flota">Destacado</span>{% endif %}
+          {% comment %}
+            El sello de oferta estaba solo en la ficha del producto, y el
+            catalogo es donde la gente mira primero. Va arriba del "Destacado"
+            porque el descuento manda sobre eso.
+          {% endcomment %}
+          {% if p.tiene_descuento %}<span class="catalog-tag catalog-tag--oferta catalog-tag--flota">−{{ promocion.porcentaje }}%</span>
+          {% elif p.destacado %}<span class="catalog-tag catalog-tag--flota">Destacado</span>{% endif %}
           {% if not p.disponible %}<span class="catalog-tag catalog-tag-muted catalog-tag--flota">No disponible</span>{% endif %}
         </span>
         <span class="catalog-card__pie">
           <span class="catalog-card__nombre">{% if p.unidades_por_pack > 1 %}{{ p.unidades_por_pack }} {{ p.nombre|lower }}{% else %}{{ p.nombre }}{% endif %}</span>
-          <span class="catalog-price">{% if p.tiene_descuento %}<s class="precio-lista">${{ p.precio_lista_desde|floatformat:0 }}</s> {% endif %}<span data-precio="{{ p.precio }}">${{ p.precio_desde|floatformat:0 }}</span><small> c/u</small></span>
+          <span class="catalog-price">{% if p.tiene_descuento %}<s class="precio-lista">${{ p.precio_lista_desde|pesos }}</s> {% endif %}<span data-precio="{{ p.precio }}">${{ p.precio_desde|pesos }}</span><small> c/u</small></span>
         </span>
       </button>
       <div class="catalog-actions">

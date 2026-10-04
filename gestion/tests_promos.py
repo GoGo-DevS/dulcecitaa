@@ -193,3 +193,70 @@ class PanelPromosTests(TestCase):
         html = self.client.get("/panel/promos/").content.decode()
         self.assertIn('action="/panel/promos/%d/encender/"' % promo.pk, html)
         self.assertIn("Apagar", html)
+
+
+class AvisoEnElSitioTests(TestCase):
+    """Que la campaña SE VEA, no solo que descuente.
+
+    Diego, con la campaña ya encendida: "solo se ve en los precios, no hay
+    ningun banner o algo que alerte a la gente". La franja dependia de
+    `promocion.mensaje`, que es un campo OPCIONAL: al dejarlo vacio la campaña
+    corria invisible.
+    """
+
+    def setUp(self):
+        from BebesitaAPP.models import Producto
+        self.prod = Producto.objects.create(
+            nombre="Caja sorpresa", descripcion="x", precio=12900, stock=5,
+            visible=True, destacado=True, imagen="productos/x.jpg")
+
+    def _promo(self, **kw):
+        from BebesitaAPP.models import Promocion
+        hoy = timezone.localdate()
+        datos = dict(nombre="Dia del Profesor", porcentaje=10, desde=hoy,
+                     hasta=hoy + timedelta(days=12), etiqueta="Dia del Profesor")
+        datos.update(kw)
+        return Promocion.objects.create(**datos)
+
+    def test_la_franja_sale_aunque_el_mensaje_este_vacio(self):
+        self._promo(mensaje="")
+        html = self.client.get("/").content.decode()
+        self.assertIn("dr-topbar--promo", html)
+        self.assertIn("10% de descuento", html)
+        self.assertNotIn("Compra aquí · Entrega coordinada", html)
+
+    def test_con_mensaje_manda_el_mensaje(self):
+        self._promo(mensaje="10% en todo por el Dia del Profesor")
+        html = self.client.get("/").content.decode()
+        self.assertIn("10% en todo por el Dia del Profesor", html)
+
+    def test_sin_promocion_vuelve_la_franja_de_siempre(self):
+        html = self.client.get("/").content.decode()
+        self.assertNotIn("dr-topbar--promo", html)
+        self.assertIn("Compra aquí", html)
+
+    def test_el_catalogo_marca_los_productos_en_oferta(self):
+        self._promo()
+        html = self.client.get("/productos/").content.decode()
+        self.assertIn("catalog-tag--oferta", html)
+        self.assertIn("−10%", html)
+
+    def test_sin_promocion_la_tarjeta_vuelve_a_decir_destacado(self):
+        html = self.client.get("/productos/").content.decode()
+        self.assertNotIn("catalog-tag--oferta", html)
+        self.assertIn("Destacado", html)
+
+    def test_la_portada_tambien_marca_la_oferta(self):
+        self._promo()
+        html = self.client.get("/").content.decode()
+        self.assertIn("sello-promo--mini", html)
+
+    def test_la_franja_lleva_a_armar_el_box(self):
+        """Es el objetivo de la campaña: que armen un box, no solo que miren."""
+        self._promo()
+        html = self.client.get("/").content.decode()
+        # la etiqueta <a ...> COMPLETA: el href va despues de la clase
+        import re
+        m = re.search(r'<a[^>]*dr-topbar--promo[^>]*>', html)
+        self.assertIsNotNone(m, "no hay franja de promocion")
+        self.assertIn("box", m.group(0), m.group(0))

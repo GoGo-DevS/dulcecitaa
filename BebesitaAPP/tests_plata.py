@@ -29,3 +29,26 @@ class PesosTests(TestCase):
     def test_en_una_plantilla(self):
         t = Template("{% load plata %}${{ v|pesos }}")
         self.assertEqual(t.render(Context({"v": 12900})), "$12.900")
+
+
+class PreciosEnTodasLasPantallasTests(TestCase):
+    """Un mismo producto no puede verse "$12.900" en la portada y "$12900" en
+    el catalogo. Pasaba: la portada usaba el filtro y el catalogo floatformat."""
+
+    def setUp(self):
+        from BebesitaAPP.models import Producto
+        Producto.objects.create(nombre="Caja grande", descripcion="x", precio=12900,
+                                stock=5, visible=True, destacado=True,
+                                imagen="productos/x.jpg")
+
+    def test_ninguna_pantalla_publica_un_precio_de_5_cifras_sin_separador(self):
+        import re
+        for ruta in ("/", "/productos/"):
+            html = self.client.get(ruta).content.decode()
+            # $ seguido de 5 o mas digitos sin punto = sin formatear
+            sueltos = re.findall(r"\$\d{5,}(?!\d)", html)
+            self.assertEqual(sueltos, [], f"{ruta}: {sueltos[:5]}")
+
+    def test_el_precio_sale_con_punto(self):
+        html = self.client.get("/productos/").content.decode()
+        self.assertIn("$12.900", html)
