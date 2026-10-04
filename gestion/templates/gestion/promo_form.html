@@ -1,0 +1,108 @@
+{% extends "gestion/base.html" %}
+{% load humanize %}
+
+{% block title %}{{ titulo }} | Gestión Dulcecita{% endblock %}
+{% block nav_promos %}active{% endblock %}
+
+{% block content %}
+<a href="{% url 'gestion:promos' %}" class="btn btn-sm btn-link text-muted ps-0 mb-1">
+  <i class="bi bi-arrow-left"></i> Volver
+</a>
+<h1 class="page-title mb-3">{{ titulo }}</h1>
+
+<div class="card">
+  <div class="card-body">
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.nombre.id_for_label }}">{{ form.nombre.label }} *</label>
+        {{ form.nombre }}
+        <div class="form-text">{{ form.nombre.help_text }}</div>
+        {% if form.nombre.errors %}<div class="text-danger small mt-1">{{ form.nombre.errors|striptags }}</div>{% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.porcentaje.id_for_label }}">{{ form.porcentaje.label }} (%) *</label>
+        {{ form.porcentaje }}
+        <div class="form-text">{{ form.porcentaje.help_text }}</div>
+        {% if form.porcentaje.errors %}<div class="text-danger small mt-1">{{ form.porcentaje.errors|striptags }}</div>{% endif %}
+        {% if muestra %}
+          {% comment %}
+            El efecto en PESOS sobre un producto de verdad. Un "10%" no dice
+            nada hasta que se ve que $1.290 queda en $1.161. Se calcula al
+            escribir, sin recargar.
+          {% endcomment %}
+          <div class="form-text" data-efecto
+               data-base="{{ muestra.precio_lista_desde }}"
+               data-nombre="{{ muestra.nombre }}">
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="row g-2">
+        <div class="col-12 col-sm-6 mb-3">
+          <label class="form-label" for="{{ form.desde.id_for_label }}">{{ form.desde.label }} *</label>
+          {{ form.desde }}
+          <div class="form-text">{{ form.desde.help_text }}</div>
+          {% if form.desde.errors %}<div class="text-danger small mt-1">{{ form.desde.errors|striptags }}</div>{% endif %}
+        </div>
+        <div class="col-12 col-sm-6 mb-3">
+          <label class="form-label" for="{{ form.hasta.id_for_label }}">{{ form.hasta.label }} *</label>
+          {{ form.hasta }}
+          <div class="form-text">{{ form.hasta.help_text }}</div>
+          {% if form.hasta.errors %}<div class="text-danger small mt-1">{{ form.hasta.errors|striptags }}</div>{% endif %}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.etiqueta.id_for_label }}">{{ form.etiqueta.label }}</label>
+        {{ form.etiqueta }}
+        <div class="form-text">{{ form.etiqueta.help_text }}</div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="{{ form.mensaje.id_for_label }}">{{ form.mensaje.label }}</label>
+        {{ form.mensaje }}
+        <div class="form-text">{{ form.mensaje.help_text }}</div>
+      </div>
+
+      <div class="form-check mb-3">
+        {{ form.activa }}
+        <label class="form-check-label" for="{{ form.activa.id_for_label }}">{{ form.activa.label }}</label>
+        <div class="form-text">{{ form.activa.help_text }}</div>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors|striptags }}</div>
+      {% endif %}
+
+      <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-dc"><i class="bi bi-check-lg"></i> Guardar</button>
+        <a href="{% url 'gestion:promos' %}" class="btn btn-outline-dc">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  // El precio resultante mientras escribe. Si el bloque no existe (no hay
+  // productos cargados) no hace nada y el formulario funciona igual.
+  (function () {
+    var caja = document.querySelector('[data-efecto]');
+    var campo = document.getElementById('{{ form.porcentaje.id_for_label }}');
+    if (!caja || !campo) return;
+    var base = parseInt(caja.dataset.base, 10);
+    var nombre = caja.dataset.nombre;
+    function pesos(n) { return '$' + n.toLocaleString('es-CL'); }
+    function pintar() {
+      var pct = parseInt(campo.value, 10);
+      if (!pct || pct < 1 || pct > 60 || !base) { caja.textContent = ''; return; }
+      var final = Math.round(base * (100 - pct) / 100);
+      caja.innerHTML = nombre + ': <s>' + pesos(base) + '</s> <strong>' + pesos(final) + '</strong>';
+    }
+    campo.addEventListener('input', pintar);
+    pintar();
+  })();
+</script>
+{% endblock %}

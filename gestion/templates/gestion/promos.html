@@ -1,0 +1,111 @@
+{% extends "gestion/base.html" %}
+{% load humanize plata %}
+
+{% block title %}Promociones | Gestión Dulcecita{% endblock %}
+{% block nav_promos %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+  <h1 class="page-title">Promociones</h1>
+  <a href="{% url 'gestion:promo_nueva' %}" class="btn btn-dc btn-sm">
+    <i class="bi bi-plus-lg"></i> Nueva
+  </a>
+</div>
+
+{% comment %}
+  Lo primero que tiene que contestar esta pantalla es "¿hay descuento en la web
+  AHORA MISMO?". Es la unica pregunta que importa y no puede costar leerla.
+{% endcomment %}
+{% if vigente %}
+  <div class="card mb-3 border-success">
+    <div class="card-body">
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="badge bg-success">En la web ahora</span>
+        <strong>{{ vigente.nombre }}</strong>
+      </div>
+      <p class="mb-2">
+        Todos los productos están con <strong>{{ vigente.porcentaje }}% de descuento</strong>
+        hasta el <strong>{{ vigente.hasta|date:"d \d\e F" }}</strong> incluido.
+      </p>
+      {% if muestra %}
+        <p class="item-meta mb-0">
+          Por ejemplo, {{ muestra.nombre }}:
+          <s>${{ muestra.precio_lista_desde|pesos }}</s>
+          <strong>${{ muestra.precio_desde|pesos }}</strong>
+        </p>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <span class="badge bg-secondary">Sin descuento</span>
+      <p class="mb-0 mt-2">La web está con los precios normales.</p>
+    </div>
+  </div>
+{% endif %}
+
+{% if filas %}
+  <div class="list-group">
+    {% for f in filas %}
+      <div class="list-group-item">
+        <div class="d-flex justify-content-between align-items-center gap-2">
+          <div class="flex-grow-1 min-w-0">
+            <div class="item-title">
+              {{ f.promo.nombre }}
+              <span class="badge bg-{{ f.color }} ms-1">{{ f.texto }}</span>
+            </div>
+            <div class="item-meta">
+              <i class="bi bi-tag"></i> {{ f.promo.porcentaje }}% en todo
+              · {{ f.promo.desde|date:"d-m" }} al {{ f.promo.hasta|date:"d-m-Y" }}
+            </div>
+            {% if f.promo.mensaje %}
+              <div class="item-meta"><i class="bi bi-megaphone"></i> {{ f.promo.mensaje }}</div>
+            {% endif %}
+          </div>
+          <div class="d-flex align-items-center gap-1 flex-shrink-0">
+            {% comment %}
+              A una campaña TERMINADA no se le ofrece "Apagar": ya no está
+              descontando nada, así que el botón prometería una acción sin
+              efecto. Lo que sirve ahí es volver a usarla cambiándole las
+              fechas — el Día del Profesor se repite todos los años.
+            {% endcomment %}
+            {% if f.clave == "terminada" %}
+              <a href="{% url 'gestion:promo_editar' f.promo.pk %}" class="btn btn-sm btn-outline-dc">
+                <i class="bi bi-arrow-repeat"></i> Reusar
+              </a>
+            {% else %}
+              <form method="post" action="{% url 'gestion:promo_toggle' f.promo.pk %}" class="m-0">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm {% if f.promo.activa %}btn-outline-dc{% else %}btn-dc{% endif %}">
+                  <i class="bi bi-{% if f.promo.activa %}pause{% else %}play{% endif %}-fill"></i>
+                  {% if f.promo.activa %}Apagar{% else %}Encender{% endif %}
+                </button>
+              </form>
+              <a href="{% url 'gestion:promo_editar' f.promo.pk %}" class="btn btn-sm btn-outline-dc"
+                 aria-label="Editar campaña" title="Editar campaña">
+                <i class="bi bi-pencil"></i>
+              </a>
+            {% endif %}
+            <form method="post" action="{% url 'gestion:promo_eliminar' f.promo.pk %}"
+                  onsubmit="return confirm('¿Eliminar esta campaña? No se puede deshacer.');" class="m-0">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-link text-danger btn-icon"
+                      aria-label="Eliminar campaña" title="Eliminar campaña">
+                <i class="bi bi-trash"></i>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="card">
+    <div class="empty-state">
+      <i class="bi bi-tag"></i>
+      Aún no hay campañas. Crea la primera y el descuento se aplica solo en toda la web.
+    </div>
+  </div>
+{% endif %}
+{% endblock %}

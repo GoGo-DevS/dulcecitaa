@@ -2,11 +2,13 @@ from datetime import date
 from urllib.parse import quote
 
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.db.models.deletion import ProtectedError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.http import require_POST
 
 from BebesitaAPP.models import Producto
 
@@ -546,3 +548,107 @@ def web(request):
         "sitio": sitio,
     }
     return render(request, "gestion/web.html", context)
+
+
+# ─── Promociones ──────────────────────────────────────────────────────────
+# Viven en el panel y NO en /admin/: la dueña arma las campañas desde el
+# teléfono y el admin de Django no le dice lo que necesita saber, que es si la
+# campaña está corriendo HOY y cuánto le queda un producto con ese descuento.
+
+def _estado_promo(promo, hoy):
+    """Corriendo / programada / terminada / apagada, en palabras."""
+    if not promo.activa:
+        return ("apagada", "secondary", "Apagada")
+    if promo.desde > hoy:
+        dias = (promo.desde - hoy).days
+        return ("programada", "info", f"Empieza en {dias} día{'s' if dias != 1 else ''}")
+    if promo.hasta < hoy:
+        return ("terminada", "secondary", "Terminada")
+    dias = (promo.hasta - hoy).days
+    if dias == 0:
+        return ("corriendo", "success", "Último día")
+    return ("corriendo", "success", f"Corriendo · {dias} día{'s' if dias != 1 else ''} más")
+
+
+@login_required
+def promos(request):
+    """Lista de campañas, la que corre hoy arriba."""
+    from BebesitaAPP.models import Producto, Promocion
+
+    hoy = timezone.localdate()
+    vigente = Promocion.vigente(hoy)
+    filas = []
+    for p in Promocion.objects.all():
+        clave, color, texto = _estado_promo(p, hoy)
+        filas.append({"promo": p, "clave": clave, "color": color, "texto": texto,
+                      "es_la_que_corre": vigente and p.pk == vigente.pk})
+    # la que corre primero, después las programadas, al final lo terminado
+    orden = {"corriendo": 0, "programada": 1, "apagada": 2, "terminada": 3}
+    filas.sort(key=lambda f: (orden[f["clave"]], -f["promo"].desde.toordinal()))
+
+    # Un producto real para mostrar el efecto en pesos: un porcentaje no dice
+    # nada, "$1.290 queda en $1.161" sí.
+    muestra = Producto.objects.filter(visible=True, variante_de__isnull=True).order_by("orden").first()
+    return render(request, "gestion/promos.html", {
+        "filas": filas, "vigente": vigente, "hoy": hoy, "muestra": muestra,
+    })
+
+
+@login_required
+def promo_form(request, pk=None):
+    from BebesitaAPP.models import Producto, Promocion
+    from .forms import PromocionForm
+
+    promo = get_object_or_404(Promocion, pk=pk) if pk else None
+    if request.method == "POST":
+        form = PromocionForm(request.POST, instance=promo)
+        if form.is_valid():
+            guardada = form.save()
+            messages.success(request, f"Campaña «{guardada.nombre}» guardada.")
+            # Avisar del solape: dos campañas encimadas hacen que gane la de
+            # mayor descuento, y eso sorprende a quien no lo sabe.
+            otras = (Promocion.objects.filter(activa=True).exclude(pk=guardada.pk)
+                     .filter(desde__lte=guardada.hasta, hasta__gte=guardada.desde))
+            if guardada.activa and otras.exists():
+                nombres = ", ".join(o.nombre for o in otras)
+                messages.warning(request, (
+                    f"Ojo: se cruza de fecha con {nombres}. Mientras se cruzan manda la "
+                    f"del descuento más alto. Si no quieres eso, apaga la otra."))
+            return redirect("gestion:promos")
+    else:
+        form = PromocionForm(instance=promo)
+    return render(request, "gestion/promo_form.html", {
+        "form": form, "promo": promo,
+        "titulo": "Editar campaña" if promo else "Nueva campaña",
+        "muestra": Producto.objects.filter(visible=True, variante_de__isnull=True).order_by("orden").first(),
+    })
+
+
+@login_required
+@require_POST
+def promo_toggle(request, pk):
+    """Prender o apagar sin abrir el formulario: es lo que más se usa."""
+    from BebesitaAPP.models import Promocion
+
+    promo = get_object_or_404(Promocion, pk=pk)
+    promo.activa = not promo.activa
+    promo.save(update_fields=["activa"])
+    if promo.activa and promo.esta_vigente():
+        messages.success(request, f"«{promo.nombre}» encendida: el descuento ya se ve en la web.")
+    elif promo.activa:
+        messages.info(request, f"«{promo.nombre}» encendida, pero empieza el {promo.desde:%d-%m}.")
+    else:
+        messages.info(request, f"«{promo.nombre}» apagada: la web vuelve a los precios normales.")
+    return redirect("gestion:promos")
+
+
+@login_required
+@require_POST
+def promo_eliminar(request, pk):
+    from BebesitaAPP.models import Promocion
+
+    promo = get_object_or_404(Promocion, pk=pk)
+    nombre = promo.nombre
+    promo.delete()
+    messages.success(request, f"Campaña «{nombre}» eliminada.")
+    return redirect("gestion:promos")

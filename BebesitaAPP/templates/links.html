@@ -1,4 +1,4 @@
-{% load static humanize %}<!DOCTYPE html>
+{% load static humanize plata %}<!DOCTYPE html>
 {% comment %}
   dulcecita.cl/links: la pagina de la bio de Instagram.
 
@@ -174,7 +174,7 @@
       {% if destinos.box %}
       <a class="lk-btn lk-btn--box lk-anim" style="--i:6" href="{% url 'links_ir' 'box' %}">
         <span class="lk-ico"><i class="bi bi-gift-fill" aria-hidden="true"></i></span>
-        <span class="lk-txt"><b>Arma tu box</b><span>Desde {{ minimo_box }} por producto, empaque ${{ precio_caja|intcomma }}</span></span>
+        <span class="lk-txt"><b>Arma tu box</b><span>Desde {{ minimo_box }} por producto, empaque ${{ precio_caja|pesos }}</span></span>
         <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
       </a>
       {% endif %}

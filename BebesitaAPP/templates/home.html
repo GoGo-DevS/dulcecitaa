@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static plata %}
 {% load humanize %}
 {% load fotos %}
 {% block title %}Alfajores, barquillos y cuchuflís artesanales | {{ site_brand }}{% endblock %}
@@ -234,7 +234,7 @@
           {% if p.imagen %}<img src="{{ p.imagen.url|foto:500 }}" alt="{{ p.nombre }}" loading="lazy">{% endif %}
           <span class="dr-tile-overlay">
             <span class="dr-tile-name">{{ p.nombre }}</span>
-            <span class="dr-tile-price">{% if p.tiene_descuento %}<s class="precio-lista">${{ p.precio_lista_desde|intcomma }}</s> {% endif %}${{ p.precio_desde|intcomma }}</span>
+            <span class="dr-tile-price">{% if p.tiene_descuento %}<s class="precio-lista">${{ p.precio_lista_desde|pesos }}</s> {% endif %}${{ p.precio_desde|pesos }}</span>
           </span>
         </a>
       {% empty %}

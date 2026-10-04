@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
 from BebesitaAPP.models import Producto
+from BebesitaAPP.models import Promocion
 
 from .models import Cliente, Componente, Compra, Pedido, PedidoItem
 
@@ -113,3 +114,50 @@ class CompraForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["fecha"].input_formats = ["%Y-%m-%d"]
+
+class PromocionForm(forms.ModelForm):
+    """Formulario de campana para el panel de la duena, no para el admin crudo.
+
+    Los campos van con su texto de ayuda en palabras y el calendario nativo del
+    telefono (type=date), que es desde donde ella lo va a llenar.
+    """
+
+    class Meta:
+        model = Promocion
+        fields = ("nombre", "porcentaje", "desde", "hasta", "etiqueta", "mensaje", "activa")
+        labels = {
+            "nombre": "Nombre de la campaña",
+            "porcentaje": "Descuento",
+            "desde": "Primer día",
+            "hasta": "Último día",
+            "etiqueta": "Sello sobre el precio",
+            "mensaje": "Franja de arriba",
+            "activa": "Encendida",
+        }
+        help_texts = {
+            "nombre": "Para ti, no se muestra. Ej: Día del Profesor 2026.",
+            "porcentaje": "Se aplica a todos los productos.",
+            "desde": "Desde este día se ve el descuento.",
+            "hasta": "Este día TODAVÍA tiene descuento. Al día siguiente se apaga sola.",
+            "etiqueta": "Lo que dice el sello junto al precio. Ej: Día del Profesor.",
+            "mensaje": "La franja rosada de arriba. Si la dejas vacía, no aparece la franja.",
+            "activa": "Desmarcar la apaga sin borrar nada: las fechas quedan guardadas.",
+        }
+        widgets = {
+            # type=date abre el calendario del telefono. Sin esto hay que
+            # escribir la fecha a mano en el formato exacto o no guarda.
+            "desde": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+            "hasta": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+            "nombre": forms.TextInput(attrs={"class": "form-control", "placeholder": "Día del Profesor 2026"}),
+            "porcentaje": forms.NumberInput(attrs={"class": "form-control", "min": 1, "max": 60}),
+            "etiqueta": forms.TextInput(attrs={"class": "form-control", "placeholder": "Día del Profesor"}),
+            "mensaje": forms.TextInput(attrs={
+                "class": "form-control",
+                "placeholder": "10% en todo por el Día del Profesor · arma tu box"}),
+            "activa": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        }
+
+    # Que "hasta" no quede antes de "desde" lo valida Promocion.clean(), y el
+    # ModelForm lo corre solo: el error cae en el campo "hasta". Validarlo acá
+    # de nuevo era duplicar la regla en dos lugares, con el riesgo de que un
+    # día digan cosas distintas.

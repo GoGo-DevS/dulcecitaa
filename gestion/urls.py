@@ -42,6 +42,13 @@ urlpatterns = [
     path("pedidos/<int:pk>/compra/<int:compra_pk>/eliminar/", views.compra_eliminar, name="compra_eliminar"),
     path("compra-granel/", views.compra_granel, name="compra_granel"),
 
+    # Promociones: las campanas por fecha viven aca y no en /admin/
+    path("promos/", views.promos, name="promos"),
+    path("promos/nueva/", views.promo_form, name="promo_nueva"),
+    path("promos/<int:pk>/editar/", views.promo_form, name="promo_editar"),
+    path("promos/<int:pk>/encender/", views.promo_toggle, name="promo_toggle"),
+    path("promos/<int:pk>/eliminar/", views.promo_eliminar, name="promo_eliminar"),
+
     # Costos por unidad
     path("costos/", views.costos, name="costos"),
     path("web/", views.web, name="web"),
