@@ -68,7 +68,7 @@
       detalle" compitiendo con "Agregar". Va como <button> y no como <div>
       clickeable para que se pueda llegar con el teclado.
     {% endcomment %}
-    <article class="catalog-card" data-catalog-card data-linea-scope data-pid="{{ p.id }}" data-precios='{{ p.precios_json }}'>
+    <article class="catalog-card" data-catalog-card data-linea-scope data-pid="{{ p.id }}" data-precios='{{ p.precios_json }}' data-descuento="{{ promocion.porcentaje|default:0 }}">
       <button type="button" class="catalog-card__abrir btn-view" data-id="{{ p.id }}"
               aria-label="Ver detalle de {{ p.nombre }}">
         <span class="catalog-media">
@@ -78,7 +78,7 @@
         </span>
         <span class="catalog-card__pie">
           <span class="catalog-card__nombre">{% if p.unidades_por_pack > 1 %}{{ p.unidades_por_pack }} {{ p.nombre|lower }}{% else %}{{ p.nombre }}{% endif %}</span>
-          <span class="catalog-price"><span data-precio="{{ p.precio }}">${{ p.precio_desde|floatformat:0 }}</span><small> c/u</small></span>
+          <span class="catalog-price">{% if p.tiene_descuento %}<s class="precio-lista">${{ p.precio_lista_desde|floatformat:0 }}</s> {% endif %}<span data-precio="{{ p.precio }}">${{ p.precio_desde|floatformat:0 }}</span><small> c/u</small></span>
         </span>
       </button>
       <div class="catalog-actions">

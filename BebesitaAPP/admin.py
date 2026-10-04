@@ -13,6 +13,7 @@ from .models import (
     PreguntaFrecuente,
     Producto,
     ProductoImagen,
+    Promocion,
     Testimonio,
 )
 
@@ -208,3 +209,17 @@ from django.dispatch import receiver  # noqa: E402
 def _clave_precio(sender, instance, action, **kwargs):
     if action in ("post_add", "post_remove", "post_clear"):
         instance.actualizar_clave()
+
+
+@admin.register(Promocion)
+class PromocionAdmin(admin.ModelAdmin):
+    """Donde la duena arma la campana: porcentaje, fechas y el texto de la franja."""
+    list_display = ("nombre", "porcentaje", "desde", "hasta", "activa", "corriendo")
+    list_filter = ("activa",)
+    fields = ("nombre", "porcentaje", "desde", "hasta", "etiqueta", "mensaje", "activa")
+
+    @admin.display(boolean=True, description="¿Corriendo hoy?")
+    def corriendo(self, obj):
+        """Que se vea en la lista si HOY esta aplicando, no solo si esta activa:
+        'activa' con fechas futuras no descuenta nada y confunde."""
+        return obj.esta_vigente()

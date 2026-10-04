@@ -36,6 +36,7 @@ def _transferencia(settings):
 def seo(request):
     """Dominio oficial, IDs de medicion y el schema del negocio para todas las paginas."""
     from django.conf import settings
+    from .models import Promocion
     from .seo import schema_negocio, schema_preguntas
 
     site_url = getattr(settings, "SITE_URL", "https://dulcecita.cl")
@@ -49,6 +50,7 @@ def seo(request):
         "site_url": site_url,
         "canonical_url": site_url + ruta,
         "medir": medir and any(ids[k] for k in ("GA4_ID", "GTM_ID", "CLARITY_ID", "META_PIXEL_ID")),
+        "promocion": Promocion.vigente(),
         "schema_negocio": schema_negocio(),
         "schema_preguntas": schema_preguntas(),
         **{k.lower(): v for k, v in ids.items()},

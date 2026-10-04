@@ -25,10 +25,14 @@
     {% endif %}
   </div>
 
-  <div class="product-detail-content" data-linea-scope data-pid="{{ p.id }}" data-precios='{{ p.precios_json }}'>
+  <div class="product-detail-content" data-linea-scope data-pid="{{ p.id }}" data-precios='{{ p.precios_json }}' data-descuento="{{ promocion.porcentaje|default:0 }}">
     <p class="eyebrow">Edición artesanal</p>
     {% if es_pagina %}<h1 class="detail-titulo">{{ p.nombre }}</h1>{% else %}<h2>{{ p.nombre }}</h2>{% endif %}
-    <p class="detail-price"><span data-precio="{{ p.precio }}">${{ p.precio_desde }}</span></p>
+    <p class="detail-price">
+      {% if p.tiene_descuento %}<s class="precio-lista">${{ p.precio_lista_desde }}</s> {% endif %}
+      <span data-precio="{{ p.precio }}">${{ p.precio_desde }}</span>
+      {% if p.tiene_descuento %}<span class="sello-promo">{{ promocion.etiqueta }} −{{ promocion.porcentaje }}%</span>{% endif %}
+    </p>
     <p class="detail-description">{{ p.descripcion|linebreaksbr }}</p>
 
     <div class="detail-badges">

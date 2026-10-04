@@ -18,7 +18,7 @@ from django.urls import reverse
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 
-from .models import Producto
+from .models import Producto, Promocion
 
 
 def _abs(ruta):
@@ -75,8 +75,15 @@ def _oferta(producto):
         "@type": "Offer",
         "url": _abs(producto.get_absolute_url()),
         "priceCurrency": "CLP",
-        "price": str(producto.precio),
+        # El precio del schema tiene que ser el que se COBRA. Si Google muestra
+        # un precio en el resultado y la pagina cobra otro, es motivo de accion
+        # manual: el precio mal publicado es el error mas caro de una tienda.
+        "price": str(producto.precio_desde()),
         "availability": "https://schema.org/InStock" if producto.disponible else "https://schema.org/OutOfStock",
+        # priceValidUntil: hasta cuando vale este precio. Con promocion es el
+        # ultimo dia de la campana; es lo que le dice a Google que el precio
+        # bajo es temporal y no el nuevo precio de lista.
+        **({"priceValidUntil": Promocion.vigente().hasta.isoformat()} if Promocion.vigente() else {}),
         "itemCondition": "https://schema.org/NewCondition",
         "seller": {"@id": _abs("/#negocio")},
         "eligibleQuantity": {"@type": "QuantitativeValue", "minValue": settings.MINIMO_UNIDADES,

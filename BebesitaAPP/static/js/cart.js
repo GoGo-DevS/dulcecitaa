@@ -104,8 +104,14 @@
     let fijos = {};
     try { fijos = JSON.parse(scope.dataset.precios || '{}'); } catch (e) { fijos = {}; }
     const claveOpciones = clave.split('-').slice(1).join('-');
+    // El descuento de la promocion se aplica AQUI y una sola vez, despues de
+    // resolver el precio por cualquiera de los dos caminos. Sin esto, al elegir
+    // una cobertura el precio volvia al valor sin descuento: la pagina mostraba
+    // un numero y el servidor cobraba otro.
+    const dto = parseInt(scope.dataset.descuento || '0', 10);
     scope.querySelectorAll('[data-precio]').forEach((el) => {
-      const precio = claveOpciones in fijos ? fijos[claveOpciones] : parseInt(el.dataset.precio, 10) + recargo;
+      let precio = claveOpciones in fijos ? fijos[claveOpciones] : parseInt(el.dataset.precio, 10) + recargo;
+      if (dto > 0) precio = Math.round(precio * (100 - dto) / 100);
       el.textContent = '$' + precio;
     });
     scope.querySelectorAll('.product-ctl').forEach((ctl) => {

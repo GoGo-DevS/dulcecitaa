@@ -1,5 +1,8 @@
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.utils import timezone
 
 
 class CategoriaProducto(models.Model):
@@ -133,8 +136,8 @@ class Producto(models.Model):
         from django.conf import settings
         return self.minimo or max(1, int(getattr(settings, "MINIMO_UNIDADES", 1)))
 
-    def precio_para(self, opcion_ids):
-        """Precio unitario de una combinacion de opciones.
+    def precio_lista_para(self, opcion_ids):
+        """Precio SIN descuento de una combinacion de opciones.
 
         Si la combinacion tiene precio fijo cargado (tortas: 50 con chocolate
         no es 50 sin cobertura + un recargo parejo), manda ese. Si no, precio
@@ -147,14 +150,42 @@ class Producto(models.Model):
         opciones = [op for op in self.opciones.all() if op.id in set(opcion_ids)]
         return self.precio + sum(op.recargo for op in opciones)
 
+    def precio_para(self, opcion_ids):
+        """El precio que se COBRA: con la promocion vigente aplicada.
+
+        El descuento se aplica aqui a proposito, porque este metodo es el unico
+        lugar por donde pasa el precio real: el carrito, el checkout, el pedido
+        guardado, los correos y el mensaje de WhatsApp todos lo llaman. Ponerlo
+        solo en la plantilla mostraria 10% de descuento y cobraria el precio
+        entero, que es el bug mas caro que puede tener una tienda.
+        """
+        precio = self.precio_lista_para(opcion_ids)
+        promo = Promocion.vigente()
+        return promo.aplicar(precio) if promo else precio
+
     def precios_json(self):
         """{"3-8": 17990} para que la tarjeta cambie el precio al elegir."""
         import json
+        # SIN descuento a proposito: el descuento lo aplica el JS una sola vez
+        # al final, para los dos caminos (precio fijo y base+recargo). Si se
+        # descontara aqui tambien, el precio fijo saldria con doble descuento.
         return json.dumps({pc.clave: pc.precio for pc in self.precios_combinacion.all()})
 
-    def precio_desde(self):
+    def precio_lista_desde(self):
+        """El "desde $X" SIN descuento. Es el precio tachado."""
         fijos = [pc.precio for pc in self.precios_combinacion.all()]
         return min(fijos) if fijos else self.precio
+
+    def precio_desde(self):
+        """El "desde $X" que se muestra, con la promocion vigente."""
+        precio = self.precio_lista_desde()
+        promo = Promocion.vigente()
+        return promo.aplicar(precio) if promo else precio
+
+    @property
+    def tiene_descuento(self):
+        """Para que la plantilla sepa si dibujar el precio tachado."""
+        return self.precio_desde() < self.precio_lista_desde()
 
     def clave_inicial(self):
         """La linea de carrito con la primera opcion de cada grupo: "15-1"."""
@@ -336,3 +367,68 @@ class PrecioCombinacion(models.Model):
 
     def __str__(self):
         return f"{self.producto} {self.clave}: ${self.precio}"
+
+class Promocion(models.Model):
+    """Un descuento en TODO el catalogo, con fecha de inicio y de termino.
+
+    Para campanas por fecha: Dia del Profesor, Halloween, Navidad. La duena la
+    crea, le pone el porcentaje y las fechas, y el sitio se encarga del resto.
+
+    LAS FECHAS NO SON DECORATIVAS. El descuento se aplica en `precio_para()`,
+    que es el UNICO lugar por donde pasa el precio que se cobra, asi que una
+    promocion vencida deja de cobrarse barata sola. La leccion viene de
+    medina4x4 el 02-10-2026: una oferta sin vigencia real se sigue cobrando
+    para siempre y nadie se entera.
+
+    Solo puede haber UNA vigente a la vez (`vigente()` toma la de mayor
+    descuento si se solapan dos): dos promociones encimadas es la via directa a
+    cobrar un precio que la pagina no mostro.
+    """
+    nombre = models.CharField(
+        max_length=80, help_text='Para ti. Ej: Dia del Profesor 2026.')
+    porcentaje = models.PositiveSmallIntegerField(
+        'Descuento (%)', validators=[MinValueValidator(1), MaxValueValidator(60)],
+        help_text='Entre 1 y 60. Se aplica a todos los productos.')
+    desde = models.DateField(help_text='Primer dia en que se ve el descuento.')
+    hasta = models.DateField(help_text='Ultimo dia. Ese dia TODAVIA aplica.')
+    etiqueta = models.CharField(
+        max_length=60, default='Oferta',
+        help_text='Lo que dice el sello sobre el precio. Ej: Dia del Profesor.')
+    mensaje = models.CharField(
+        max_length=160, blank=True,
+        help_text='La franja de arriba. Ej: 10% en todo por el Dia del Profesor.')
+    activa = models.BooleanField(
+        default=True, help_text='Desmarcar la apaga sin borrar nada ni perder las fechas.')
+
+    class Meta:
+        ordering = ('-desde',)
+        verbose_name = 'Promocion'
+        verbose_name_plural = 'Promociones'
+
+    def __str__(self):
+        return f'{self.nombre} ({self.porcentaje}% · {self.desde} a {self.hasta})'
+
+    def clean(self):
+        if self.desde and self.hasta and self.hasta < self.desde:
+            raise ValidationError({'hasta': 'La fecha de termino no puede ser anterior al inicio.'})
+
+    def esta_vigente(self, hoy=None):
+        hoy = hoy or timezone.localdate()
+        return bool(self.activa and self.desde <= hoy <= self.hasta)
+
+    @classmethod
+    def vigente(cls, hoy=None):
+        """La promocion que corre hoy, o None.
+
+        Si dos se solapan gana la de MAYOR descuento: si la duena dejo dos
+        encimadas por error, el cliente paga el precio mas bajo de los dos que
+        pudo haber visto. Equivocarse hacia el cliente es barato; cobrarle mas
+        de lo que vio, no.
+        """
+        hoy = hoy or timezone.localdate()
+        return (cls.objects.filter(activa=True, desde__lte=hoy, hasta__gte=hoy)
+                .order_by('-porcentaje').first())
+
+    def aplicar(self, precio):
+        """El precio con el descuento, redondeado a peso."""
+        return int(round(precio * (100 - self.porcentaje) / 100))

@@ -3161,3 +3161,46 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
 @media (max-width: 1199.98px) {
   .catalog-grid--n5 > .catalog-card:last-child .catalog-media { aspect-ratio: 1 / 1; }
 }
+
+/* ── Franja de promocion ─────────────────────────────────────────────────
+   Va al FINAL del archivo y con !important a proposito: .dr-topbar esta
+   declarada 5 veces en esta hoja y una de ellas (la del tema azul) ya usa
+   !important, asi que sin esto la variante no gana y la franja de la campana
+   sale del mismo color que el aviso de todos los dias — o sea no se nota, que
+   es justo lo contrario de lo que se busca.
+
+   El rosado es el de la marca (--rosa), no un color nuevo: la franja habitual
+   es azul, asi que el cambio de color YA es la señal de que hay algo distinto. */
+.dr-cabecera .dr-topbar.dr-topbar--promo {
+  background: var(--rosa) !important;
+  color: #3a2230 !important;        /* texto oscuro: sobre rosado claro el blanco no se lee */
+  letter-spacing: .12em;            /* el mensaje es mas largo que "Compra aqui" */
+}
+
+/* Precio de lista tachado y sello de la campana. */
+.precio-lista {
+  opacity: .55;
+  font-weight: 500;
+  margin-right: .15em;
+  text-decoration-thickness: 1px;   /* el tachado por defecto tapa el numero */
+}
+.sello-promo {
+  display: inline-block;
+  margin-left: .4em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--rosa);
+  color: #3a2230;                   /* mismo par medido de la franja: 7,84:1 */
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  vertical-align: middle;
+  white-space: nowrap;              /* "Dia del Profesor -10%" no se parte */
+}
+
+/* La franja de promocion es un enlace a "Arma tu box": es el destino que la
+   campana quiere empujar. Sin estas tres lineas hereda el subrayado y el color
+   de enlace y deja de verse como franja. */
+a.dr-topbar--promo { text-decoration: none; display: block; }
+a.dr-topbar--promo:hover { filter: brightness(1.05); }

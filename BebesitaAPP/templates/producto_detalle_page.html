@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}{{ p.nombre }} artesanales, ${{ p.precio }} | {{ site_brand }}{% endblock %}
+{% block title %}{{ p.nombre }} artesanales, ${{ p.precio_desde }} | {{ site_brand }}{% endblock %}
 {% block meta_description %}{{ p.descripcion|striptags|truncatechars:150 }}{% endblock %}
 {% block og_type %}product{% endblock %}
 {% block og_image_meta %}{% endblock %}
@@ -11,7 +11,7 @@
 {% block content %}
 <section class="container py-5">
   {% include 'partials/producto_detalle.html' with es_pagina=True %}
-  <script>window.dcMedir('view_item', { currency: 'CLP', value: {{ p.precio }}, items: [{ item_id: '{{ p.id }}', item_name: '{{ p.nombre|escapejs }}', price: {{ p.precio }} }] });</script>
+  <script>window.dcMedir('view_item', { currency: 'CLP', value: {{ p.precio_desde }}, items: [{ item_id: '{{ p.id }}', item_name: '{{ p.nombre|escapejs }}', price: {{ p.precio_desde }} }] });</script>
 </section>
 
 {% if preguntas %}
