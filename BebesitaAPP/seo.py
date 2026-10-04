@@ -111,6 +111,24 @@ def schema_producto(producto, request=None):
             migas([("Catálogo", reverse("productos")), (producto.nombre, producto.get_absolute_url())]),
         ],
     }
+    # Las preguntas de ESTE producto, si la duena cargo alguna. Van en el mismo
+    # @graph y no en un <script> aparte: es la misma pagina describiendose.
+    # Si no hay ninguna no se declara nada, porque un FAQPage que promete
+    # preguntas que la pagina no muestra es motivo de accion manual de Google.
+    preguntas = list(producto.preguntas.filter(activa=True)[:8])
+    if preguntas:
+        data["@graph"].append({
+            "@type": "FAQPage",
+            "@id": _abs(producto.get_absolute_url()) + "#preguntas",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": p.pregunta,
+                    "acceptedAnswer": {"@type": "Answer", "text": strip_tags(p.respuesta).strip()},
+                }
+                for p in preguntas
+            ],
+        })
     return json_ld(data)
 
 
@@ -228,7 +246,10 @@ def schema_preguntas():
     preguntas visibles en la pagina es motivo de accion manual de Google.
     """
     from .models import PreguntaFrecuente
-    activas = list(PreguntaFrecuente.objects.filter(activa=True)[:10])
+    # Solo las generales: las de un producto se declaran en SU ficha, con su
+    # propio FAQPage. Declararlas aqui tambien seria la misma pregunta en dos
+    # paginas, que para Google es contenido duplicado.
+    activas = list(PreguntaFrecuente.objects.filter(activa=True, producto__isnull=True)[:10])
     if not activas:
         return ""
     return json_ld({

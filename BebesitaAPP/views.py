@@ -219,7 +219,9 @@ def home(request):
 
     beneficios = BeneficioDiferencial.objects.filter(activo=True)[:4]
     testimonios = Testimonio.objects.filter(activo=True, destacado=True)[:3]
-    faqs = PreguntaFrecuente.objects.filter(activa=True)[:6]
+    # producto__isnull: las preguntas de un producto viven en SU ficha. Sin
+    # este filtro se colaban en la portada y la respondian fuera de contexto.
+    faqs = PreguntaFrecuente.objects.filter(activa=True, producto__isnull=True)[:6]
     campanas = CampanaEspecial.objects.filter(activa=True)[:2]
 
     return render(
@@ -542,7 +544,8 @@ def eliminar_carrito_ajax(request, linea):
 def producto_detalle(request, pk):
     producto = get_object_or_404(Producto.objects.prefetch_related("opciones"), pk=pk)
     imagenes = getattr(producto, "imagenes", None)
-    ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto)}
+    ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto),
+           "preguntas": producto.preguntas.filter(activa=True)[:8]}
 
     if request.GET.get("modal") == "1":
         return render(request, "partials/producto_detalle.html", ctx)
@@ -561,7 +564,8 @@ def producto_ficha(request, slug):
     producto = get_object_or_404(
         Producto.objects.prefetch_related("opciones"), slug=slug, variante_de__isnull=True)
     imagenes = getattr(producto, "imagenes", None)
-    ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto)}
+    ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto),
+           "preguntas": producto.preguntas.filter(activa=True)[:8]}
     return render(request, "producto_detalle_page.html", ctx)
 
 

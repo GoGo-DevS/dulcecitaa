@@ -13,4 +13,33 @@
   {% include 'partials/producto_detalle.html' with es_pagina=True %}
   <script>window.dcMedir('view_item', { currency: 'CLP', value: {{ p.precio }}, items: [{ item_id: '{{ p.id }}', item_name: '{{ p.nombre|escapejs }}', price: {{ p.precio }} }] });</script>
 </section>
+
+{% if preguntas %}
+{% comment %}
+  Las preguntas de ESTE producto. Mismas clases que la portada (section-soft,
+  faq-list, faq-item) para no inventar estilos nuevos.
+
+  Los h3 van dentro de un h2: la ficha tenia 115-149 palabras y CERO h2, o sea
+  ninguna estructura. Y el texto tiene que estar VISIBLE aqui, porque el
+  FAQPage del schema describe esta pagina: declararlo sin mostrarlo es accion
+  manual de Google.
+{% endcomment %}
+<section class="section-soft">
+  <div class="container">
+    <div class="section-head section-head-center">
+      <p class="eyebrow">Sobre este producto</p>
+      <h2>Lo que más nos preguntan</h2>
+    </div>
+    <div class="faq-list">
+      {% for faq in preguntas %}
+      <article class="faq-item surface-card">
+        <h3>{{ faq.pregunta }}</h3>
+        <p class="mb-0">{{ faq.respuesta }}</p>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
 {% endblock %}

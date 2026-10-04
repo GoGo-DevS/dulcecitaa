@@ -251,6 +251,18 @@ class Testimonio(models.Model):
 
 
 class PreguntaFrecuente(models.Model):
+    """Preguntas frecuentes de la portada o de la ficha de un producto.
+
+    Con producto vacio sale en la portada. Con producto, en SU ficha: las 5
+    fichas tenian 115-149 palabras y ningun H2, asi que para Google no habia
+    estructura que posicionar y para un asistente que responde "donde compro
+    alfajores artesanales" no habia nada que citar. Lo que se cita es una
+    pregunta respondida, no un parrafo de marca.
+    """
+    producto = models.ForeignKey(
+        'Producto', on_delete=models.CASCADE, null=True, blank=True,
+        related_name='preguntas',
+        help_text='Vacio = sale en la portada. Con producto = sale en su ficha.')
     pregunta = models.CharField(max_length=180)
     respuesta = models.TextField()
     orden = models.PositiveIntegerField(default=0)
