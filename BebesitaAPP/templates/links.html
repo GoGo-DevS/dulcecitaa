@@ -108,6 +108,33 @@
     .lk-txt span { display: block; font-size: .83rem; color: var(--tinta-suave); margin-top: .12rem; }
     .lk-flecha { color: var(--tinta-suave); font-size: 1.05rem; }
 
+    .lk-promo {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      width: 100%;
+      margin: 0 0 1rem;
+      padding: .85rem 1rem;
+      border-radius: 18px;
+      background: linear-gradient(135deg, #ff8fc7 0%, #f6a7d6 100%);
+      color: #4a1430;
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(246,167,214,.28);
+    }
+    .lk-promo__sello {
+      flex: none;
+      background: rgba(74,20,48,.14);
+      border-radius: 999px;
+      padding: .3rem .65rem;
+      font-weight: 800;
+      font-size: .82rem;
+      white-space: nowrap;
+    }
+    .lk-promo__txt { display: flex; flex-direction: column; line-height: 1.25; }
+    .lk-promo__txt b { font-size: .98rem; }
+    .lk-promo__txt span { font-size: .8rem; opacity: .78; }
+    .lk-promo .lk-flecha { margin-left: auto; }
+
     .lk-btn--pedido { background: var(--rosa); border-color: var(--rosa); color: var(--azul-hondo); min-height: 72px; box-shadow: 0 10px 26px rgba(245, 167, 214, .45); }
     .lk-btn--pedido .lk-ico { background: rgba(255, 255, 255, .55); color: var(--azul-hondo); }
     .lk-btn--pedido .lk-txt span, .lk-btn--pedido .lk-flecha { color: rgba(31, 49, 69, .78); }
@@ -155,6 +182,17 @@
         <li><i class="bi bi-clock" aria-hidden="true"></i>Sale {{ despacho_horas }} h tras el pago</li>
       </ul>
     </header>
+
+    {% if promocion %}
+    <a class="lk-promo lk-anim" style="--i:3" href="{% url 'links_ir' 'pedido' %}">
+      <span class="lk-promo__sello">{{ promocion.porcentaje }}% dcto</span>
+      <span class="lk-promo__txt">
+        <b>{% if promocion.mensaje %}{{ promocion.mensaje }}{% else %}{{ promocion.nombre }}{% endif %}</b>
+        <span>Hasta el {{ promocion.hasta|date:"j \d\e F" }} · ya aplicado en el catálogo</span>
+      </span>
+      <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
+    </a>
+    {% endif %}
 
     <nav class="lk-acciones" aria-label="Qué quieres hacer">
       {% if destinos.pedido %}
