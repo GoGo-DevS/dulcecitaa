@@ -113,7 +113,7 @@
       align-items: center;
       gap: .75rem;
       width: 100%;
-      margin: 0 0 1rem;
+      margin: 0;
       padding: .85rem 1rem;
       border-radius: 18px;
       background: linear-gradient(135deg, #ff8fc7 0%, #f6a7d6 100%);
@@ -183,18 +183,17 @@
       </ul>
     </header>
 
-    {% if promocion %}
-    <a class="lk-promo lk-anim" style="--i:3" href="{% url 'links_ir' 'pedido' %}">
-      <span class="lk-promo__sello">{{ promocion.porcentaje }}% dcto</span>
-      <span class="lk-promo__txt">
-        <b>{% if promocion.mensaje %}{{ promocion.mensaje }}{% else %}{{ promocion.nombre }}{% endif %}</b>
-        <span>Hasta el {{ promocion.hasta|date:"j \d\e F" }} · ya aplicado en el catálogo</span>
-      </span>
-      <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
-    </a>
-    {% endif %}
-
     <nav class="lk-acciones" aria-label="Qué quieres hacer">
+      {% if promocion %}
+    <a class="lk-promo lk-anim" style="--i:3" href="{% url 'links_ir' 'pedido' %}">
+        <span class="lk-promo__sello">{{ promocion.porcentaje }}% dcto</span>
+        <span class="lk-promo__txt">
+          <b>{% if promocion.mensaje %}{{ promocion.mensaje }}{% else %}{{ promocion.nombre }}{% endif %}</b>
+          <span>Hasta el {{ promocion.hasta|date:"j \d\e F" }} · ya aplicado en el catálogo</span>
+        </span>
+        <i class="bi bi-arrow-right lk-flecha" aria-hidden="true"></i>
+      </a>
+      {% endif %}
       {% if destinos.pedido %}
       <a class="lk-btn lk-btn--pedido lk-anim" style="--i:4" href="{% url 'links_ir' 'pedido' %}">
         <span class="lk-ico"><i class="bi bi-bag-heart-fill" aria-hidden="true"></i></span>
