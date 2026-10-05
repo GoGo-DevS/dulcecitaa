@@ -185,7 +185,7 @@
 
     <nav class="lk-acciones" aria-label="Qué quieres hacer">
       {% if promocion %}
-    <a class="lk-promo lk-anim" style="--i:3" href="{% url 'links_ir' 'pedido' %}">
+      <a class="lk-promo lk-anim" style="--i:3" href="{% url 'links_ir' 'pedido' %}">
         <span class="lk-promo__sello">{{ promocion.porcentaje }}% dcto</span>
         <span class="lk-promo__txt">
           <b>{% if promocion.mensaje %}{{ promocion.mensaje }}{% else %}{{ promocion.nombre }}{% endif %}</b>
