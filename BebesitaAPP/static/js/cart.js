@@ -195,6 +195,12 @@
     const btnView = e.target.closest('.btn-view');
 
     if (btnView) {
+      // En el catalogo la tarjeta es un <a> a la ficha, para que Google pueda
+      // seguirla (era un <button> y el catalogo no enlazaba a ninguna ficha).
+      // Con Ctrl, Cmd o Shift se respeta el enlace: abre la ficha en otra
+      // pestana. Con un clic normal se abre el modal, como siempre.
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+      e.preventDefault();
       const id = btnView.getAttribute('data-id');
       try {
         setButtonBusy(btnView, true);

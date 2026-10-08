@@ -65,12 +65,14 @@
     {% for p in productos %}
     {% comment %}
       La tarjeta ENTERA abre el detalle, asi que no hace falta un boton "Ver
-      detalle" compitiendo con "Agregar". Va como <button> y no como <div>
-      clickeable para que se pueda llegar con el teclado.
+      detalle" compitiendo con "Agregar". Es un <a> a la ficha y no un
+      <button>: con el boton, el catalogo no enlazaba a NINGUNA ficha y Google
+      dejo cuchuflis banados y rellenos "descubiertas, sin indexar". El clic
+      normal sigue abriendo el modal (cart.js le hace preventDefault).
     {% endcomment %}
     <article class="catalog-card" data-catalog-card data-linea-scope data-pid="{{ p.id }}" data-precios='{{ p.precios_json }}' data-descuento="{{ promocion.porcentaje|default:0 }}">
-      <button type="button" class="catalog-card__abrir btn-view" data-id="{{ p.id }}"
-              aria-label="Ver detalle de {{ p.nombre }}">
+      <a href="{{ p.get_absolute_url }}" class="catalog-card__abrir btn-view" data-id="{{ p.id }}"
+         aria-label="Ver detalle de {{ p.nombre }}">
         <span class="catalog-media">
           <img src="{{ p.imagen.url|foto:500 }}" alt="{{ p.nombre }}" class="catalog-image" loading="lazy">
           {% comment %}
@@ -86,7 +88,7 @@
           <span class="catalog-card__nombre">{% if p.unidades_por_pack > 1 %}{{ p.unidades_por_pack }} {{ p.nombre|lower }}{% else %}{{ p.nombre }}{% endif %}</span>
           <span class="catalog-price">{% if p.tiene_descuento %}<s class="precio-lista">${{ p.precio_lista_desde|pesos }}</s> {% endif %}<span data-precio="{{ p.precio }}">${{ p.precio_desde|pesos }}</span><small> c/u</small></span>
         </span>
-      </button>
+      </a>
       <div class="catalog-actions">
         {% include "partials/opciones.html" with p=p prefijo="c" %}
         <div class="product-ctl" data-id="{{ p.clave_inicial }}">

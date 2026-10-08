@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}{{ p.nombre }} artesanales, ${{ p.precio_desde }} | {{ site_brand }}{% endblock %}
-{% block meta_description %}{{ p.descripcion|striptags|truncatechars:150 }}{% endblock %}
+{% load fotos plata %}
+{% block title %}{{ seo_titulo }}{% endblock %}
+{% block meta_description %}{{ seo_descripcion }}{% endblock %}
 {% block og_type %}product{% endblock %}
 {% block og_image_meta %}{% endblock %}
 {% block og_title %}{{ p.nombre }} | {{ site_brand }}{% endblock %}
-{% block og_description %}{{ p.descripcion|striptags|truncatechars:150 }}{% endblock %}
+{% block og_description %}{{ seo_descripcion }}{% endblock %}
+{% block twitter_description %}{{ seo_descripcion }}{% endblock %}
 {% block og_image %}{% if p.imagen %}{{ p.imagen.url|default:default_og_image_url }}{% else %}{{ default_og_image_url }}{% endif %}{% endblock %}
 {% block schema %}<script type="application/ld+json">{{ schema }}</script>{% endblock %}
 
@@ -13,6 +15,50 @@
   {% include 'partials/producto_detalle.html' with es_pagina=True %}
   <script>window.dcMedir('view_item', { currency: 'CLP', value: {{ p.precio_desde }}, items: [{ item_id: '{{ p.id }}', item_name: '{{ p.nombre|escapejs }}', price: {{ p.precio_desde }} }] });</script>
 </section>
+
+{% if parrafos_ficha %}
+{% comment %}
+  Texto propio de cada ficha (fichas_seo.py). Cuchuflis banados y rellenos
+  tenian casi la misma descripcion y Google los dejo sin indexar: dos paginas
+  que dicen lo mismo compiten entre si.
+{% endcomment %}
+<section class="container pb-4">
+  <div class="section-head">
+    <p class="eyebrow">Sobre este producto</p>
+    <h2>{{ h1_ficha }}</h2>
+  </div>
+  <div class="surface-card p-4">
+    {% for parrafo in parrafos_ficha %}<p{% if forloop.last %} class="mb-0"{% endif %}>{{ parrafo }}</p>{% endfor %}
+    <p class="mt-3 mb-0">
+      <a href="{% url 'arma_tu_box' %}">Arma tu box</a> ·
+      <a href="{% url 'delivery' %}">Despacho a todo Chile</a> ·
+      <a href="{% url 'corporativo' %}">Venta corporativa</a>
+    </p>
+  </div>
+</section>
+{% endif %}
+
+{% if relacionados %}
+<section class="dr-products">
+  <div class="container">
+    <h2 class="dr-products-title">También te puede gustar</h2>
+    <div class="dr-grid">
+      {% for r in relacionados %}
+      <a class="dr-tile" href="{{ r.get_absolute_url }}">
+        {% if r.imagen %}<img src="{{ r.imagen.url|foto:500 }}" alt="{{ r.nombre }}" loading="lazy">{% endif %}
+        <span class="dr-tile-overlay">
+          <span class="dr-tile-name">{{ r.nombre }}</span>
+          <span class="dr-tile-price">${{ r.precio_desde|pesos }}</span>
+        </span>
+      </a>
+      {% endfor %}
+    </div>
+    <div class="dr-products-cta">
+      <a href="{% url 'productos' %}" class="dr-btn-wine">Ver todo el catálogo</a>
+    </div>
+  </div>
+</section>
+{% endif %}
 
 {% if preguntas %}
 {% comment %}

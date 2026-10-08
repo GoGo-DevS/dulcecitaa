@@ -1,13 +1,22 @@
 {% extends 'base.html' %}
 {% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
-{% block title %}Despacho de dulces a todo Chile y retiro | {{ site_brand }}{% endblock %}
-{% block meta_description %}Despacho de alfajores y cuchuflís a todo Chile por Paket y entrega coordinada en Santiago. Tu pedido sale {{ despacho_horas }} horas después del pago.{% endblock %}
+{% comment %}
+  /delivery/ es la pagina con mas impresiones en Google (posicion 5) y poco
+  clic: el title no decia QUE se despacha ni el description COMO se pide.
+  Solo lo que la pagina muestra: Paket a todo Chile con seguimiento, entrega
+  coordinada por WhatsApp en Santiago, el minimo y las horas.
+{% endcomment %}
+{% block title %}Delivery de alfajores y cuchuflís a todo Chile | {{ site_brand }}{% endblock %}
+{% block meta_description %}Despacho por Paket a todo Chile con seguimiento y entrega coordinada por WhatsApp en Santiago. Desde {{ minimo_unidades }} unidades; sale {{ despacho_horas }} h tras el pago.{% endblock %}
+{% block og_title %}Delivery de alfajores y cuchuflís a todo Chile | {{ site_brand }}{% endblock %}
+{% block og_description %}Despacho por Paket a todo Chile con seguimiento y entrega coordinada por WhatsApp en Santiago.{% endblock %}
+{% block twitter_description %}Despacho por Paket a todo Chile con seguimiento y entrega coordinada por WhatsApp en Santiago.{% endblock %}
 
 {% block content %}
 <section class="page-hero container reveal-ready">
   <p class="eyebrow">Delivery y retiro</p>
-  <h1>Cómo llega tu pedido</h1>
+  <h1>Delivery y despacho a todo Chile</h1>
   <p class="sutil-minimo">Pedido mínimo de {{ minimo_unidades }} unidades por producto</p>
 </section>
 

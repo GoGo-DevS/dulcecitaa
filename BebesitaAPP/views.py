@@ -10,7 +10,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
 from . import box as arma_box
-from . import seo
+from . import fichas_seo, seo
 from .email_utils import send_checkout_emails, send_contact_email, send_corporate_email
 from .forms import CheckoutForm, ContactoForm, CorporativoForm
 from .models import (
@@ -564,8 +564,19 @@ def producto_ficha(request, slug):
     producto = get_object_or_404(
         Producto.objects.prefetch_related("opciones"), slug=slug, variante_de__isnull=True)
     imagenes = getattr(producto, "imagenes", None)
+    # Los otros productos del catalogo, enlazados desde la ficha: antes una
+    # ficha no enlazaba a ninguna otra, y las que solo llegaban por el sitemap
+    # quedaron "descubiertas, sin indexar".
+    relacionados = (Producto.objects.filter(visible=True, variante_de__isnull=True)
+                    .exclude(pk=producto.pk).prefetch_related("precios_combinacion")
+                    .order_by("orden", "nombre")[:4])
     ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto),
-           "preguntas": producto.preguntas.filter(activa=True)[:8]}
+           "preguntas": producto.preguntas.filter(activa=True)[:8],
+           "seo_titulo": fichas_seo.titulo(producto),
+           "seo_descripcion": fichas_seo.descripcion(producto),
+           "h1_ficha": fichas_seo.h1(producto),
+           "parrafos_ficha": fichas_seo.parrafos(producto),
+           "relacionados": relacionados}
     return render(request, "producto_detalle_page.html", ctx)
 
 

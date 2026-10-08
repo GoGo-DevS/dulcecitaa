@@ -2186,13 +2186,14 @@ html {
 .catalog-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-2, 0 16px 36px rgba(245, 167, 214, .13)); }
 .catalog-card:focus-within { outline: 2px solid var(--marca-legible); outline-offset: 2px; }
 
-/* Es un <button> para que se pueda llegar con el teclado; hay que apagarle
-   los estilos propios del boton para que se vea como parte de la tarjeta. */
+/* Es un <a> a la ficha (antes <button>): se le apagan subrayado y color de
+   enlace para que se vea como parte de la tarjeta. */
 .catalog-card__abrir {
   display: block; width: 100%; text-align: left;
   background: none; border: 0; padding: 0; cursor: pointer; color: inherit;
-  font: inherit;
+  font: inherit; text-decoration: none;
 }
+.catalog-card__abrir:hover, .catalog-card__abrir:focus { color: inherit; text-decoration: none; }
 .catalog-media { position: relative; display: block; overflow: hidden; aspect-ratio: 1 / 1; }
 .catalog-image {
   width: 100%; height: 100%; object-fit: cover; display: block;

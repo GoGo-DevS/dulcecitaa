@@ -99,6 +99,24 @@ def _oferta(producto):
     }
 
 
+def _descripcion(producto):
+    """La descripcion del producto para el schema, nunca vacia.
+
+    Search Console marco 5 productos "sin description" en Fichas de
+    comerciantes: eran los del ItemList del catalogo, que no la declaraba.
+    Si la duena deja la descripcion vacia en el panel, cae al texto de
+    busqueda de la ficha (fichas_seo), que tambien describe el producto real.
+    """
+    from . import fichas_seo
+
+    texto = " ".join(strip_tags(producto.descripcion or "").split())
+    return texto[:500] if texto else fichas_seo.descripcion(producto)
+
+
+def _marca():
+    return {"@type": "Brand", "name": settings.BRAND_NAME}
+
+
 def schema_producto(producto, request=None):
     imagen = producto.imagen.url if producto.imagen else static("img/sello-dulcecita.jpg")
     if not imagen.startswith("http"):
@@ -109,9 +127,9 @@ def schema_producto(producto, request=None):
             {
                 "@type": "Product",
                 "name": producto.nombre,
-                "description": strip_tags(producto.descripcion)[:500],
+                "description": _descripcion(producto),
                 "image": [imagen],
-                "brand": {"@type": "Brand", "name": settings.BRAND_NAME},
+                "brand": _marca(),
                 "category": producto.categoria.nombre if producto.categoria_id else "Repostería",
                 "offers": _oferta(producto),
             },
@@ -148,6 +166,8 @@ def schema_catalogo(productos):
             "item": {"@type": "Product", "name": p.nombre,
                      "url": _abs(p.get_absolute_url()),
                      "image": imagen if imagen.startswith("http") else _abs(imagen),
+                     "description": _descripcion(p),
+                     "brand": _marca(),
                      "offers": _oferta(p)},
         })
     return json_ld({"@context": "https://schema.org", "@graph": [
