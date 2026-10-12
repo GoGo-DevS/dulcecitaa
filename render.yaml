@@ -1,14 +1,13 @@
-databases:
-  - name: dulcecitaa-db
-    plan: free
-    databaseName: dulcecitaa
-    user: dulcecitaa
+# La base NO vive en Render: se migro a Neon (verificado 12-10-2026). La base
+# free de Render (dulcecitaa-db) se borraba el 14-10. Si este archivo la volviera
+# a declarar, una sincronizacion del blueprint podria crear una base vacia y
+# conectar la web a ella. Por eso no hay bloque `databases`.
 
 services:
   - type: web
     name: dulcecitaa
     runtime: python
-    plan: free
+    plan: starter          # el servicio esta en Starter; con "free" un sync lo bajaria
     branch: main
     buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --no-input && python manage.py migrate --no-input && python manage.py seed_data && python manage.py catalogo_inicial && python manage.py sembrar_preguntas --confirmar --solo-si-vacio && python manage.py clave_panel"
     startCommand: "gunicorn reposteria.wsgi:application --bind 0.0.0.0:$PORT"
@@ -21,10 +20,10 @@ services:
         value: "Dulcecita"
       - key: WEBSITE_URL          # base para link del footer y logo de los correos
         value: "https://dulcecita.cl"
+      # Cadena de Neon, puesta a mano en el dashboard (Environment). sync: false
+      # = Render conserva el valor que ya tiene y nunca lo pisa.
       - key: DATABASE_URL
-        fromDatabase:
-          name: dulcecitaa-db
-          property: connectionString
+        sync: false
       # Cloudinary: pega el valor en el dashboard de Render (Environment).
       # NO se versiona aquí porque contiene el API secret.
       - key: CLOUDINARY_URL
