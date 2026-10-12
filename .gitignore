@@ -29,3 +29,7 @@ Thumbs.db
 # backups/dumps viejos locales
 datos_bebesita.json
 db - copia.txt
+
+# Respaldos de la base: traen pedidos y datos de clientes reales. Nunca a GitHub.
+respaldos/
+.tmp_*.py
