@@ -105,6 +105,7 @@ if USE_CLOUDINARY:
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
+    "BebesitaAPP.middleware.MemoriaPorVisita",  # una consulta de promocion por visita
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",

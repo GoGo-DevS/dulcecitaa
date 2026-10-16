@@ -208,14 +208,20 @@ def _build_order_whatsapp_url(pedido):
 
 @ensure_csrf_cookie
 def home(request):
-    destacados = Producto.objects.filter(visible=True, destacado=True, variante_de__isnull=True).select_related("categoria")[:4]
+    # prefetch: cada tarjeta lee sus opciones y sus precios por combinacion para
+    # el "desde $X". Sin esto eran 60 consultas extra en la portada (16-10-2026).
+    _con_precios = ("opciones", "precios_combinacion")
+    destacados = (Producto.objects.filter(visible=True, destacado=True, variante_de__isnull=True)
+                  .select_related("categoria").prefetch_related(*_con_precios)[:4])
     if not destacados:
-        destacados = Producto.objects.filter(visible=True).select_related("categoria")[:4]
+        destacados = (Producto.objects.filter(visible=True).select_related("categoria")
+                      .prefetch_related(*_con_precios)[:4])
 
     # Slides del hero (carrusel): destacados con imagen
     hero_items = [p for p in destacados if p.imagen][:4]
     # Grilla "Nuestros productos"
-    grilla = Producto.objects.filter(visible=True, variante_de__isnull=True).select_related("categoria")[:12]
+    grilla = (Producto.objects.filter(visible=True, variante_de__isnull=True)
+              .select_related("categoria").prefetch_related(*_con_precios)[:12])
 
     beneficios = BeneficioDiferencial.objects.filter(activo=True)[:4]
     testimonios = Testimonio.objects.filter(activo=True, destacado=True)[:3]

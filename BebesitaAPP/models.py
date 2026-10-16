@@ -5,6 +5,12 @@ from django.db import models
 from django.utils import timezone
 
 
+
+import contextvars  # noqa: E402
+
+# Lo que se recuerda durante UNA visita (lo llena middleware.MemoriaPorVisita).
+_MEMORIA_VISITA = contextvars.ContextVar("memoria_visita", default=None)
+
 class CategoriaProducto(models.Model):
     nombre = models.CharField(max_length=80, unique=True)
     slug = models.SlugField(max_length=90, unique=True)
@@ -425,9 +431,21 @@ class Promocion(models.Model):
         pudo haber visto. Equivocarse hacia el cliente es barato; cobrarle mas
         de lo que vio, no.
         """
-        hoy = hoy or timezone.localdate()
-        return (cls.objects.filter(activa=True, desde__lte=hoy, hasta__gte=hoy)
-                .order_by('-porcentaje').first())
+        # 16-10-2026: se llamaba UNA vez por cada precio dibujado (37 consultas
+        # en la portada, 61 en el catalogo) y con la base en Neon cada una
+        # cuesta un viaje de red: la portada tardaba 3-4 s. Dentro de una visita
+        # se consulta UNA vez y se recuerda solo durante esa visita (ver
+        # MemoriaPorVisita en middleware.py): sin cache compartida, una
+        # promocion recien guardada en el panel se ve en la visita siguiente.
+        memoria = _MEMORIA_VISITA.get()
+        if hoy is None and memoria is not None and "promocion" in memoria:
+            return memoria["promocion"]
+        promo = (cls.objects.filter(activa=True, desde__lte=hoy or timezone.localdate(),
+                                    hasta__gte=hoy or timezone.localdate())
+                 .order_by('-porcentaje').first())
+        if hoy is None and memoria is not None:
+            memoria["promocion"] = promo
+        return promo
 
     def aplicar(self, precio):
         """El precio con el descuento, redondeado a peso."""
