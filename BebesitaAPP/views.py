@@ -577,7 +577,7 @@ def producto_ficha(request, slug):
                     .exclude(pk=producto.pk).prefetch_related("precios_combinacion")
                     .order_by("orden", "nombre")[:4])
     ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto),
-           "preguntas": producto.preguntas.filter(activa=True)[:8],
+           "preguntas": fichas_seo.preguntas(producto),
            "seo_titulo": fichas_seo.titulo(producto),
            "seo_descripcion": fichas_seo.descripcion(producto),
            "h1_ficha": fichas_seo.h1(producto),

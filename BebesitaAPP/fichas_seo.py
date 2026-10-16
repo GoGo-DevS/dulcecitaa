@@ -150,3 +150,43 @@ def descripcion(producto):
 def parrafos(producto):
     datos = ficha(producto)
     return datos["parrafos"] if datos else []
+
+
+# Respuestas de la duena (16-10-2026, por WhatsApp a Diego). Son las preguntas
+# que la gente hace antes de comprar dulces para regalar o por mayor, y ninguna
+# ficha las respondia. Van en TODAS las fichas, despues de las que ella cargue
+# en el panel para ese producto.
+POR_MAYOR_DESDE = 20
+PREGUNTAS_COMUNES = [
+    ("¿Cuánto duran y cómo se guardan?",
+     "Duran aproximadamente un mes, guardados en un ambiente fresco y seco."),
+    ("¿Se pueden personalizar?",
+     "Sí. Se pueden personalizar para regalos y eventos: cuéntanos qué necesitas al hacer "
+     "el pedido."),
+    ("¿Venden por mayor?",
+     f"Sí, desde {POR_MAYOR_DESDE} unidades. Si es para una empresa o un evento, también lo "
+     "cotizamos en venta corporativa."),
+]
+
+
+class _Pregunta:
+    def __init__(self, pregunta, respuesta):
+        self.pregunta, self.respuesta = pregunta, respuesta
+
+
+def _norma(texto):
+    import unicodedata
+    t = unicodedata.normalize("NFKD", texto or "").encode("ascii", "ignore").decode().lower()
+    return "".join(c for c in t if c.isalnum())
+
+
+def preguntas(producto, limite=8):
+    """Las de la duena para este producto y despues las comunes, sin repetir.
+
+    UNA sola lista para la pagina y para el FAQPage del schema: lo que se
+    declara es exactamente lo que se ve.
+    """
+    propias = list(producto.preguntas.filter(activa=True)[:limite])
+    vistas = {_norma(p.pregunta) for p in propias}
+    comunes = [_Pregunta(p, r) for p, r in PREGUNTAS_COMUNES if _norma(p) not in vistas]
+    return (propias + comunes)[:limite]

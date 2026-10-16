@@ -125,7 +125,9 @@ class FichasSeoTests(TestCase):
         html = self.client.get(f"/productos/{nuevo.slug}/").content.decode()
         self.assertEqual(_title(html), "Chilenitos artesanales desde $990 | Dulcecita")
         self.assertEqual(_meta(html), "Chilenitos con manjar.")
-        self.assertNotIn("Sobre este producto", html)
+        # 16-10-2026: toda ficha trae las preguntas comunes de la duena (duracion,
+        # personalizacion, por mayor), aunque no tenga preguntas propias.
+        self.assertIn("¿Cuánto duran y cómo se guardan?", html)
 
     def test_sin_voseo(self):
         textos = []
@@ -163,3 +165,24 @@ class JsonLdComercianteTests(TestCase):
         nodos = _ld(self.client.get("/productos/alfajores/").content.decode())
         producto = next(n for n in nodos if n.get("@type") == "Product")
         self.assertEqual(producto["description"], "Alfajor de triple capa")
+
+
+@override_settings(MINIMO_UNIDADES=10, BRAND_NAME="Dulcecita")
+class PreguntasComunesTests(TestCase):
+    """Las respuestas de la duena del 16-10 en todas las fichas, sin duplicar."""
+
+    def test_no_repite_una_pregunta_que_la_duena_ya_cargo(self):
+        from .models import PreguntaFrecuente
+        p = _crear("Alfajores", 1590)
+        PreguntaFrecuente.objects.create(producto=p, pregunta="¿Cuanto duran y como se guardan?",
+                                         respuesta="Un mes.", activa=True)
+        html = self.client.get(f"/productos/{p.slug}/").content.decode()
+        self.assertEqual(html.count("uran y c"), 2)  # 1 en la pagina + 1 en el schema
+
+    def test_el_schema_declara_lo_mismo_que_se_ve(self):
+        p = _crear("Alfajores", 1590)
+        html = self.client.get(f"/productos/{p.slug}/").content.decode()
+        faq = [n for n in _ld(html) if n.get("@type") == "FAQPage"][0]
+        for q in faq["mainEntity"]:
+            self.assertIn("<h3>%s</h3>" % q["name"], html)
+        self.assertIn("desde 20 unidades", html)

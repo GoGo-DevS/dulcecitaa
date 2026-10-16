@@ -140,7 +140,8 @@ def schema_producto(producto, request=None):
     # @graph y no en un <script> aparte: es la misma pagina describiendose.
     # Si no hay ninguna no se declara nada, porque un FAQPage que promete
     # preguntas que la pagina no muestra es motivo de accion manual de Google.
-    preguntas = list(producto.preguntas.filter(activa=True)[:8])
+    from . import fichas_seo
+    preguntas = fichas_seo.preguntas(producto)
     if preguntas:
         data["@graph"].append({
             "@type": "FAQPage",
