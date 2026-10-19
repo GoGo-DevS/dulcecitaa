@@ -2,16 +2,27 @@
 {% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
 {% load fotos %}
-{% block title %}Box de dulces personalizado para regalar | {{ site_brand }}{% endblock %}
-{% block meta_description %}Arma tu box de alfajores, barquillos y cuchuflís con la cobertura que quieras, desde {{ minimo_box }} por producto. Un regalo dulce hecho a mano, listo para entregar.{% endblock %}
+{% comment %}
+  19-10-2026: se busca "box de dulces para regalar" (y para cumpleaños, San
+  Valentin, Navidad). El H1 "Tu box, a tu gusto" no decia que era un box de
+  dulces ni para que. La pagina tenia 193 palabras: se le agrega para que
+  sirve y de que se arma, con las fichas enlazadas.
+{% endcomment %}
+{% block title %}Box de dulces para regalar, armado a tu gusto | {{ site_brand }}{% endblock %}
+{% block meta_description %}Arma tu box de dulces para regalar: alfajores, barquillos y cuchuflís artesanales con la cobertura que quieras, desde {{ minimo_box }} por producto. Listo para entregar.{% endblock %}
+{% block og_title %}Box de dulces para regalar, armado a tu gusto | {{ site_brand }}{% endblock %}
 
 {% block content %}
 <section class="container py-5 box-armar">
   <div class="section-head mb-4">
     <p class="eyebrow">Arma tu box</p>
-    <h1>Tu box, a tu gusto</h1>
+    <h1>Box de dulces para regalar, a tu gusto</h1>
     <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. El empaque del box cuesta ${{ precio_caja }}.</p>
-    <p class="box-cabeza__texto">Elige cuántos quieres de cada uno y con qué cobertura.</p>
+    <p class="box-cabeza__texto">Elige cuántos quieres de cada uno y con qué cobertura. Sirve para un cumpleaños, un aniversario, Navidad o un simple gracias: va en caja, listo para entregar.</p>
+    {% regroup filas by producto as por_producto %}
+    {% if por_producto %}
+    <p class="box-cabeza__texto">Se arma con {% for grupo in por_producto %}<a href="{{ grupo.grouper.get_absolute_url }}">{{ grupo.grouper.nombre|lower }}</a>{% if forloop.revcounter0 == 1 %} y {% elif not forloop.last %}, {% endif %}{% endfor %}, hechos a mano. Si es para una empresa o necesitas más de {{ por_mayor_desde }} unidades, lo cotizamos en <a href="{% url 'corporativo' %}">venta corporativa</a>.</p>
+    {% endif %}
   </div>
 
   {% if messages %}
@@ -31,7 +42,7 @@
       <article class="box-producto">
         <img src="{{ grupo.grouper.imagen.url|foto:420 }}" alt="{{ grupo.grouper.nombre }}" class="box-producto__foto" loading="lazy">
         <div class="box-producto__cuerpo">
-          <h2 class="box-producto__nombre">{% if grupo.grouper.unidades_por_pack > 1 %}{{ grupo.grouper.unidades_por_pack }} {{ grupo.grouper.nombre|lower }}{% else %}{{ grupo.grouper.nombre }}{% endif %}</h2>
+          <h2 class="box-producto__nombre"><a href="{{ grupo.grouper.get_absolute_url }}">{% if grupo.grouper.unidades_por_pack > 1 %}{{ grupo.grouper.unidades_por_pack }} {{ grupo.grouper.nombre|lower }}{% else %}{{ grupo.grouper.nombre }}{% endif %}</a></h2>
           <ul class="box-filas">
             {% for fila in grupo.list %}
             <li class="box-fila" data-box-fila data-precio="{{ fila.precio }}">

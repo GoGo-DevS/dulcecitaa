@@ -105,17 +105,23 @@ class CatalogoFiltroTests(TestCase):
             imagen=SimpleUploadedFile("p2.jpg", b"fake", content_type="image/jpeg"),
         )
 
+    def _cuerpo(self, response):
+        # Desde el 19-10-2026 el pie enlaza a TODAS las fichas en todas las
+        # paginas: lo que se filtra es el catalogo, no el pie.
+        self.assertEqual(response.status_code, 200)
+        return response.content.decode().split("<footer", 1)[0]
+
     def test_filtro_por_busqueda_y_categoria(self):
         response = self.client.get(reverse("productos"), {"q": "Brownie", "categoria": "brownies"})
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.p1.nombre)
-        self.assertNotContains(response, self.p2.nombre)
+        cuerpo = self._cuerpo(response)
+        self.assertIn(self.p1.nombre, cuerpo)
+        self.assertNotIn(self.p2.nombre, cuerpo)
 
     def test_filtro_solo_destacados(self):
         response = self.client.get(reverse("productos"), {"destacados": "1"})
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, self.p1.nombre)
-        self.assertNotContains(response, self.p2.nombre)
+        cuerpo = self._cuerpo(response)
+        self.assertIn(self.p1.nombre, cuerpo)
+        self.assertNotIn(self.p2.nombre, cuerpo)
 
 
 @override_settings(
@@ -761,7 +767,9 @@ class TortaCuchuflisTests(TestCase):
         self.assertEqual(r["qty"], 1)
 
     def test_no_aparece_en_arma_tu_box(self):
-        self.assertNotContains(self.client.get(reverse("arma_tu_box")), "Torta de cuchuflís")
+        # El pie enlaza a todas las fichas (incluida la torta): se mira el armado.
+        cuerpo = self.client.get(reverse("arma_tu_box")).content.decode().split("<footer", 1)[0]
+        self.assertNotIn("Torta de cuchuflís", cuerpo)
 
     def test_nota_de_cinta_viaja_al_pedido(self):
         linea = self._linea(self.t50, self.choc)

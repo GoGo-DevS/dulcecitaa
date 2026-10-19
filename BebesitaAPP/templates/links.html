@@ -16,6 +16,12 @@
   <title>{{ site_brand }} | Pedidos y links</title>
   <meta name="description" content="Alfajores, barquillos y cuchuflís hechos a mano. Haz tu pedido, arma tu box o escríbenos por WhatsApp.">
   <link rel="canonical" href="{{ site_url }}/links/">
+  {% comment %}
+    noindex: es la pagina de la bio, no una pagina para encontrar en Google.
+    Ningun enlace interno la apunta y Google la tenia "descubierta, sin
+    indexar" igual (19-10-2026). Fuera del sitemap por lo mismo (seo.py).
+  {% endcomment %}
+  <meta name="robots" content="noindex, follow">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="{{ site_brand }}">
   <meta property="og:title" content="{{ site_brand }} | La felicidad en cajita">

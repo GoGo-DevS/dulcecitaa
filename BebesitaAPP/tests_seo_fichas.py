@@ -47,14 +47,15 @@ class DeliverySeoTests(TestCase):
     def test_title_y_description_nuevos_y_dentro_del_largo(self):
         html = self.client.get("/delivery/").content.decode()
         titulo, meta = _title(html), _meta(html)
-        self.assertEqual(titulo, "Delivery de alfajores y cuchuflís a todo Chile | Dulcecita")
+        # 19-10-2026: Santiago adelante, que es la busqueda local que no tenia pagina.
+        self.assertEqual(titulo, "Delivery de alfajores en Santiago y todo Chile | Dulcecita")
         self.assertLessEqual(len(titulo), 60)
         self.assertLessEqual(len(meta), 155)
         # Promete solo lo que la pagina muestra: Paket, Santiago por WhatsApp,
         # el minimo y las horas.
         for dato in ("Paket", "Santiago", "WhatsApp", "10 unidades", "48 h"):
             self.assertIn(dato, meta)
-        self.assertIn("<h1>Delivery y despacho a todo Chile</h1>", html)
+        self.assertIn("<h1>Delivery en Santiago y despacho a todo Chile</h1>", html)
 
     def test_no_se_imprime_marcado_de_plantilla(self):
         html = self.client.get("/delivery/").content.decode()
@@ -185,4 +186,106 @@ class PreguntasComunesTests(TestCase):
         faq = [n for n in _ld(html) if n.get("@type") == "FAQPage"][0]
         for q in faq["mainEntity"]:
             self.assertIn("<h3>%s</h3>" % q["name"], html)
+        self.assertIn("desde 20 unidades", html)
+
+
+@override_settings(MINIMO_UNIDADES=10, DESPACHO_HORAS=48, BRAND_NAME="Dulcecita",
+                   SITE_URL="https://dulcecita.cl")
+class Tanda1SeoTests(TestCase):
+    """Tanda 1 del metodo /seo-gogodevs (19-10-2026).
+
+    Search Console decia: 90 % de las impresiones son la marca, dos fichas
+    "descubiertas, sin indexar" con 7 enlaces internos, y ninguna pagina con
+    las palabras que la gente usa (dulces corporativos, box de dulces para
+    regalar, alfajores en Santiago, por mayor).
+    """
+
+    def setUp(self):
+        self.productos = {nombre: _crear(nombre, precio) for nombre, (_, precio) in SLUGS.items()}
+        torta = self.productos["Torta de cuchuflís"]
+        torta.en_box = False
+        torta.save()
+
+    def _pie(self, html):
+        return html.split('<footer', 1)[1]
+
+    def test_el_pie_de_todas_las_paginas_enlaza_a_cada_ficha(self):
+        for ruta in ("/", "/productos/", "/arma-tu-box/", "/delivery/", "/corporativo/", "/contacto/",
+                     "/productos/alfajores/"):
+            pie = self._pie(self.client.get(ruta).content.decode())
+            for slug, _ in SLUGS.values():
+                self.assertIn(f'href="/productos/{slug}/"', pie, f"{ruta} -> {slug}")
+
+    def test_un_producto_oculto_no_sale_en_el_pie(self):
+        oculto = _crear("Secreto", 100)
+        oculto.visible = False
+        oculto.save()
+        self.assertNotIn(f'href="/productos/{oculto.slug}/"', self._pie(self.client.get("/").content.decode()))
+
+    def test_el_pie_no_agrega_una_consulta_por_producto(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        with CaptureQueriesContext(connection) as c:
+            self.client.get("/delivery/")
+        de_producto = [q for q in c.captured_queries if "bebesitaapp_producto" in q["sql"].lower()]
+        self.assertEqual(len(de_producto), 1)
+
+    def test_links_lleva_noindex_y_no_va_en_el_sitemap(self):
+        html = self.client.get("/links/").content.decode()
+        self.assertIn('<meta name="robots" content="noindex, follow">', html)
+        self.assertNotIn("{% comment", html)
+        sitemap = self.client.get("/sitemap.xml").content.decode()
+        self.assertNotIn("/links/", sitemap)
+        self.assertIn("https://dulcecita.cl/corporativo/", sitemap)
+
+    def test_titles_y_descriptions_con_la_intencion_y_dentro_del_largo(self):
+        esperados = {
+            "/productos/": ("Comprar alfajores y cuchuflís por mayor | Dulcecita",
+                            "<h1>Alfajores, barquillos y cuchuflís artesanales</h1>"),
+            "/corporativo/": ("Dulces corporativos personalizados para empresas | Dulcecita",
+                              "<h1>Dulces corporativos para tu empresa, con tu marca</h1>"),
+            "/arma-tu-box/": ("Box de dulces para regalar, armado a tu gusto | Dulcecita",
+                              "<h1>Box de dulces para regalar, a tu gusto</h1>"),
+        }
+        for ruta, (titulo, h1) in esperados.items():
+            html = self.client.get(ruta).content.decode()
+            self.assertEqual(_title(html), titulo, ruta)
+            self.assertLessEqual(len(_title(html)), 60, ruta)
+            self.assertLessEqual(len(_meta(html)), 155, ruta)
+            self.assertIn(h1, html, ruta)
+            self.assertNotIn("{% comment", html)
+
+    def test_el_catalogo_dice_por_mayor_como_promete_su_title(self):
+        html = self.client.get("/productos/").content.decode()
+        self.assertIn("Venta por mayor desde 20 unidades", html)
+
+    def test_corporativo_dice_que_hace_falta_para_cotizar_sin_inventar_plazos(self):
+        html = self.client.get("/corporativo/").content.decode()
+        self.assertIn("Qué necesitamos para cotizar", html)
+        self.assertIn("desde 20 unidades", html)
+        self.assertIn('href="/productos/alfajores/"', html.split("<footer", 1)[0])
+        # Lo que la duena no confirmo no se publica.
+        for invento in ("IVA", "3 días", "días hábiles de producción"):
+            self.assertNotIn(invento, html)
+
+    def test_el_box_enlaza_a_los_productos_que_lo_arman_y_no_a_la_torta(self):
+        html = self.client.get("/arma-tu-box/").content.decode().split("<footer", 1)[0]
+        self.assertIn('href="/productos/alfajores/"', html)
+        self.assertIn('href="/productos/cuchuflis-banados/"', html)
+        self.assertNotIn('href="/productos/torta-de-cuchuflis/"', html)
+        self.assertIn("Navidad", html)
+
+    def test_delivery_enlaza_a_las_fichas(self):
+        html = self.client.get("/delivery/").content.decode().split("<footer", 1)[0]
+        self.assertIn('href="/productos/barquillos-rellenos-banados-en-chocolate/"', html)
+
+    def test_la_torta_responde_ninos_tamano_precio_y_donde_comprar(self):
+        html = self.client.get("/productos/torta-de-cuchuflis/").content.decode()
+        for dato in ("cumpleaños infantiles", "50 o 100", "El precio depende del tamaño", "Se compra aquí mismo",
+                     "48 horas"):
+            self.assertIn(dato, html)
+
+    def test_la_ficha_de_alfajores_dice_chile_y_por_mayor(self):
+        html = self.client.get("/productos/alfajores/").content.decode()
+        self.assertIn("Santiago de Chile", html)
         self.assertIn("desde 20 unidades", html)

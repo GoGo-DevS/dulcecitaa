@@ -201,8 +201,9 @@ class _SitemapBase(Sitemap):
 
 class PaginasSitemap(_SitemapBase):
     changefreq = "weekly"
+    # /links/ no va: es la pagina de la bio de Instagram y lleva noindex.
     PAGINAS = [("home", 1.0), ("productos", 0.9), ("arma_tu_box", 0.8), ("corporativo", 0.8),
-               ("delivery", 0.6), ("contacto", 0.5), ("links", 0.4)]
+               ("delivery", 0.6), ("contacto", 0.5)]
 
     def items(self):
         return [nombre for nombre, _ in self.PAGINAS]

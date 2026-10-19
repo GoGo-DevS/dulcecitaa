@@ -7,8 +7,16 @@ def cart_count(request):
 
 def site_config(request):
     from django.conf import settings
+    from .fichas_seo import POR_MAYOR_DESDE
+    from .models import Producto
 
     default_og_image = getattr(settings, "DEFAULT_OG_IMAGE", "")
+    # Las fichas en el pie de TODAS las paginas. Con 12 paginas en el sitio,
+    # cada ficha recibia 7 enlaces internos contra 33-43 de las troncales, y
+    # dos de ellas llevaban 12 dias "descubiertas, sin indexar" (19-10-2026).
+    # Una sola consulta por visita; se lee desde el template, no aca.
+    productos_pie = (Producto.objects.filter(visible=True, variante_de__isnull=True)
+                     .only("nombre", "slug", "en_box").order_by("orden", "pk"))
     if default_og_image and not default_og_image.startswith("http"):
         default_og_image_url = request.build_absolute_uri(default_og_image)
     else:
@@ -22,6 +30,8 @@ def site_config(request):
         "business_hours": getattr(settings, "BUSINESS_HOURS", ""),
         "minimo_unidades": getattr(settings, "MINIMO_UNIDADES", 1),
         "despacho_horas": getattr(settings, "DESPACHO_HORAS", 48),
+        "por_mayor_desde": POR_MAYOR_DESDE,
+        "productos_pie": productos_pie,
         "transferencia": _transferencia(settings),
         "default_og_image_url": default_og_image_url,
     }

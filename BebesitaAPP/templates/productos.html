@@ -8,12 +8,18 @@
 {% block content %}
 <section class="page-hero container reveal-ready">
   <p class="eyebrow">Productos</p>
-  <h1>Nuestros productos</h1>
+  {% comment %}
+    El H1 nombra lo que se vende: "Nuestros productos" no le decia nada a
+    Google, y el catalogo solo aparecia en busquedas de la marca (19-10-2026).
+    El title ya prometia "por mayor"; la pagina no lo decia en ninguna parte.
+    La cantidad sale de fichas_seo.POR_MAYOR_DESDE (respuesta de la duena).
+  {% endcomment %}
+  <h1>Alfajores, barquillos y cuchuflís artesanales</h1>
   {% comment %}
     El minimo se dice ANTES de elegir, no al llegar al carrito: quien recien
     descubre la regla despues de armar el pedido se va.
   {% endcomment %}
-  <p class="sutil-minimo">Pedido mínimo de {{ minimo_unidades }} unidades por producto. Despacho a todo Chile por Paket</p>
+  <p class="sutil-minimo">Pedido mínimo de {{ minimo_unidades }} unidades por producto. Venta por mayor desde {{ por_mayor_desde }} unidades. Despacho a todo Chile por Paket</p>
   <p>Elige tu favorito y la cobertura, y agrégalo al carrito en segundos.</p>
 </section>
 

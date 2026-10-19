@@ -60,6 +60,12 @@ def _fichas():
                 "Para un regalo puedes armar tu propio box mezclando alfajores con barquillos "
                 "y cuchuflís. Si es para una empresa o un evento, lo cotizamos en venta "
                 "corporativa.",
+                # 19-10-2026: "alfajores artesanales chile / precio / por mayor" son
+                # las busquedas con mas variantes del rubro; la ficha no decia ni
+                # "Chile" ni "por mayor".
+                f"Alfajores artesanales hechos en Santiago de Chile, con despacho a todo el "
+                f"país. El precio es por unidad y se vende desde {minimo}; por mayor, desde "
+                f"{POR_MAYOR_DESDE} unidades.",
             ],
         },
         "cuchuflis-banados": {
@@ -95,12 +101,22 @@ def _fichas():
             "descripcion": (
                 "Torta de cuchuflís rellenos de manjar, de 50 o 100 unidades, sin cobertura o "
                 "bañados en chocolate. Con cinta y decoración en tus colores."),
+            # 19-10-2026: Google muestra esta ficha para "torta de cuchufli para
+            # niños", "50 unidades", "donde comprar" y "precio". Cada frase
+            # responde una de esas, con lo que la ficha ya vende.
             "parrafos": [
                 "La torta se arma con cuchuflís rellenos de manjar, en 50 o 100 unidades. "
                 "Puedes pedirla sin cobertura o con los cuchuflís bañados en chocolate o "
                 "chocolate blanco.",
                 "Va terminada con cinta y decoración: al hacer el pedido nos cuentas los "
                 "colores que quieres. Se vende desde una torta.",
+                "Es la clásica de los cumpleaños infantiles y también se pide para "
+                "celebraciones de oficina: con la cinta en los colores del homenajeado o "
+                "de la empresa, llega lista para la mesa.",
+                "El precio depende del tamaño (50 o 100 cuchuflís) y de si van bañados: lo "
+                "ves arriba al elegir. Se compra aquí mismo, se despacha a todo Chile por "
+                f"Paket y en Santiago se coordina la entrega por WhatsApp, {horas} horas "
+                "después del pago.",
             ],
         },
     }

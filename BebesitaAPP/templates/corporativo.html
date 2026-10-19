@@ -1,8 +1,16 @@
 {% extends 'base.html' %}
 {% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
-{% block title %}Regalos corporativos dulces para empresas | {{ site_brand }}{% endblock %}
-{% block meta_description %}Regalos corporativos con tu marca: box de alfajores y cuchuflís personalizados, coffee breaks y pedidos por volumen para empresas en todo Chile.{% endblock %}
+{% comment %}
+  19-10-2026: la gente busca "dulces corporativos chile", "dulces personalizados
+  corporativos" y "dulces para empresas"; el title decia "regalos corporativos
+  dulces" y el H1 "regalos dulces para tu empresa": la palabra con que buscan
+  no estaba en ninguno de los dos.
+{% endcomment %}
+{% block title %}Dulces corporativos personalizados para empresas | {{ site_brand }}{% endblock %}
+{% block meta_description %}Dulces corporativos para empresas en Chile: alfajores, cuchuflís y barquillos artesanales en box con tu logo. Por mayor desde {{ por_mayor_desde }} unidades.{% endblock %}
+{% block og_title %}Dulces corporativos personalizados para empresas | {{ site_brand }}{% endblock %}
+{% block og_description %}Alfajores, cuchuflís y barquillos artesanales en box con tu logo. Por mayor desde {{ por_mayor_desde }} unidades, despacho a todo Chile.{% endblock %}
 
 {% block content %}
 {% for m in messages %}{% if m.level_tag == 'success' %}<script>window.dcMedir('generate_lead', { formulario: 'corporativo' });</script>{% endif %}{% endfor %}
@@ -17,9 +25,9 @@
   <div class="corp-intro">
     <div class="corp-texto" data-reveal-item>
       <p class="eyebrow">Venta corporativa</p>
-      <h1>Regalos dulces para tu empresa</h1>
+      <h1>Dulces corporativos para tu empresa, con tu marca</h1>
       <p>En {{ site_brand }} creemos que un detalle bien pensado se recuerda. Por eso preparamos propuestas para empresas que quieren sorprender, agradecer o celebrar: clientes, equipos de trabajo, fechas especiales y eventos.</p>
-      <p>Alfajores, cuchuflís, barquillos y box surtidos, todo hecho a mano, armados según la ocasión.</p>
+      <p>{% for p in productos_pie %}<a href="{{ p.get_absolute_url }}">{{ p.nombre }}</a>{% if not forloop.last %}, {% endif %}{% empty %}Alfajores, cuchuflís, barquillos{% endfor %} y box surtidos, todo hecho a mano, armados según la ocasión.</p>
 
       <h2>Box de regalo</h2>
       <p>Opciones para clientes, equipos y fechas especiales, con una presentación cuidada y el packaging ajustado al tipo de evento.</p>
@@ -32,6 +40,22 @@
 
       <h2>Pedidos por volumen</h2>
       <p>Atendemos pedidos recurrentes o por cantidad, con despacho a todo Chile por Paket y entrega coordinada en Santiago.</p>
+
+      {% comment %}
+        Lo que una empresa pregunta al cotizar (lo pidio VMICA el 19-10-2026:
+        cantidad, presentacion, logo, plazo). Solo datos confirmados por la
+        duena o que el sitio ya publica: por mayor desde 20, empaque con logo,
+        las 48 horas de un pedido normal, Paket y Santiago. Plazos de
+        produccion para cientos de unidades, IVA y precios por volumen NO se
+        publican: se responden en la cotizacion.
+      {% endcomment %}
+      <h2>Qué necesitamos para cotizar</h2>
+      <ul class="check-list">
+        <li><b>Cantidad.</b> Vendemos por mayor desde {{ por_mayor_desde }} unidades; los pedidos grandes se cotizan con su propio plazo de producción (un pedido normal sale {{ despacho_horas }} horas después del pago).</li>
+        <li><b>Producto.</b> Alfajores, cuchuflís bañados o rellenos, barquillos, o un box surtido. Todo va envuelto por unidad.</li>
+        <li><b>Tu marca.</b> Mándanos el logo y, si quieres, un mensaje o los colores: van en el empaque.</li>
+        <li><b>Dónde y cuándo.</b> Comuna de entrega en Santiago o región para el despacho por Paket, y la fecha en que lo necesitas.</li>
+      </ul>
 
       <h2>¿Listo para un regalo que se recuerde?</h2>
       <p>Completa el formulario de abajo{% if contact_email %} o escríbenos a <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>{% endif %}. Te respondemos en menos de 24 horas hábiles.</p>
