@@ -264,8 +264,11 @@ class Tanda1SeoTests(TestCase):
         self.assertIn("Qué necesitamos para cotizar", html)
         self.assertIn("desde 20 unidades", html)
         self.assertIn('href="/productos/alfajores/"', html.split("<footer", 1)[0])
+        # Respuestas de la duena del 19-10: mismo precio por volumen y boleta.
+        self.assertIn("al mismo precio por unidad del catálogo", html)
+        self.assertIn("Emitimos boleta", html)
         # Lo que la duena no confirmo no se publica.
-        for invento in ("IVA", "3 días", "días hábiles de producción"):
+        for invento in ("IVA", "factura", "3 días", "días hábiles de producción"):
             self.assertNotIn(invento, html)
 
     def test_el_box_enlaza_a_los_productos_que_lo_arman_y_no_a_la_torta(self):

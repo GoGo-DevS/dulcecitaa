@@ -51,7 +51,9 @@
       {% endcomment %}
       <h2>Qué necesitamos para cotizar</h2>
       <ul class="check-list">
-        <li><b>Cantidad.</b> Vendemos por mayor desde {{ por_mayor_desde }} unidades; los pedidos grandes se cotizan con su propio plazo de producción (un pedido normal sale {{ despacho_horas }} horas después del pago).</li>
+        <li><b>Cantidad.</b> Vendemos por mayor desde {{ por_mayor_desde }} unidades, al mismo precio por unidad del catálogo; los pedidos grandes se cotizan con su propio plazo de producción (un pedido normal sale {{ despacho_horas }} horas después del pago).</li>
+        {% comment %} Respuesta de la duena del 19-10-2026: emite boleta, no factura. {% endcomment %}
+        <li><b>Documento.</b> Emitimos boleta por el total del pedido.</li>
         <li><b>Producto.</b> Alfajores, cuchuflís bañados o rellenos, barquillos, o un box surtido. Todo va envuelto por unidad.</li>
         <li><b>Tu marca.</b> Mándanos el logo y, si quieres, un mensaje o los colores: van en el empaque.</li>
         <li><b>Dónde y cuándo.</b> Comuna de entrega en Santiago o región para el despacho por Paket, y la fecha en que lo necesitas.</li>
