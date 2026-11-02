@@ -6,10 +6,13 @@
   corporativos" y "dulces para empresas"; el title decia "regalos corporativos
   dulces" y el H1 "regalos dulces para tu empresa": la palabra con que buscan
   no estaba en ninguno de los dos.
+  02-11-2026: noviembre y diciembre son cuando las empresas compran regalos de
+  fin de año; el title suma esa busqueda sin perder "dulces corporativos". Se
+  deja todo el año: el fin de año vuelve cada año y la pagina gana antiguedad.
 {% endcomment %}
-{% block title %}Dulces corporativos personalizados para empresas | {{ site_brand }}{% endblock %}
-{% block meta_description %}Dulces corporativos para empresas en Chile: alfajores, cuchuflís y barquillos artesanales en box con tu logo. Por mayor desde {{ por_mayor_desde }} unidades.{% endblock %}
-{% block og_title %}Dulces corporativos personalizados para empresas | {{ site_brand }}{% endblock %}
+{% block title %}Dulces corporativos y regalos de fin de año | {{ site_brand }}{% endblock %}
+{% block meta_description %}Dulces corporativos y regalos de fin de año para empresas: alfajores, cuchuflís y barquillos artesanales en box con tu logo, desde {{ por_mayor_desde }} unidades.{% endblock %}
+{% block og_title %}Dulces corporativos y regalos de fin de año | {{ site_brand }}{% endblock %}
 {% block og_description %}Alfajores, cuchuflís y barquillos artesanales en box con tu logo. Por mayor desde {{ por_mayor_desde }} unidades, despacho a todo Chile.{% endblock %}
 
 {% block content %}
@@ -40,6 +43,15 @@
 
       <h2>Pedidos por volumen</h2>
       <p>Atendemos pedidos recurrentes o por cantidad, con despacho a todo Chile por Paket y entrega coordinada en Santiago.</p>
+
+      {% comment %}
+        02-11-2026: la temporada de regalos de empresa. Solo lo confirmado
+        (mismo precio por unidad, desde 20, logo en el empaque, los pedidos
+        grandes con su propio plazo). NO se publica una fecha limite de pedidos:
+        la capacidad la decide la duena y se responde en la cotizacion.
+      {% endcomment %}
+      <h2>Regalos de fin de año para tu equipo y tus clientes</h2>
+      <p>Navidad y fin de año es cuando más empresas regalan. Armamos box con tu logo para tu equipo y tus clientes, al mismo precio por unidad del catálogo desde {{ por_mayor_desde }} unidades. Como los pedidos grandes llevan su propio plazo de producción, escríbenos apenas tengas la cantidad y la fecha: así te confirmamos si llegamos a tiempo.</p>
 
       {% comment %}
         Lo que una empresa pregunta al cotizar (lo pidio VMICA el 19-10-2026:

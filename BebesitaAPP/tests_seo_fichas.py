@@ -242,7 +242,7 @@ class Tanda1SeoTests(TestCase):
         esperados = {
             "/productos/": ("Comprar alfajores y cuchuflís por mayor | Dulcecita",
                             "<h1>Alfajores, barquillos y cuchuflís artesanales</h1>"),
-            "/corporativo/": ("Dulces corporativos personalizados para empresas | Dulcecita",
+            "/corporativo/": ("Dulces corporativos y regalos de fin de año | Dulcecita",
                               "<h1>Dulces corporativos para tu empresa, con tu marca</h1>"),
             "/arma-tu-box/": ("Box de dulces para regalar, armado a tu gusto | Dulcecita",
                               "<h1>Box de dulces para regalar, a tu gusto</h1>"),
@@ -270,6 +270,14 @@ class Tanda1SeoTests(TestCase):
         # Lo que la duena no confirmo no se publica.
         for invento in ("IVA", "factura", "3 días", "días hábiles de producción"):
             self.assertNotIn(invento, html)
+
+    def test_corporativo_ofrece_fin_de_ano_sin_prometer_fecha_limite(self):
+        html = self.client.get("/corporativo/").content.decode()
+        self.assertIn("<h2>Regalos de fin de año para tu equipo y tus clientes</h2>", html)
+        self.assertIn("regalos de fin de año", _meta(html))
+        # La fecha limite de pedidos la decide la duena: el sitio no la inventa.
+        for invento in ("hasta el", "último día", "fecha límite"):
+            self.assertNotIn(invento, html.split("<footer", 1)[0])
 
     def test_el_box_enlaza_a_los_productos_que_lo_arman_y_no_a_la_torta(self):
         html = self.client.get("/arma-tu-box/").content.decode().split("<footer", 1)[0]
