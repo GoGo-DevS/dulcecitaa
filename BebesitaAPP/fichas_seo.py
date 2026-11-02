@@ -49,7 +49,11 @@ def _fichas():
             ],
         },
         "alfajores": {
-            "titulo": "Alfajores para regalar",
+            # 02-11-2026: "alfajores artesanales" es la variante con mas
+            # sugerencias de Google (por mayor, precio, chile, santiago, premium,
+            # para regalar) y Search Console ya la muestra aqui (pos 35, y
+            # "alfajor artesanal" pos 41). El H1 la tenia; el title no.
+            "titulo": "Alfajores artesanales para regalar",
             "h1": "Alfajores artesanales para regalar",
             "descripcion": (
                 "Alfajores de triple capa con manjar y cobertura de chocolate o chocolate "
@@ -96,6 +100,11 @@ def _fichas():
             ],
         },
         "torta-de-cuchuflis": {
+            # 02-11-2026: Google sugiere "cuanto vale una torta de cuchuflis",
+            # "valor torta de cuchufli" y "torta 50 cuchuflis", y la compiten
+            # Jumbo, Tottus, Unimarc y Lider. La respuesta va en las preguntas
+            # de la ficha con los precios de la BASE (ver _texto_precios).
+            "pregunta_precio": "¿Cuánto vale una torta de cuchuflís?",
             "titulo": "Torta de cuchuflís decorada",
             "h1": "Torta de cuchuflís",
             "descripcion": (
@@ -196,13 +205,64 @@ def _norma(texto):
     return "".join(c for c in t if c.isalnum())
 
 
+MESES = ("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto",
+         "septiembre", "octubre", "noviembre", "diciembre")
+
+
+def _texto_precios(producto):
+    """Los precios de cada combinacion en una frase, con el precio que se COBRA.
+
+    "50 cuchuflís: sin cobertura, $14.990; chocolate o chocolate blanco, $17.990."
+    Agrupa por la primera opcion (el tamaño) y junta con "o" las que cuestan lo
+    mismo.
+
+    Cada precio sale de precio_para(), el mismo camino del carrito, el checkout
+    y el pedido: si la duena cambia un precio en el panel o corre una
+    promocion, la respuesta cambia sola. Escribir los precios a mano aqui seria
+    publicar un numero que un dia deja de ser el que se cobra, y un precio
+    publicado mal es el error mas caro de una tienda.
+    """
+    import itertools
+    from .models import Promocion
+
+    grupos = [opciones for _, _, opciones in producto.grupos_opciones()]
+    if not grupos:
+        texto = f"${_pesos(producto.precio_para([]))}."
+    else:
+        frases = []
+        for primera in grupos[0]:
+            por_precio = {}  # precio -> nombres, en el orden en que se eligen
+            for resto in itertools.product(*grupos[1:]):
+                precio = producto.precio_para([primera.id] + [o.id for o in resto])
+                por_precio.setdefault(precio, []).append(" ".join(o.nombre for o in resto).lower())
+            partes = [f"{' o '.join(n for n in nombres if n)}, ${_pesos(precio)}" if any(nombres)
+                      else f"${_pesos(precio)}" for precio, nombres in por_precio.items()]
+            frases.append(f"{primera.nombre}: {'; '.join(partes)}.")
+        texto = " ".join(frases)
+    promo = Promocion.vigente()
+    if promo:
+        texto += (f" Precios con {promo.porcentaje}% de descuento hasta el "
+                  f"{promo.hasta.day} de {MESES[promo.hasta.month - 1]}.")
+    return texto
+
+
+def pregunta_precio(producto):
+    """La pregunta del precio con los precios de la base, o None si la ficha no la pide."""
+    datos = ficha(producto)
+    if not datos or not datos.get("pregunta_precio"):
+        return None
+    return _Pregunta(datos["pregunta_precio"], _texto_precios(producto))
+
+
 def preguntas(producto, limite=8):
-    """Las de la duena para este producto y despues las comunes, sin repetir.
+    """Las de la duena para este producto, la del precio y las comunes, sin repetir.
 
     UNA sola lista para la pagina y para el FAQPage del schema: lo que se
     declara es exactamente lo que se ve.
     """
     propias = list(producto.preguntas.filter(activa=True)[:limite])
     vistas = {_norma(p.pregunta) for p in propias}
+    precio = pregunta_precio(producto)
+    generadas = [precio] if precio and _norma(precio.pregunta) not in vistas else []
     comunes = [_Pregunta(p, r) for p, r in PREGUNTAS_COMUNES if _norma(p) not in vistas]
-    return (propias + comunes)[:limite]
+    return (propias + generadas + comunes)[:limite]

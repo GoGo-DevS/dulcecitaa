@@ -76,7 +76,7 @@ class FichasSeoTests(TestCase):
 
     def test_title_trabaja_la_busqueda_y_respeta_el_largo(self):
         esperados = {
-            "alfajores": "Alfajores para regalar desde $1.590 | Dulcecita",
+            "alfajores": "Alfajores artesanales para regalar desde $1.590 | Dulcecita",
             "torta-de-cuchuflis": "Torta de cuchuflís decorada desde $14.990 | Dulcecita",
             "barquillos-rellenos-banados-en-chocolate": "Barquillos rellenos de manjar desde $1.290 | Dulcecita",
         }
@@ -240,8 +240,8 @@ class Tanda1SeoTests(TestCase):
 
     def test_titles_y_descriptions_con_la_intencion_y_dentro_del_largo(self):
         esperados = {
-            "/productos/": ("Comprar alfajores y cuchuflís por mayor | Dulcecita",
-                            "<h1>Alfajores, barquillos y cuchuflís artesanales</h1>"),
+            "/productos/": ("Alfajores y cuchuflís por mayor en Santiago | Dulcecita",
+                            "<h1>Alfajores, barquillos y cuchuflís por mayor</h1>"),
             "/corporativo/": ("Dulces corporativos y regalos de fin de año | Dulcecita",
                               "<h1>Dulces corporativos para tu empresa, con tu marca</h1>"),
             "/arma-tu-box/": ("Box de dulces para regalar, armado a tu gusto | Dulcecita",
@@ -300,3 +300,147 @@ class Tanda1SeoTests(TestCase):
         html = self.client.get("/productos/alfajores/").content.decode()
         self.assertIn("Santiago de Chile", html)
         self.assertIn("desde 20 unidades", html)
+
+
+@override_settings(MINIMO_UNIDADES=10, DESPACHO_HORAS=48, BRAND_NAME="Dulcecita",
+                   SITE_URL="https://dulcecita.cl")
+class TandaDemanda0211Tests(TestCase):
+    """Tanda de demanda del 02-11-2026 (autocompletado de Google + Search Console).
+
+    1. El catalogo trabaja "por mayor en Santiago" y deja de repetir el title
+       de la portada.
+    2. La ficha de alfajores lleva "alfajores artesanales" en el title.
+    3. La torta responde "cuanto vale" con los precios que se COBRAN.
+    """
+
+    RESPUESTA_TORTA = ("50 cuchuflís: sin cobertura, $14.990; chocolate o chocolate blanco, $17.990. "
+                       "100 cuchuflís: sin cobertura, $29.990; chocolate o chocolate blanco, $34.990.")
+
+    def setUp(self):
+        from .models import Opcion, PrecioCombinacion
+        self.productos = {nombre: _crear(nombre, precio) for nombre, (_, precio) in SLUGS.items()}
+        # La torta como la crea catalogo_inicial: precio fijo por tamano y cobertura.
+        self.torta = self.productos["Torta de cuchuflís"]
+        self.torta.minimo, self.torta.en_box = 1, False
+        self.torta.save()
+        t50 = Opcion.objects.create(tipo="tamano", nombre="50 cuchuflís", orden=1)
+        t100 = Opcion.objects.create(tipo="tamano", nombre="100 cuchuflís", orden=2)
+        sin = Opcion.objects.create(tipo="cobertura", nombre="Sin cobertura", orden=0)
+        choc = Opcion.objects.create(tipo="cobertura", nombre="Chocolate", orden=1)
+        blanco = Opcion.objects.create(tipo="cobertura", nombre="Chocolate blanco", orden=2)
+        self.torta.opciones.add(t50, t100, sin, choc, blanco)
+        self.combos = {}
+        for tam, cob, precio in [(t50, sin, 14990), (t50, choc, 17990), (t50, blanco, 17990),
+                                 (t100, sin, 29990), (t100, choc, 34990), (t100, blanco, 34990)]:
+            pc = PrecioCombinacion.objects.create(producto=self.torta, precio=precio)
+            pc.opciones.set([tam, cob])
+            pc.actualizar_clave()
+            self.combos[(tam.nombre, cob.nombre)] = pc
+
+    # --- 1. catalogo -------------------------------------------------------
+    def test_catalogo_title_h1_y_meta_por_mayor_en_santiago(self):
+        html = self.client.get("/productos/").content.decode()
+        self.assertEqual(_title(html), "Alfajores y cuchuflís por mayor en Santiago | Dulcecita")
+        self.assertLessEqual(len(_title(html)), 60)
+        meta = _meta(html)
+        self.assertLessEqual(len(meta), 155)
+        for dato in ("por mayor", "Santiago", "10 unidades", "todo Chile"):
+            self.assertIn(dato, meta)
+        self.assertIn("<h1>Alfajores, barquillos y cuchuflís por mayor</h1>", html)
+        self.assertIn('<meta property="og:title" content="Alfajores y cuchuflís por mayor en Santiago | Dulcecita">',
+                      html)
+
+    def test_catalogo_y_portada_no_compiten_por_la_misma_frase(self):
+        portada = _title(self.client.get("/").content.decode())
+        catalogo = self.client.get("/productos/").content.decode()
+        h1 = re.search(r"<h1[^>]*>(.*?)</h1>", catalogo, re.S).group(1)
+        self.assertNotEqual(portada.split(" | ")[0], h1)
+        self.assertNotEqual(portada, _title(catalogo))
+
+    def test_catalogo_responde_como_comprar_por_mayor_con_lo_ya_publicado(self):
+        cuerpo = self.client.get("/productos/").content.decode().split("<footer", 1)[0]
+        self.assertIn("<h2>Cómo comprar por mayor</h2>", cuerpo)
+        for dato in ("Desde 10 unidades por producto", "desde 20 unidades",
+                     "al mismo precio por unidad", "Boleta por el total del pedido", "Paket",
+                     "coordina por WhatsApp", "Sale 48 horas después del pago"):
+            self.assertIn(dato, cuerpo)
+        bloque = cuerpo.split("<h2>Cómo comprar por mayor</h2>", 1)[1].split("</section>", 1)[0]
+        self.assertIn('href="/corporativo/"', bloque)
+        # Lo que la duena no confirmo no se publica.
+        for invento in ("IVA", "factura", "descuento por volumen", "precio mayorista", "días hábiles"):
+            self.assertNotIn(invento, bloque)
+        self.assertNotIn("{% comment", cuerpo)
+        self.assertNotIn("unica busqueda", cuerpo)
+
+    # --- 2. alfajores ------------------------------------------------------
+    def test_alfajores_artesanales_en_el_title_igual_que_el_h1(self):
+        html = self.client.get("/productos/alfajores/").content.decode()
+        self.assertEqual(_title(html), "Alfajores artesanales para regalar desde $1.590 | Dulcecita")
+        self.assertLessEqual(len(_title(html)), 60)
+        self.assertIn('<h1 class="detail-titulo">Alfajores artesanales para regalar</h1>', html)
+
+    # --- 3. torta: cuanto vale ---------------------------------------------
+    def _faq(self, html):
+        faq = [n for n in _ld(html) if n.get("@type") == "FAQPage"][0]
+        return {q["name"]: q["acceptedAnswer"]["text"] for q in faq["mainEntity"]}
+
+    def test_la_torta_responde_cuanto_vale_con_cada_precio(self):
+        html = self.client.get("/productos/torta-de-cuchuflis/").content.decode()
+        self.assertIn("<h3>¿Cuánto vale una torta de cuchuflís?</h3>", html)
+        self.assertIn(f'<p class="mb-0">{self.RESPUESTA_TORTA}</p>', html)
+        # Va primero entre las generadas: es lo que mas se busca.
+        self.assertLess(html.index("<h3>¿Cuánto vale una torta"), html.index("<h3>¿Cuánto duran"))
+
+    def test_el_schema_declara_la_misma_respuesta_que_se_ve(self):
+        html = self.client.get("/productos/torta-de-cuchuflis/").content.decode()
+        self.assertEqual(self._faq(html)["¿Cuánto vale una torta de cuchuflís?"], self.RESPUESTA_TORTA)
+
+    def test_cada_precio_de_la_respuesta_es_el_que_cobra_el_carrito(self):
+        from .templatetags.plata import pesos
+        respuesta = fichas_seo.pregunta_precio(self.torta).respuesta
+        for pc in self.combos.values():
+            ids = list(pc.opciones.values_list("id", flat=True))
+            self.assertIn(f"${pesos(self.torta.precio_para(ids))}", respuesta)
+
+    def test_si_la_duena_cambia_un_precio_la_respuesta_cambia_sola(self):
+        pc = self.combos[("50 cuchuflís", "Sin cobertura")]
+        pc.precio = 15990
+        pc.save()
+        html = self.client.get("/productos/torta-de-cuchuflis/").content.decode()
+        preguntas = html.split("Lo que más nos preguntan", 1)[1]
+        self.assertIn("sin cobertura, $15.990", preguntas)
+        self.assertNotIn("$14.990", preguntas)
+
+    def test_con_promocion_responde_el_precio_con_descuento_y_hasta_cuando(self):
+        import datetime
+        from django.utils import timezone
+        from .models import Promocion
+        hoy = timezone.localdate()
+        Promocion.objects.create(nombre="Navidad", porcentaje=10, desde=hoy,
+                                 hasta=hoy + datetime.timedelta(days=5), etiqueta="Navidad")
+        respuesta = fichas_seo.pregunta_precio(self.torta).respuesta
+        self.assertIn("sin cobertura, $13.491", respuesta)
+        self.assertNotIn("$14.990", respuesta)
+        self.assertIn("Precios con 10% de descuento hasta el", respuesta)
+
+    def test_solo_la_torta_pregunta_el_precio(self):
+        html = self.client.get("/productos/alfajores/").content.decode()
+        self.assertNotIn("¿Cuánto vale", html)
+        self.assertIsNone(fichas_seo.pregunta_precio(self.productos["Alfajores"]))
+
+    def test_si_la_duena_carga_la_misma_pregunta_no_se_repite(self):
+        from .models import PreguntaFrecuente
+        PreguntaFrecuente.objects.create(producto=self.torta, pregunta="¿Cuanto vale una torta de cuchuflis?",
+                                         respuesta="Desde $14.990.", activa=True)
+        html = self.client.get("/productos/torta-de-cuchuflis/").content.decode()
+        self.assertEqual(html.count("nto vale una torta de cuchufl"), 2)  # 1 en la pagina + 1 en el schema
+        self.assertNotIn(self.RESPUESTA_TORTA, html)
+
+    def test_la_respuesta_no_agrega_consultas_por_combinacion(self):
+        from django.db import connection
+        from django.test.utils import CaptureQueriesContext
+        with CaptureQueriesContext(connection) as c:
+            self.client.get("/productos/torta-de-cuchuflis/")
+        de_precios = [q for q in c.captured_queries if "preciocombinacion" in q["sql"].lower()]
+        # Una para la torta y una para los relacionados, no una por cada una de las 6 filas.
+        self.assertLessEqual(len(de_precios), 2)

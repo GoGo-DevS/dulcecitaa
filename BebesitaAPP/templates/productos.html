@@ -2,8 +2,20 @@
 {% block schema %}<script type="application/ld+json">{{ schema }}</script>{% endblock %}
 {% load static plata %}
 {% load fotos %}
-{% block title %}Comprar alfajores y cuchuflís por mayor | {{ site_brand }}{% endblock %}
-{% block meta_description %}Catálogo con precios de alfajores, barquillos y cuchuflís artesanales. Elige chocolate o chocolate blanco, desde {{ minimo_unidades }} unidades, con despacho a todo Chile.{% endblock %}
+{% comment %}
+  02-11-2026 (tanda de demanda): "alfajores por mayor" es la unica busqueda
+  que no es la marca y ya llega cerca de la primera pagina (posicion 11,5, y
+  aqui cae el unico clic que no es de marca). El autocompletado de Google
+  repite "<producto> por mayor santiago" para alfajores, cuchuflis y
+  barquillos. Ademas el H1 de esta pagina era igual al title de la portada
+  ("Alfajores, barquillos y cuchuflis artesanales"): dos URL para la misma
+  busqueda compiten entre si. La portada se queda con la marca y lo
+  artesanal; el catalogo, con "por mayor" y el precio.
+{% endcomment %}
+{% block title %}Alfajores y cuchuflís por mayor en Santiago | {{ site_brand }}{% endblock %}
+{% block meta_description %}Alfajores, barquillos y cuchuflís artesanales por mayor, con precios a la vista. Desde {{ minimo_unidades }} unidades, entrega en Santiago y despacho a todo Chile.{% endblock %}
+{% block og_title %}Alfajores y cuchuflís por mayor en Santiago | {{ site_brand }}{% endblock %}
+{% block og_description %}Alfajores, barquillos y cuchuflís artesanales con precios a la vista. Entrega en Santiago y despacho a todo Chile.{% endblock %}
 
 {% block content %}
 <section class="page-hero container reveal-ready">
@@ -14,7 +26,7 @@
     El title ya prometia "por mayor"; la pagina no lo decia en ninguna parte.
     La cantidad sale de fichas_seo.POR_MAYOR_DESDE (respuesta de la duena).
   {% endcomment %}
-  <h1>Alfajores, barquillos y cuchuflís artesanales</h1>
+  <h1>Alfajores, barquillos y cuchuflís por mayor</h1>
   {% comment %}
     El minimo se dice ANTES de elegir, no al llegar al carrito: quien recien
     descubre la regla despues de armar el pedido se va.
@@ -115,6 +127,25 @@
       <p class="mb-0">Vuelve pronto para ver nuestras nuevas colecciones.</p>
     </div>
     {% endfor %}
+  </div>
+</section>
+{% comment %}
+  02-11-2026: lo que pregunta quien compra por cantidad, SOLO con datos que el
+  sitio ya publica: el minimo, por mayor desde 20 al mismo precio por unidad
+  (respuesta de la duena del 19-10), boleta, Paket, Santiago por WhatsApp y
+  las 48 horas. Descuento por volumen, IVA, factura y plazos para cientos de
+  unidades NO van: la duena no los ha confirmado.
+{% endcomment %}
+<section class="container pb-5">
+  <div class="surface-card p-4">
+    <h2>Cómo comprar por mayor</h2>
+    <ul class="check-list mb-0">
+      <li><b>Desde {{ minimo_unidades }} unidades por producto.</b> Por mayor, desde {{ por_mayor_desde }} unidades, al mismo precio por unidad que ves en el catálogo.</li>
+      <li><b>El precio está a la vista.</b> No hace falta cotizar: eliges el producto y la cobertura, y el total aparece en el carrito.</li>
+      <li><b>Boleta por el total del pedido.</b></li>
+      <li><b>Entrega en Santiago y despacho a todo Chile.</b> En Santiago la entrega se coordina por WhatsApp; a regiones viaja por Paket con seguimiento. Sale {{ despacho_horas }} horas después del pago.</li>
+      <li><b>¿Cientos de unidades o con tu logo?</b> Lo cotizamos en <a href="{% url 'corporativo' %}">venta corporativa</a>, con su propio plazo de producción.</li>
+    </ul>
   </div>
 </section>
 {% comment %}

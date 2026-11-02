@@ -567,8 +567,11 @@ def producto_detalle(request, pk):
 
 @ensure_csrf_cookie
 def producto_ficha(request, slug):
+    # precios_combinacion: la torta responde "¿cuánto vale?" con un precio por
+    # combinacion (fichas_seo._texto_precios); sin esto eran 2 consultas por fila.
     producto = get_object_or_404(
-        Producto.objects.prefetch_related("opciones"), slug=slug, variante_de__isnull=True)
+        Producto.objects.prefetch_related("opciones", "precios_combinacion"),
+        slug=slug, variante_de__isnull=True)
     imagenes = getattr(producto, "imagenes", None)
     # Los otros productos del catalogo, enlazados desde la ficha: antes una
     # ficha no enlazaba a ninguna otra, y las que solo llegaban por el sitemap
