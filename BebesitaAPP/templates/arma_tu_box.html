@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
-{% load fotos %}
+{% load fotos plata %}
 {% comment %}
   19-10-2026: se busca "box de dulces para regalar" (y para cumpleaños, San
   Valentin, Navidad). El H1 "Tu box, a tu gusto" no decia que era un box de
@@ -17,7 +17,7 @@
   <div class="section-head mb-4">
     <p class="eyebrow">Arma tu box</p>
     <h1>Box de dulces para regalar, a tu gusto</h1>
-    <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. El empaque del box cuesta ${{ precio_caja }}.</p>
+    <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. El empaque del box cuesta ${{ precio_caja|pesos }}.</p>
     <p class="box-cabeza__texto">Elige cuántos quieres de cada uno y con qué cobertura. Sirve para un cumpleaños, un aniversario, Navidad o un simple gracias: va en caja, listo para entregar.</p>
     {% regroup filas by producto as por_producto %}
     {% if por_producto %}

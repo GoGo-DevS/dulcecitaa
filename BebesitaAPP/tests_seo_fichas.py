@@ -444,3 +444,17 @@ class TandaDemanda0211Tests(TestCase):
         de_precios = [q for q in c.captured_queries if "preciocombinacion" in q["sql"].lower()]
         # Una para la torta y una para los relacionados, no una por cada una de las 6 filas.
         self.assertLessEqual(len(de_precios), 2)
+
+
+class PrecioDelEmpaqueTests(TestCase):
+    """02-11-2026: "El empaque del box cuesta $1490" salia sin punto de miles."""
+
+    def test_el_empaque_del_box_sale_con_punto_de_miles(self):
+        from BebesitaAPP import box as arma_box
+        precio = arma_box.precio_caja()
+        if precio < 1000:
+            self.skipTest("precio de caja bajo mil: no hay punto que poner")
+        esperado = "${:,}".format(int(precio)).replace(",", ".")
+        for ruta in ("/productos/", "/arma-tu-box/"):
+            html = self.client.get(ruta).content.decode()
+            self.assertIn("El empaque del box cuesta " + esperado + ".", html, ruta)
