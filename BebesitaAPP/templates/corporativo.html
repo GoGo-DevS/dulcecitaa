@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
-{% load static %}
+{% load static fichas %}
 {% comment %}
   19-10-2026: la gente busca "dulces corporativos chile", "dulces personalizados
   corporativos" y "dulces para empresas"; el title decia "regalos corporativos
@@ -30,7 +30,7 @@
       <p class="eyebrow">Venta corporativa</p>
       <h1>Dulces corporativos para tu empresa, con tu marca</h1>
       <p>En {{ site_brand }} creemos que un detalle bien pensado se recuerda. Por eso preparamos propuestas para empresas que quieren sorprender, agradecer o celebrar: clientes, equipos de trabajo, fechas especiales y eventos.</p>
-      <p>{% for p in productos_pie %}<a href="{{ p.get_absolute_url }}">{{ p.nombre }}</a>{% if not forloop.last %}, {% endif %}{% empty %}Alfajores, cuchuflís, barquillos{% endfor %} y box surtidos, todo hecho a mano, armados según la ocasión.</p>
+      <p>{% for p in productos_pie %}<a href="{{ p.get_absolute_url }}">{{ p|ancla }}</a>{% if not forloop.last %}, {% endif %}{% empty %}Alfajores, cuchuflís, barquillos{% endfor %} y box surtidos, todo hecho a mano, armados según la ocasión.</p>
 
       <h2>Box de regalo</h2>
       <p>Opciones para clientes, equipos y fechas especiales, con una presentación cuidada y el packaging ajustado al tipo de evento.</p>
@@ -51,7 +51,7 @@
         la capacidad la decide la duena y se responde en la cotizacion.
       {% endcomment %}
       <h2>Regalos de fin de año para tu equipo y tus clientes</h2>
-      <p>Navidad y fin de año es cuando más empresas regalan. Armamos box con tu logo para tu equipo y tus clientes, al mismo precio por unidad del catálogo desde {{ por_mayor_desde }} unidades. Como los pedidos grandes llevan su propio plazo de producción, escríbenos apenas tengas la cantidad y la fecha: así te confirmamos si llegamos a tiempo.</p>
+      <p>Navidad y fin de año es cuando más empresas regalan. Armamos box con tu logo para tu equipo y tus clientes, al mismo precio por unidad del catálogo desde {{ por_mayor_desde }} unidades. Como los pedidos grandes llevan su propio plazo de producción, escríbenos apenas tengas la cantidad y la fecha: así te confirmamos si llegamos a tiempo. Si el regalo es tuyo y no de una empresa, mira los <a href="{% url 'navidad' %}">regalos de Navidad</a>.</p>
 
       {% comment %}
         Lo que una empresa pregunta al cotizar (lo pidio VMICA el 19-10-2026:

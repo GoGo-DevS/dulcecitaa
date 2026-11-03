@@ -3242,3 +3242,14 @@ a.dr-topbar--promo:hover { filter: brightness(1.05); }
   font-weight: 800;
 }
 @media (min-width: 768px) { .dr-topbar__ir { display: inline-block; } }
+
+/* 03-11-2026 (/navidad/): un boton-enlace dentro de la zona blanca quedaba con
+   el texto azul sobre fondo azul, porque `.corp-blanco a` es mas especifico
+   que `.btn-main`. */
+.corp-blanco a.btn-main, .corp-blanco a.dr-btn-wine { color: #fff !important; }
+/* /navidad/ recibe visitas desde Instagram y WhatsApp en el telefono: ahi lo
+   primero es el titulo y los botones, no las fotos (en /corporativo/ si van arriba). */
+@media (max-width: 860px) {
+  .corp-intro--texto-primero .corp-foto { order: 0; }
+  .corp-intro--texto-primero .corp-foto--doble img { max-height: 420px; }
+}

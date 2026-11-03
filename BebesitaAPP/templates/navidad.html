@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load static plata fichas %}
+{% comment %}
+  03-11-2026: regalos de Navidad para PERSONAS. Google sugiere "box navideños
+  para regalar", "box de dulces para navidad", "alfajores para navidad",
+  "cuchuflis navideños" y "regalos de fin de año para compañeros / profesores".
+  Las empresas tienen su pagina (/corporativo/, "regalos de fin de año" con
+  logo): aqui solo se las deriva, para que las dos URL no compitan.
+
+  Todo lo que dice esta pagina ya se vende y ya esta publicado: los precios
+  salen de la base (los mismos del carrito), el box de /arma-tu-box/, el
+  minimo, Paket, las 48 horas, la duracion de un mes y la personalizacion
+  (respuestas de la duena del 16 y 19-10). NO hay box navideño con precio,
+  empaque navideño, fecha limite ni cupos: eso lo decide la duena y quedo
+  preguntado. Cuando responda, se completa ESTA misma pagina.
+{% endcomment %}
+{% block title %}Regalos de Navidad: box de dulces artesanales | {{ site_brand }}{% endblock %}
+{% block meta_description %}Regalos de Navidad hechos a mano en Santiago: arma tu box de alfajores, barquillos y cuchuflís, detalles por cantidad y torta de cuchuflís.{% endblock %}
+{% block og_title %}Regalos de Navidad: box de dulces artesanales | {{ site_brand }}{% endblock %}
+{% block og_description %}Arma tu box de alfajores, barquillos y cuchuflís para regalar en Navidad, con los precios a la vista. Despacho a todo Chile.{% endblock %}
+{% block twitter_description %}Arma tu box de alfajores, barquillos y cuchuflís para regalar en Navidad, con los precios a la vista.{% endblock %}
+{% block schema %}<script type="application/ld+json">{{ schema }}</script>{% endblock %}
+
+{% block content %}
+<div class="corp-blanco">
+<section class="container corp-seccion">
+  <div class="corp-intro corp-intro--texto-primero">
+    <div class="corp-texto" data-reveal-item>
+      <p class="eyebrow">Navidad</p>
+      <h1>Regalos de Navidad: box de dulces, detalles y tortas</h1>
+      <p>Alfajores, barquillos y cuchuflís hechos a mano en Santiago para regalar esta Navidad. Aquí están los dulces que ya vendemos, con sus precios: eliges, pagas por transferencia y coordinamos la entrega.</p>
+      <div class="hero-actions">
+        <a href="{% url 'arma_tu_box' %}" class="btn-main">Arma tu box</a>
+        {% if whatsapp_navidad %}<a href="{{ whatsapp_navidad }}" class="btn-ghost" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>{% endif %}
+      </div>
+
+      <h2>Un box de dulces para regalar</h2>
+      <p>En <a href="{% url 'arma_tu_box' %}">Arma tu box</a> eliges cuántos quieres de cada dulce, desde {{ minimo_box }} por producto, y con qué cobertura. Va en caja, listo para entregar, y el empaque cuesta ${{ precio_caja|pesos }}.</p>
+      {% if ejemplo_total %}
+      <p>Por ejemplo, un box con {% for f in ejemplo_box %}{{ f.cantidad }} {% if f.producto.unidades_por_pack > 1 %}bolsitas de {{ f.producto.unidades_por_pack }} {% endif %}{{ f.producto|ancla|lower }}{% if forloop.revcounter0 == 1 %} y {% elif not forloop.last %}, {% endif %}{% endfor %} cuesta ${{ ejemplo_total|pesos }} con el empaque{% if promocion_vigente %}, con el descuento de {{ promocion_vigente.etiqueta }} ya aplicado{% endif %}.</p>
+      {% endif %}
+      <p>¿Buscas un surtido distinto? También armamos box a pedido: el surtido, la cantidad y la presentación se definen contigo, como el box dieciochero que hicimos para Fiestas Patrias.</p>
+
+      {% if para_detalle %}
+      <h2>Un detalle para cada persona</h2>
+      <p>Para el curso, los compañeros de trabajo o los profesores. Todo va envuelto por unidad, y los cuchuflís vienen en bolsita de 4. Se piden desde {{ minimo_unidades }} por producto y, por mayor, desde {{ por_mayor_desde }} unidades al mismo precio.</p>
+      <ul class="check-list">
+        {% for p in para_detalle %}<li><a href="{{ p.get_absolute_url }}">{{ p|ancla }}</a>: ${{ p.precio_desde|pesos }} {{ p.unidad_venta }}</li>
+        {% endfor %}
+      </ul>
+      <p>Se pueden personalizar para regalos y eventos: cuéntanos qué necesitas al hacer el pedido.</p>
+      {% endif %}
+
+      {% for t in tortas %}
+      <h2>Para compartir en la celebración: {{ t|ancla|lower }}</h2>
+      <p>{{ t.texto_precios }}</p>
+      <p>Va terminada con cinta y decoración: al pedir nos cuentas los colores que quieres. <a href="{{ t.get_absolute_url }}">Ver la {{ t|ancla|lower }}</a>.</p>
+      {% endfor %}
+
+      <h2>¿Es para tu empresa?</h2>
+      <p>Los regalos de fin de año para el equipo o los clientes de una empresa, con su logo en el empaque, se cotizan en <a href="{% url 'corporativo' %}">venta corporativa</a>.</p>
+
+      <h2>Cuándo pedir y cómo llega</h2>
+      <ul class="check-list">
+        <li><b>Sale {{ despacho_horas }} horas después del pago.</b> Todo se hace a mano.</li>
+        <li><b>En Santiago</b> coordinamos la entrega por WhatsApp; <b>a regiones</b> viaja por Paket con seguimiento. <a href="{% url 'delivery' %}">Delivery y retiro</a>.</li>
+        <li><b>Duran aproximadamente un mes</b> guardados en un ambiente fresco y seco, así que puedes pedir con tiempo.</li>
+      </ul>
+    </div>
+
+    <figure class="corp-foto corp-foto--doble" data-reveal-item>
+      <img class="corp-foto__principal" src="{% static 'img/galeria/torta-cuchuflis-papel-colores.webp' %}" alt="Torta de cuchuflís terminada con cinta y papel de colores" loading="lazy" width="720" height="900">
+      <img class="corp-foto__segunda" src="{% static 'img/galeria/corporativo-empaques-aza.webp' %}" alt="Cuchuflís bañados embolsados con un sticker de agradecimiento personalizado" loading="lazy" width="499" height="900">
+      <figcaption class="corp-foto__pie">Fotos reales: una torta de cuchuflís y cuchuflís bañados con el sticker de agradecimiento de un cliente.</figcaption>
+    </figure>
+  </div>
+</section>
+</div>
+
+{% if preguntas %}
+{% comment %}
+  Las mismas preguntas que declara el FAQPage del schema: lo que se declara es
+  exactamente lo que se ve.
+{% endcomment %}
+<section class="section-soft">
+  <div class="container">
+    <div class="section-head section-head-center">
+      <p class="eyebrow">Navidad</p>
+      <h2>Lo que más nos preguntan antes de regalar</h2>
+    </div>
+    <div class="faq-list">
+      {% for faq in preguntas %}
+      <article class="faq-item surface-card">
+        <h3>{{ faq.pregunta }}</h3>
+        <p class="mb-0">{{ faq.respuesta }}</p>
+      </article>
+      {% endfor %}
+    </div>
+    <div class="hero-actions justify-content-center mt-4">
+      <a href="{% url 'arma_tu_box' %}" class="dr-btn-wine">Arma tu box</a>
+      {% if whatsapp_navidad %}<a href="{{ whatsapp_navidad }}" class="btn-ghost" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>{% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

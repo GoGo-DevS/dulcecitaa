@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block schema %}<script type="application/ld+json">{{ schema_migas }}</script>{% endblock %}
 {% load static %}
-{% load fotos plata %}
+{% load fotos plata fichas %}
 {% comment %}
   19-10-2026: se busca "box de dulces para regalar" (y para cumpleaños, San
   Valentin, Navidad). El H1 "Tu box, a tu gusto" no decia que era un box de
@@ -18,10 +18,10 @@
     <p class="eyebrow">Arma tu box</p>
     <h1>Box de dulces para regalar, a tu gusto</h1>
     <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. El empaque del box cuesta ${{ precio_caja|pesos }}.</p>
-    <p class="box-cabeza__texto">Elige cuántos quieres de cada uno y con qué cobertura. Sirve para un cumpleaños, un aniversario, Navidad o un simple gracias: va en caja, listo para entregar.</p>
+    <p class="box-cabeza__texto">Elige cuántos quieres de cada uno y con qué cobertura. Sirve para un cumpleaños, un aniversario, <a href="{% url 'navidad' %}">Navidad</a> o un simple gracias: va en caja, listo para entregar.</p>
     {% regroup filas by producto as por_producto %}
     {% if por_producto %}
-    <p class="box-cabeza__texto">Se arma con {% for grupo in por_producto %}<a href="{{ grupo.grouper.get_absolute_url }}">{{ grupo.grouper.nombre|lower }}</a>{% if forloop.revcounter0 == 1 %} y {% elif not forloop.last %}, {% endif %}{% endfor %}, hechos a mano. Si es para una empresa o necesitas más de {{ por_mayor_desde }} unidades, lo cotizamos en <a href="{% url 'corporativo' %}">venta corporativa</a>.</p>
+    <p class="box-cabeza__texto">Se arma con {% for grupo in por_producto %}<a href="{{ grupo.grouper.get_absolute_url }}">{{ grupo.grouper|ancla|lower }}</a>{% if forloop.revcounter0 == 1 %} y {% elif not forloop.last %}, {% endif %}{% endfor %}, hechos a mano. Si es para una empresa o necesitas más de {{ por_mayor_desde }} unidades, lo cotizamos en <a href="{% url 'corporativo' %}">venta corporativa</a>.</p>
     {% endif %}
   </div>
 
@@ -48,7 +48,7 @@
             <li class="box-fila" data-box-fila data-precio="{{ fila.precio }}">
               <span class="box-fila__nombre">
                 {% for op in fila.opciones %}<i class="muestra__color muestra__color--chica" style="--muestra: {{ op.color }}"></i>{{ op.nombre }}{% if not forloop.last %} · {% endif %}{% empty %}Sin cobertura{% endfor %}
-                <small>${{ fila.precio }} c/u</small>
+                <small>${{ fila.precio|pesos }} c/u</small>
               </span>
               <span class="qty-control box-stepper">
                 <button type="button" class="btn-qty" data-box-menos aria-label="Quitar uno de {{ fila.producto.nombre }}">-</button>
@@ -68,9 +68,9 @@
       <p class="cart-summary-label">Tu box</p>
       <ul class="box-resumen__lineas">
         <li><span>Productos (<b data-box-unidades>0</b> u.)</span><strong data-box-subtotal>$0</strong></li>
-        <li><span>Empaque del box</span><strong>${{ precio_caja }}</strong></li>
+        <li><span>Empaque del box</span><strong>${{ precio_caja|pesos }}</strong></li>
       </ul>
-      <p class="cart-summary-total" data-box-total>${{ precio_caja }}</p>
+      <p class="cart-summary-total" data-box-total>${{ precio_caja|pesos }}</p>
       <button type="submit" class="btn-main w-100" data-box-enviar disabled>Agregar box al carrito</button>
       <p class="cart-summary-note">Al primer + se suman {{ minimo_box }}, que es el mínimo por producto. Con − bajas de a uno.</p>
     </aside>
@@ -83,7 +83,8 @@
     if (!form) return;
     var MIN = parseInt(form.dataset.minimo, 10) || 1;
     var CAJA = parseInt(form.dataset.caja, 10) || 0;
-    var fmt = function (n) { return '$' + n; };
+    // Mismo formato que el servidor (filtro pesos): punto de miles.
+    var fmt = function (n) { return '$' + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); };
 
     function recalcular() {
       var unidades = 0, subtotal = 0;

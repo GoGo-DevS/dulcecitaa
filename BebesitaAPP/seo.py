@@ -86,7 +86,9 @@ def _oferta(producto):
         **({"priceValidUntil": Promocion.vigente().hasta.isoformat()} if Promocion.vigente() else {}),
         "itemCondition": "https://schema.org/NewCondition",
         "seller": {"@id": _abs("/#negocio")},
-        "eligibleQuantity": {"@type": "QuantitativeValue", "minValue": settings.MINIMO_UNIDADES,
+        # El minimo de ESTE producto: la torta se vende desde 1 y el schema
+        # decia 10 (el minimo general), contradiciendo la ficha (03-11-2026).
+        "eligibleQuantity": {"@type": "QuantitativeValue", "minValue": producto.minimo_efectivo(),
                              "unitText": "bolsita" if producto.unidades_por_pack > 1 else "unidad"},
         "shippingDetails": {
             "@type": "OfferShippingDetails",
@@ -203,7 +205,7 @@ class PaginasSitemap(_SitemapBase):
     changefreq = "weekly"
     # /links/ no va: es la pagina de la bio de Instagram y lleva noindex.
     PAGINAS = [("home", 1.0), ("productos", 0.9), ("arma_tu_box", 0.8), ("corporativo", 0.8),
-               ("delivery", 0.6), ("contacto", 0.5)]
+               ("navidad", 0.8), ("delivery", 0.6), ("contacto", 0.5)]
 
     def items(self):
         return [nombre for nombre, _ in self.PAGINAS]

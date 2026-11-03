@@ -35,6 +35,12 @@ def _fichas():
     horas = getattr(settings, "DESPACHO_HORAS", 48)
     return {
         "barquillos-rellenos-banados-en-chocolate": {
+            # 03-11-2026: Search Console muestra la ficha para "barquillos
+            # rellenos" (pos 19) y "barquillo relleno" (pos 49), y Google sugiere
+            # "barquillos rellenos por mayor / santiago / chile / precio". La
+            # ficha no decia ni Santiago, ni por mayor, ni cuanto cuestan.
+            "ancla": "Barquillos rellenos",
+            "pregunta_precio": "¿Cuánto cuestan los barquillos rellenos?",
             "titulo": "Barquillos rellenos de manjar",
             "h1": "Barquillos rellenos bañados en chocolate",
             "descripcion": (
@@ -46,6 +52,9 @@ def _fichas():
                 "blanco.",
                 f"Se venden desde {minimo} unidades por producto. Si quieres mezclarlos con "
                 "alfajores o cuchuflís, en Arma tu box combinas los que quieras en una sola caja.",
+                f"Barquillos rellenos hechos a mano en Santiago: en la ciudad la entrega se "
+                f"coordina por WhatsApp y a regiones van por Paket. Por mayor, desde "
+                f"{POR_MAYOR_DESDE} unidades al mismo precio por unidad.",
             ],
         },
         "alfajores": {
@@ -53,6 +62,10 @@ def _fichas():
             # sugerencias de Google (por mayor, precio, chile, santiago, premium,
             # para regalar) y Search Console ya la muestra aqui (pos 35, y
             # "alfajor artesanal" pos 41). El H1 la tenia; el title no.
+            "ancla": "Alfajores artesanales",
+            # 03-11-2026: "alfajores artesanales precio" y "alfajores navideños
+            # precio" estan en el autocompletado; el precio se lee de la base.
+            "pregunta_precio": "¿Cuánto cuesta un alfajor artesanal?",
             "titulo": "Alfajores artesanales para regalar",
             "h1": "Alfajores artesanales para regalar",
             "descripcion": (
@@ -73,6 +86,10 @@ def _fichas():
             ],
         },
         "cuchuflis-banados": {
+            # 03-11-2026: "cuchuflis bañados en chocolate" llega en pos 42 y Google
+            # sugiere "... por mayor", "... precio" y "caja de cuchuflis bañados".
+            "ancla": "Cuchuflís bañados en chocolate",
+            "pregunta_precio": "¿Cuánto cuestan los cuchuflís bañados en chocolate?",
             "titulo": "Cuchuflís bañados en chocolate",
             "h1": "Cuchuflís bañados en chocolate",
             "descripcion": (
@@ -84,9 +101,17 @@ def _fichas():
                 "chocolate blanco.",
                 "Vienen en bolsita de 4 unidades, y también puedes sumarlos a tu box. "
                 f"Tu pedido sale {horas} horas después del pago.",
+                "Cuchuflís bañados en chocolate hechos a mano en Santiago, con entrega "
+                "coordinada por WhatsApp en la ciudad y despacho a regiones por Paket. "
+                "Para un evento o un regalo por cantidad, también se venden por mayor al "
+                "mismo precio del catálogo.",
             ],
         },
         "cuchuflis-rellenos": {
+            "ancla": "Cuchuflís rellenos de manjar",
+            # 03-11-2026: Google sugiere "cuchuflis rellenos por mayor" y
+            # "cuchuflis con manjar por mayor"; el precio se lee de la base.
+            "pregunta_precio": "¿Cuánto cuestan los cuchuflís rellenos?",
             "titulo": "Cuchuflís rellenos de manjar",
             "h1": "Cuchuflís rellenos de manjar",
             "descripcion": (
@@ -97,9 +122,12 @@ def _fichas():
                 "menos que los bañados y no llevan chocolate a elegir.",
                 "La torta de cuchuflís se arma con cuchuflís rellenos de manjar como estos. "
                 "Vienen en bolsita de 4 unidades y se despachan a todo Chile por Paket.",
+                "Se hacen a mano en Santiago, donde la entrega se coordina por WhatsApp, y "
+                "también se venden por mayor al mismo precio del catálogo.",
             ],
         },
         "torta-de-cuchuflis": {
+            "ancla": "Torta de cuchuflís",
             # 02-11-2026: Google sugiere "cuanto vale una torta de cuchuflis",
             # "valor torta de cuchufli" y "torta 50 cuchuflis", y la compiten
             # Jumbo, Tottus, Unimarc y Lider. La respuesta va en las preguntas
@@ -156,6 +184,19 @@ def titulo(producto, marca=None):
 def h1(producto):
     datos = ficha(producto)
     return datos["h1"] if datos else producto.nombre
+
+
+def ancla(producto):
+    """Texto del enlace hacia la ficha desde el resto del sitio.
+
+    03-11-2026: el pie de TODAS las paginas enlazaba con el nombre interno del
+    producto ("Cuchuflís bañados", "Alfajores"), que no es la frase que se
+    busca. Con la palabra de la ficha ("Cuchuflís bañados en chocolate",
+    "Alfajores artesanales") cada enlace interno le dice a Google de que trata
+    la pagina de destino. Sin ficha propia, el nombre de siempre.
+    """
+    datos = ficha(producto)
+    return (datos or {}).get("ancla") or producto.nombre
 
 
 def descripcion(producto):
@@ -226,8 +267,8 @@ def _texto_precios(producto):
     from .models import Promocion
 
     grupos = [opciones for _, _, opciones in producto.grupos_opciones()]
-    if not grupos:
-        texto = f"${_pesos(producto.precio_para([]))}."
+    if len(grupos) <= 1:
+        texto = _texto_precio_simple(producto, grupos[0] if grupos else [])
     else:
         frases = []
         for primera in grupos[0]:
@@ -244,6 +285,33 @@ def _texto_precios(producto):
         texto += (f" Precios con {promo.porcentaje}% de descuento hasta el "
                   f"{promo.hasta.day} de {MESES[promo.hasta.month - 1]}.")
     return texto
+
+
+def unidad_de_venta(producto):
+    """A que corresponde el precio: "por unidad" o "la bolsita de 4"."""
+    if producto.unidades_por_pack > 1:
+        return f"la bolsita de {producto.unidades_por_pack}"
+    return "por unidad"
+
+
+def _texto_precio_simple(producto, opciones):
+    """Precio de un producto con un solo grupo de opciones (la cobertura) o sin opciones.
+
+    "$1.290 por unidad, con chocolate o chocolate blanco."
+    "$1.590 la bolsita de 4, con chocolate o chocolate blanco."
+    "$1.190 la bolsita de 4."
+    Si una cobertura costara distinto, cada precio va con la suya. La unidad
+    sale de unidades_por_pack: el precio de los cuchuflis es por bolsita.
+    """
+    unidad = unidad_de_venta(producto)
+    if not opciones:
+        return f"${_pesos(producto.precio_para([]))} {unidad}."
+    por_precio = {}
+    for op in opciones:
+        por_precio.setdefault(producto.precio_para([op.id]), []).append(op.nombre.lower())
+    partes = [f"${_pesos(precio)} {unidad if i == 0 else ''}".rstrip() + f", con {' o '.join(nombres)}"
+              for i, (precio, nombres) in enumerate(por_precio.items())]
+    return "; ".join(partes) + "."
 
 
 def pregunta_precio(producto):

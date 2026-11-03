@@ -423,10 +423,12 @@ class TandaDemanda0211Tests(TestCase):
         self.assertNotIn("$14.990", respuesta)
         self.assertIn("Precios con 10% de descuento hasta el", respuesta)
 
-    def test_solo_la_torta_pregunta_el_precio(self):
+    def test_la_pregunta_de_la_torta_es_solo_de_la_torta(self):
+        # 03-11-2026: las otras fichas tambien responden su precio
+        # (tests_tanda_0311), cada una con SU pregunta: ninguna repite la de la torta.
         html = self.client.get("/productos/alfajores/").content.decode()
         self.assertNotIn("¿Cuánto vale", html)
-        self.assertIsNone(fichas_seo.pregunta_precio(self.productos["Alfajores"]))
+        self.assertNotIn("torta", fichas_seo.pregunta_precio(self.productos["Alfajores"]).pregunta)
 
     def test_si_la_duena_carga_la_misma_pregunta_no_se_repite(self):
         from .models import PreguntaFrecuente

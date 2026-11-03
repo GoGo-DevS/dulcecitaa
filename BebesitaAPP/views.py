@@ -598,6 +598,97 @@ def delivery(request):
     return render(request, 'delivery.html', {"schema_migas": seo.schema_migas(("Delivery y retiro", reverse("delivery")))})
 
 
+def _whatsapp_con_texto(texto):
+    """El enlace de WhatsApp de la tienda con un mensaje ya escrito, o vacio."""
+    base_url = getattr(settings, "WHATSAPP_URL", "").strip()
+    if not base_url:
+        return ""
+    parsed = urlparse(base_url)
+    query = dict(parse_qsl(parsed.query))
+    query["text"] = texto
+    return urlunparse(parsed._replace(query=urlencode(query)))
+
+
+def navidad(request):
+    """Regalos de Navidad para PERSONAS (03-11-2026).
+
+    Google sugiere "box navideños para regalar", "box de dulces para navidad",
+    "alfajores para navidad", "cuchuflis navideños" y "regalos de fin de año
+    para compañeros / profesores", y ninguna pagina respondia eso. Las empresas
+    ya tienen /corporativo/ ("regalos de fin de año" con logo): aqui se las
+    deriva con un enlace y no se compite por esa busqueda.
+
+    REGLA: solo la oferta que ya existe, con los precios de la BASE (los mismos
+    del carrito, con la promocion vigente). Nada de box navideños con precio,
+    empaque navideño, fechas limite ni cupos: eso lo tiene que decidir la duena
+    y queda preguntado. Cuando responda, esta misma URL se completa.
+    """
+    from .models import Promocion
+
+    productos = list(Producto.objects.filter(visible=True, disponible=True, variante_de__isnull=True)
+                     .prefetch_related("opciones", "precios_combinacion").order_by("orden", "nombre"))
+    para_detalle = [p for p in productos if p.en_box]
+    tortas = [p for p in productos if not p.en_box]
+
+    # El box se calcula con las mismas filas y precios que /arma-tu-box/.
+    minimo = arma_box.minimo_box()
+    caja = arma_box.precio_caja()
+    todas = arma_box.filas_para_armar()
+    primera_fila = {}
+    for fila in todas:
+        primera_fila.setdefault(fila["producto"].pk, fila)
+    filas = list(primera_fila.values())
+    box_desde = (min(f["precio"] for f in todas) * minimo + caja) if todas else None
+    ejemplo = [{**f, "cantidad": minimo} for f in filas[:3]]
+    ejemplo_total = sum(f["precio"] * minimo for f in ejemplo) + caja if len(ejemplo) >= 2 else None
+
+    for p in para_detalle:
+        p.unidad_venta = fichas_seo.unidad_de_venta(p)
+    for t in tortas:
+        t.texto_precios = fichas_seo._texto_precios(t)
+
+    horas = getattr(settings, "DESPACHO_HORAS", 48)
+    pesos = fichas_seo._pesos
+    preguntas = []
+    if box_desde:
+        preguntas.append(fichas_seo._Pregunta(
+            "¿Cuánto cuesta un box de dulces para Navidad?",
+            f"Depende de lo que elijas: cada dulce va a su precio del catálogo, desde {minimo} por "
+            f"producto, más ${pesos(caja)} del empaque. El box más simple parte en ${pesos(box_desde)}."))
+    preguntas.append(fichas_seo._Pregunta(
+        "¿Hacen regalos de Navidad para empresas?",
+        f"Sí. Para el equipo o los clientes de una empresa armamos box con tu logo en el empaque, "
+        f"desde {fichas_seo.POR_MAYOR_DESDE} unidades al mismo precio por unidad del catálogo. "
+        "Se cotizan en venta corporativa."))
+    preguntas.append(fichas_seo._Pregunta(
+        "¿Cuánto tarda mi pedido?",
+        f"Sale {horas} horas después del pago. En Santiago coordinamos la entrega por WhatsApp y a "
+        "regiones viaja por Paket con seguimiento. Si lo necesitas para un día en particular, "
+        "escríbenos antes de pagar."))
+
+    schema = seo.json_ld({"@context": "https://schema.org", "@graph": [
+        seo.migas([("Regalos de Navidad", reverse("navidad"))]),
+        {"@type": "FAQPage", "@id": seo._abs(reverse("navidad")) + "#preguntas",
+         "mainEntity": [{"@type": "Question", "name": q.pregunta,
+                         "acceptedAnswer": {"@type": "Answer", "text": q.respuesta}} for q in preguntas]},
+    ]})
+
+    return render(request, "navidad.html", {
+        "para_detalle": para_detalle,
+        "tortas": tortas,
+        "minimo_box": minimo,
+        "precio_caja": caja,
+        "box_desde": box_desde,
+        "ejemplo_box": ejemplo,
+        "ejemplo_total": ejemplo_total,
+        "preguntas": preguntas,
+        "schema": schema,
+        "promocion_vigente": Promocion.vigente(),
+        "whatsapp_navidad": _whatsapp_con_texto(
+            f"Hola {settings.BRAND_NAME}, quiero dulces para regalar en Navidad."),
+    })
+
+
 @ensure_csrf_cookie
 def arma_tu_box(request):
     """Pantalla para armar una caja: cantidades por producto y cobertura."""

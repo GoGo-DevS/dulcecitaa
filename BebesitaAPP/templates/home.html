@@ -43,6 +43,23 @@
   </div>
 </section>
 
+{% if temporada_navidad %}
+{% comment %}
+  03-11-2026: la portada es la pagina con mas fuerza del sitio (posicion 5) y
+  desde aqui se empuja /navidad/. Se apaga solo despues del 25 de diciembre
+  (temporada.es_navidad).
+{% endcomment %}
+<section class="container box-invita mt-4">
+  <div class="box-invita__caja">
+    <div class="box-invita__copia">
+      <p class="box-invita__titulo">Regalos de Navidad</p>
+      <p class="box-invita__texto">Box de dulces armado a tu gusto, detalles para el curso o la oficina y torta de cuchuflís, con los precios a la vista.</p>
+    </div>
+    <a href="{% url 'navidad' %}" class="btn-main">Ver regalos de Navidad</a>
+  </div>
+</section>
+{% endif %}
+
 {% comment %}
   La cinta lleva la MISMA lista dos veces a proposito: la animacion se
   corre exactamente la mitad, asi el bucle cierra en un punto identico y

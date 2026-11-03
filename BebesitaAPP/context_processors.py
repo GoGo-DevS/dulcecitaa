@@ -9,6 +9,7 @@ def site_config(request):
     from django.conf import settings
     from .fichas_seo import POR_MAYOR_DESDE
     from .models import Producto
+    from .temporada import es_navidad
 
     default_og_image = getattr(settings, "DEFAULT_OG_IMAGE", "")
     # Las fichas en el pie de TODAS las paginas. Con 12 paginas en el sitio,
@@ -34,6 +35,7 @@ def site_config(request):
         "productos_pie": productos_pie,
         "transferencia": _transferencia(settings),
         "default_og_image_url": default_og_image_url,
+        "temporada_navidad": es_navidad(),
     }
 
 
