@@ -155,7 +155,21 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 if DATABASE_URL:
     import dj_database_url
 
-    DATABASES["default"] = dj_database_url.parse(DATABASE_URL, conn_max_age=600)
+    # 03-11-2026: era conn_max_age=600 sin revision. Cada worker de gunicorn
+    # (WEB_CONCURRENCY=4) dejaba su conexion a Neon abierta indefinidamente, y:
+    # 1) si Neon o la red cortaban esa conexion, la PRIMERA visita que caia en
+    #    ese worker respondia 500 (OperationalError) y la siguiente andaba: el
+    #    02-11 se vieron 3 errores 500 en 16 pedidos, uno por worker como maximo;
+    # 2) Neon no suspende el computo con una conexion abierta, asi que la base
+    #    queda encendida las 24 horas (paso en Punto Parcelas: 80 % de la cuota
+    #    del plan gratis; ahi se arreglo igual, con 0, en ce9fbfd).
+    # Con 0 cada visita abre su conexion (el pooler de Neon lo absorbe). La
+    # revision de salud queda puesta por si alguien vuelve a subir el valor.
+    DATABASES["default"] = dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=int(os.getenv("DB_CONN_MAX_AGE", "0")),
+        conn_health_checks=True,
+    )
     # SSL obligatorio solo en Postgres (Render)
     if "postgresql" in DATABASES["default"].get("ENGINE", ""):
         DATABASES["default"].setdefault("OPTIONS", {})["sslmode"] = "require"
