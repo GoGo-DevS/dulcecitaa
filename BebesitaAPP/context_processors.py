@@ -9,7 +9,7 @@ def site_config(request):
     from django.conf import settings
     from .fichas_seo import POR_MAYOR_DESDE
     from .models import Producto
-    from .temporada import es_navidad
+    from .temporada import es_navidad, oferta_navidad
 
     default_og_image = getattr(settings, "DEFAULT_OG_IMAGE", "")
     # Las fichas en el pie de TODAS las paginas. Con 12 paginas en el sitio,
@@ -36,6 +36,9 @@ def site_config(request):
         "transferencia": _transferencia(settings),
         "default_og_image_url": default_og_image_url,
         "temporada_navidad": es_navidad(),
+        # 11-11-2026: la franja de arriba anuncia la fecha limite y el pan de
+        # pascua en todo el sitio; None fuera de temporada o sin oferta cargada.
+        "oferta_navidad": oferta_navidad(),
     }
 
 

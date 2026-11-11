@@ -1,0 +1,111 @@
+/* Estetica navideña de dulcecita.cl (11-11-2026, pedido de la duena).
+
+   Solo se carga en temporada (base.html: {% if temporada_navidad %}), del 1 de
+   noviembre al 25 de diciembre; el resto del año este archivo ni se pide.
+   Todo es decoracion: nada mueve el contenido (sin saltos de diseño), nada
+   recibe clics y nada lo lee un lector de pantalla.
+
+   Paleta: el rosado y el azul de la marca + rojo, verde y dorado navideños. */
+
+:root {
+  --nav-rojo: #d6334a;
+  --nav-verde: #2e8b57;
+  --nav-dorado: #e8b33a;
+}
+
+/* ---- Franja de arriba: roja, con la fecha limite ---- */
+.dr-cabecera .dr-topbar.dr-topbar--navidad {
+  display: block;
+  background: var(--nav-rojo) !important;
+  color: #fff !important;
+  letter-spacing: .12em;
+  text-decoration: none;
+}
+.dr-cabecera .dr-topbar.dr-topbar--navidad:hover { filter: brightness(1.06); }
+.dr-topbar--navidad .dr-topbar__ir { color: #fff !important; border-color: rgba(255, 255, 255, .7) !important; }
+
+/* ---- Guirnalda de luces colgando bajo el menu ---- */
+.temporada-navidad .dr-cabecera::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -24px;
+  height: 26px;
+  pointer-events: none;
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='26' viewBox='0 0 120 26'><path d='M0 3 Q30 13 60 3 Q90 13 120 3' fill='none' stroke='%233f6b4f' stroke-width='1.6'/><rect x='8.3' y='5.3' width='3.4' height='2.6' rx='.6' fill='%238a8a8a'/><ellipse cx='10' cy='12.2' rx='3.3' ry='4.6' fill='%23d6334a'/><ellipse cx='9' cy='10.8' rx='.9' ry='1.5' fill='%23fff' opacity='.55'/><rect x='28.3' y='7.5' width='3.4' height='2.6' rx='.6' fill='%238a8a8a'/><ellipse cx='30' cy='14.4' rx='3.3' ry='4.6' fill='%23e8b33a'/><ellipse cx='29' cy='13' rx='.9' ry='1.5' fill='%23fff' opacity='.55'/><rect x='48.3' y='5.3' width='3.4' height='2.6' rx='.6' fill='%238a8a8a'/><ellipse cx='50' cy='12.2' rx='3.3' ry='4.6' fill='%232e8b57'/><ellipse cx='49' cy='10.8' rx='.9' ry='1.5' fill='%23fff' opacity='.55'/><rect x='68.3' y='5.3' width='3.4' height='2.6' rx='.6' fill='%238a8a8a'/><ellipse cx='70' cy='12.2' rx='3.3' ry='4.6' fill='%23f5a7d6'/><ellipse cx='69' cy='10.8' rx='.9' ry='1.5' fill='%23fff' opacity='.55'/><rect x='88.3' y='7.5' width='3.4' height='2.6' rx='.6' fill='%238a8a8a'/><ellipse cx='90' cy='14.4' rx='3.3' ry='4.6' fill='%23e8b33a'/><ellipse cx='89' cy='13' rx='.9' ry='1.5' fill='%23fff' opacity='.55'/><rect x='108.3' y='5.3' width='3.4' height='2.6' rx='.6' fill='%238a8a8a'/><ellipse cx='110' cy='12.2' rx='3.3' ry='4.6' fill='%23d6334a'/><ellipse cx='109' cy='10.8' rx='.9' ry='1.5' fill='%23fff' opacity='.55'/></svg>") repeat-x left top / 120px 26px;
+}
+
+/* ---- Gorro del Viejito Pascuero sobre la "d" del logo ---- */
+.temporada-navidad .dr-brand { position: relative; }
+.temporada-navidad .dr-brand::before {
+  content: "";
+  position: absolute;
+  left: -14px;
+  top: -12px;
+  width: 34px;
+  height: 34px;
+  transform: rotate(-24deg);
+  pointer-events: none;
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M13 44 C15 26 25 13 41 13 C50 13 55 18 54 25 C50 23 45 23 42 27 C39 32 41 39 51 44 Z' fill='%23d6334a'/><path d='M20 40 C22 28 29 19 38 17' fill='none' stroke='%23ef6b7f' stroke-width='2.5' stroke-linecap='round'/><circle cx='54' cy='26' r='6.5' fill='%23fff' stroke='%23f5a7d6' stroke-width='2'/><rect x='7' y='40' width='50' height='13' rx='6.5' fill='%23fff' stroke='%23f5a7d6' stroke-width='2'/></svg>") no-repeat center / contain;
+}
+.temporada-navidad .dr-cabecera.encogida .dr-brand::before { width: 28px; height: 28px; top: -10px; left: -12px; }
+
+/* ---- "Navidad" en el menu, en rojo ---- */
+.temporada-navidad .dr-nav .nav-link[href$="/navidad/"] { color: var(--nav-rojo) !important; }
+
+/* ---- Aviso de la portada: nieve de puntos y cinta roja arriba ---- */
+.temporada-navidad .box-invita__caja {
+  background-color: var(--azul);
+  background-image: radial-gradient(rgba(255, 255, 255, .16) 1.4px, transparent 1.6px);
+  background-size: 22px 22px;
+  box-shadow: inset 0 5px 0 var(--nav-rojo);
+}
+.box-invita__titulo .gorro-navidad { vertical-align: -7px; margin-right: .15rem; }
+
+/* ---- Nieve: 14 copos, lentos y pequeños ---- */
+.nieve {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1040; /* bajo los botones flotantes (1045) y la cabecera (1070) */
+}
+.nieve i {
+  position: absolute;
+  top: -14px;
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(214, 51, 74, .10), 0 1px 5px rgba(245, 167, 214, .95);
+  opacity: .9;
+  will-change: transform;
+  animation: nieve-cae 17s linear infinite;
+}
+.nieve i:nth-child(1)  { left: 4%;  animation-duration: 16s; animation-delay: -2s; }
+.nieve i:nth-child(2)  { left: 11%; width: 5px; height: 5px; animation-duration: 19s; animation-delay: -11s; }
+.nieve i:nth-child(3)  { left: 18%; width: 9px; height: 9px; animation-duration: 14s; animation-delay: -6s; }
+.nieve i:nth-child(4)  { left: 26%; animation-duration: 21s; animation-delay: -15s; }
+.nieve i:nth-child(5)  { left: 33%; width: 5px; height: 5px; animation-duration: 17s; animation-delay: -4s; }
+.nieve i:nth-child(6)  { left: 41%; width: 8px; height: 8px; animation-duration: 15s; animation-delay: -9s; }
+.nieve i:nth-child(7)  { left: 49%; animation-duration: 20s; animation-delay: -1s; }
+.nieve i:nth-child(8)  { left: 57%; width: 6px; height: 6px; animation-duration: 18s; animation-delay: -13s; }
+.nieve i:nth-child(9)  { left: 64%; width: 9px; height: 9px; animation-duration: 16s; animation-delay: -7s; }
+.nieve i:nth-child(10) { left: 72%; width: 5px; height: 5px; animation-duration: 22s; animation-delay: -17s; }
+.nieve i:nth-child(11) { left: 79%; animation-duration: 15s; animation-delay: -3s; }
+.nieve i:nth-child(12) { left: 86%; width: 8px; height: 8px; animation-duration: 19s; animation-delay: -10s; }
+.nieve i:nth-child(13) { left: 92%; width: 6px; height: 6px; animation-duration: 17s; animation-delay: -14s; }
+.nieve i:nth-child(14) { left: 97%; width: 5px; height: 5px; animation-duration: 21s; animation-delay: -5s; }
+
+@keyframes nieve-cae {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(36px, calc(100vh + 30px), 0); }
+}
+
+/* Con "reducir movimiento" no hay nieve: el resto (franja, guirnalda, gorro)
+   es estatico y se queda. */
+@media (prefers-reduced-motion: reduce) {
+  .nieve { display: none; }
+}

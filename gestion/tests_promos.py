@@ -231,7 +231,11 @@ class AvisoEnElSitioTests(TestCase):
         self.assertIn("10% en todo por el Dia del Profesor", html)
 
     def test_sin_promocion_vuelve_la_franja_de_siempre(self):
-        html = self.client.get("/").content.decode()
+        # Fuera de temporada: del 1-11 al 25-12 la franja sin promocion es la de
+        # Navidad (11-11-2026, BebesitaAPP/tests_navidad_1111.py).
+        from unittest import mock
+        with mock.patch("BebesitaAPP.temporada.es_navidad", return_value=False):
+            html = self.client.get("/").content.decode()
         self.assertNotIn("dr-topbar--promo", html)
         self.assertIn("Compra aquí", html)
 

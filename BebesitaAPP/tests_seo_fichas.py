@@ -275,9 +275,13 @@ class Tanda1SeoTests(TestCase):
         html = self.client.get("/corporativo/").content.decode()
         self.assertIn("<h2>Regalos de fin de año para tu equipo y tus clientes</h2>", html)
         self.assertIn("regalos de fin de año", _meta(html))
-        # La fecha limite de pedidos la decide la duena: el sitio no la inventa.
+        # La fecha limite de pedidos CORPORATIVOS la decide la duena: el sitio no
+        # la inventa. Se mira el contenido de la pagina, no la franja de arriba:
+        # desde el 11-11-2026 en temporada la franja anuncia la fecha limite de
+        # Navidad que la duena SI confirmo (temporada.OFERTAS_NAVIDAD).
+        cuerpo = html.split('<main class="site-main">', 1)[1].split("<footer", 1)[0]
         for invento in ("hasta el", "último día", "fecha límite"):
-            self.assertNotIn(invento, html.split("<footer", 1)[0])
+            self.assertNotIn(invento, cuerpo)
 
     def test_el_box_enlaza_a_los_productos_que_lo_arman_y_no_a_la_torta(self):
         html = self.client.get("/arma-tu-box/").content.decode().split("<footer", 1)[0]

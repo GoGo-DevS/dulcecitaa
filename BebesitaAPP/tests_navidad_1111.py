@@ -150,3 +150,64 @@ class GorroNavidadTests(_Catalogo):
         html = self._html(datetime.date(2027, 1, 10))
         self.assertNotIn("gorro-navidad", html)
         self.assertNotIn("eyebrow--navidad", html)
+
+
+@override_settings(BRAND_NAME="Dulcecita", SITE_URL="https://dulcecita.cl")
+class EsteticaNavidenaTests(_Catalogo):
+    """Pedido de la duena (11-11): todo el sitio con estetica navideña en temporada."""
+
+    def _get(self, ruta, dia):
+        with mock.patch("BebesitaAPP.temporada.timezone.localdate", return_value=dia):
+            return self.client.get(ruta).content.decode()
+
+    def test_en_temporada_todo_el_sitio_se_adorna(self):
+        for ruta in ("/", "/productos/", "/arma-tu-box/", "/contacto/", "/navidad/"):
+            html = self._get(ruta, datetime.date(2026, 11, 11))
+            self.assertIn("temporada-navidad", html.split("<body", 1)[1][:200], ruta)
+            self.assertIn("css/navidad.css", html, ruta)
+            self.assertIn('<div class="nieve" aria-hidden="true">', html, ruta)
+
+    def test_la_franja_anuncia_la_fecha_limite_y_el_pan(self):
+        html = self._get("/", datetime.date(2026, 11, 11))
+        franja = html.split('class="dr-topbar dr-topbar--navidad"', 1)[1].split("</a>", 1)[0]
+        self.assertIn("Navidad: pedidos hasta el 20 de diciembre · Pan de pascua desde el 20 de noviembre", franja)
+        self.assertTrue(franja.startswith(' href="/navidad/">'), franja[:40])
+        self.assertNotIn("Compra aquí · Entrega coordinada por WhatsApp", html)
+
+    def test_despues_del_20_la_franja_dice_que_cerraron(self):
+        html = self._get("/", datetime.date(2026, 12, 22))
+        self.assertIn("Navidad: los pedidos cerraron el 20 de diciembre", html)
+        self.assertNotIn("pedidos hasta el 20 de diciembre", html)
+
+    def test_la_portada_nombra_box_navideno_y_pan(self):
+        html = self._get("/", datetime.date(2026, 11, 11))
+        aviso = html.split('class="box-invita__caja"', 1)[1].split("</section>", 1)[0]
+        self.assertIn("Box navideño con cinta y tarjeta, pan de pascua artesanal", aviso)
+        self.assertIn("Pedidos hasta el 20 de diciembre.", aviso)
+        self.assertIn('class="gorro-navidad"', aviso)
+
+    def test_la_promocion_sigue_teniendo_prioridad_en_la_franja(self):
+        from .models import Promocion
+        dia = datetime.date(2026, 11, 11)
+        Promocion.objects.create(nombre="Cyber", porcentaje=10, desde=dia,
+                                 hasta=dia + datetime.timedelta(days=3), etiqueta="Cyber")
+        html = self._get("/", dia)
+        self.assertIn("dr-topbar--promo", html)
+        self.assertNotIn("dr-topbar--navidad", html)
+        # Una sola franja: la de la promocion (dr-topbar__ir es el boton de adentro).
+        self.assertEqual(len(re.findall(r'class="dr-topbar(?: [^"]*)?"', html)), 1)
+
+    def test_fuera_de_temporada_no_queda_nada(self):
+        for dia in (datetime.date(2026, 12, 26), datetime.date(2027, 1, 10)):
+            html = self._get("/", dia)
+            for rastro in ("temporada-navidad", "navidad.css", 'class="nieve"', "dr-topbar--navidad",
+                           "gorro-navidad", "pan de pascua"):
+                self.assertNotIn(rastro, html, f"{dia}: {rastro}")
+            self.assertIn("Compra aquí · Entrega coordinada por WhatsApp", html)
+
+    def test_la_nieve_respeta_reducir_movimiento(self):
+        from pathlib import Path
+        css = (Path(__file__).parent / "static" / "css" / "navidad.css").read_text(encoding="utf-8")
+        bloque = css.split("@media (prefers-reduced-motion: reduce)", 1)[1].split("}", 2)
+        self.assertIn(".nieve { display: none; }", bloque[0] + "}")
+        self.assertIn("pointer-events: none", css.split(".nieve {", 1)[1].split("}", 1)[0])
