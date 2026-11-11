@@ -40,7 +40,7 @@
       </div>
 
       <h2>Un box de dulces para regalar</h2>
-      <p>En <a href="{% url 'arma_tu_box' %}">Arma tu box</a> eliges cuántos quieres de cada dulce, desde {{ minimo_box }} por producto, y con qué cobertura. Va en caja, listo para entregar, y el empaque cuesta ${{ precio_caja|pesos }}.</p>
+      <p>En <a href="{% url 'arma_tu_box' %}">Arma tu box</a> eliges cuántos quieres de cada dulce, desde {{ minimo_box }} por producto, y con qué cobertura. Va en caja, listo para entregar, y el empaque cuesta ${{ precio_caja|pesos }}.{% if minimo_box_total %} El box parte en ${{ minimo_box_total|pesos }}, con el empaque incluido.{% endif %}</p>
       {% if ejemplo_total %}
       <p>Por ejemplo, un box con {% for f in ejemplo_box %}{{ f.cantidad }} {% if f.producto.unidades_por_pack > 1 %}bolsitas de {{ f.producto.unidades_por_pack }} {% endif %}{{ f.producto|ancla|lower }}{% if forloop.revcounter0 == 1 %} y {% elif not forloop.last %}, {% endif %}{% endfor %} cuesta ${{ ejemplo_total|pesos }} con el empaque{% if promocion_vigente %}, con el descuento de {{ promocion_vigente.etiqueta }} ya aplicado{% endif %}.</p>
       {% endif %}

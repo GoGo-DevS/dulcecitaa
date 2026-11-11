@@ -356,6 +356,7 @@ def mostrar_carrito(request):
     return render(request, "carrito.html", {
         "productos": productos, "boxes": boxes, "total": total,
         "minimo_box": arma_box.minimo_box(),
+        "minimo_box_total": arma_box.minimo_total(),
     })
 
 
@@ -363,6 +364,15 @@ def checkout(request):
     cart = _get_cart(request)
     boxes = arma_box.build_boxes(arma_box.get_boxes(request))
     if not cart and not boxes:
+        return redirect("carrito")
+    # Minimo del box (11-11-2026): en el carrito se puede bajar de a uno, asi
+    # que un box puede llegar aca bajo el minimo. No se cobra: vuelve al carrito.
+    bajo_minimo = [caja for caja in boxes if caja["falta"]]
+    if bajo_minimo:
+        for caja in bajo_minimo:
+            messages.error(request, f"Tu box #{caja['numero']} debe sumar al menos "
+                                    f"${fichas_seo._pesos(arma_box.minimo_total())}: "
+                                    f"te faltan ${fichas_seo._pesos(caja['falta'])}.")
         return redirect("carrito")
 
     productos, subtotal = _build_cart_items(cart)
@@ -645,8 +655,14 @@ def navidad(request):
         primera_fila.setdefault(fila["producto"].pk, fila)
     filas = list(primera_fila.values())
     box_desde = (min(f["precio"] for f in todas) * minimo + caja) if todas else None
+    if box_desde is not None:
+        # Desde el 11-11-2026 el box tiene un total minimo (pedido de la duena).
+        box_desde = max(box_desde, arma_box.minimo_total())
     ejemplo = [{**f, "cantidad": minimo} for f in filas[:3]]
     ejemplo_total = sum(f["precio"] * minimo for f in ejemplo) + caja if len(ejemplo) >= 2 else None
+    if ejemplo_total is not None and ejemplo_total < arma_box.minimo_total():
+        # Un ejemplo bajo el minimo seria un box que no se puede comprar.
+        ejemplo_total = None
 
     for p in para_detalle:
         p.unidad_venta = fichas_seo.unidad_de_venta(p)
@@ -705,6 +721,7 @@ def navidad(request):
         "minimo_box": minimo,
         "precio_caja": caja,
         "box_desde": box_desde,
+        "minimo_box_total": arma_box.minimo_total(),
         "ejemplo_box": ejemplo,
         "ejemplo_total": ejemplo_total,
         "preguntas": preguntas,
@@ -743,6 +760,10 @@ def arma_tu_box(request):
                 messages.error(request, error)
         elif not caja:
             messages.error(request, "Elige al menos un producto para tu box.")
+        elif (falta := arma_box.falta_para_minimo(arma_box.build_boxes([caja])[0]["total"])):
+            # El mismo total que cobrara el carrito (promocion + empaque).
+            messages.error(request, f"El box parte en ${fichas_seo._pesos(arma_box.minimo_total())}: "
+                                    f"te faltan ${fichas_seo._pesos(falta)}. Suma más dulces.")
         else:
             boxes = arma_box.get_boxes(request)
             boxes.append(caja)
@@ -753,6 +774,7 @@ def arma_tu_box(request):
     return render(request, "arma_tu_box.html", {
         "filas": filas,
         "minimo_box": minimo,
+        "minimo_box_total": arma_box.minimo_total(),
         "precio_caja": arma_box.precio_caja(),
         "schema_migas": seo.schema_migas(("Arma tu box", reverse("arma_tu_box"))),
     })
@@ -771,6 +793,7 @@ def _respuesta_box(request, indice, linea):
         "qty": qty,
         "item_subtotal": float(_subtotal_de(caja["items"], linea)) if caja else 0,
         "box_total": float(caja["total"]) if caja else 0,
+        "box_falta": float(caja["falta"]) if caja else 0,
         "recargar": not caja or not qty,
         "total": float(total),
         "cart_count": sum(cart.values()) + arma_box.unidades(boxes),

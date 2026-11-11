@@ -270,6 +270,10 @@ SHIPPING_COST = int(os.getenv("SHIPPING_COST", "2500"))
 BOX_PRICE = int(os.getenv("BOX_PRICE", "1490"))
 # Minimo por linea dentro de "Arma tu box" (en el pedido normal es MINIMO_UNIDADES)
 MINIMO_BOX = max(1, int(os.getenv("MINIMO_BOX", "3")))
+# Total minimo de cada "Arma tu box", dulces + empaque (11-11-2026, Tamara: "el
+# box desde 10mil hacia arriba, no me conviene que me pidan 3 barquillos en una
+# caja"). 0 = sin minimo.
+BOX_MINIMO_TOTAL = max(0, int(os.getenv("BOX_MINIMO_TOTAL", "10000")))
 PICKUP_POINT_LABEL = os.getenv("PICKUP_POINT_LABEL", "Retiro coordinado por WhatsApp")
 
 # Horas entre que se confirma el pago y sale el pedido (todo se hace a mano).

@@ -163,6 +163,14 @@
     if (sub) sub.textContent = fmt.format(data.item_subtotal || 0);
     const totalBox = document.querySelector(`[data-box-total="${box}"]`);
     if (totalBox) totalBox.textContent = fmt.format(data.box_total || 0);
+    // Minimo del box (11-11-2026): el aviso aparece o se va al cruzar el minimo.
+    const aviso = document.querySelector(`[data-box-falta="${box}"]`);
+    if (aviso) {
+      const falta = data.box_falta || 0;
+      aviso.hidden = falta <= 0;
+      const monto = aviso.querySelector('[data-box-falta-monto]');
+      if (monto) monto.textContent = fmt.format(falta);
+    }
     setCartTotal(data.total);
   }
 

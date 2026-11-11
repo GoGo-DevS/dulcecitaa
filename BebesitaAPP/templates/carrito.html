@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load fotos %}
+{% load fotos plata %}
 {% block robots %}noindex, follow{% endblock %}
 {% block body_class %}sin-fab{% endblock %}
 {% block title %}Carrito | {{ site_brand }}{% endblock %}
@@ -108,6 +108,9 @@
           <span>Empaque del box</span><strong>${{ caja.caja }}</strong>
           <span>Total del box</span><strong class="cart-box__total" data-box-total="{{ caja.indice }}">${{ caja.total }}</strong>
         </footer>
+        {% if minimo_box_total %}
+        <p class="cart-box__falta field-error" data-box-falta="{{ caja.indice }}"{% if not caja.falta %} hidden{% endif %}>El box parte en ${{ minimo_box_total|pesos }}: te faltan <b data-box-falta-monto>${{ caja.falta|pesos }}</b>. Suma dulces para poder pagarlo.</p>
+        {% endif %}
       </section>
       {% endfor %}
 

@@ -198,7 +198,7 @@ class SchemaMinimoTests(_Catalogo):
 
 # --- 3. /navidad/ --------------------------------------------------------------
 
-@override_settings(MINIMO_UNIDADES=10, MINIMO_BOX=3, BOX_PRICE=1490, DESPACHO_HORAS=48,
+@override_settings(MINIMO_UNIDADES=10, MINIMO_BOX=3, BOX_PRICE=1490, DESPACHO_HORAS=48, BOX_MINIMO_TOTAL=0,
                    BRAND_NAME="Dulcecita", SITE_URL="https://dulcecita.cl",
                    WHATSAPP_URL="https://wa.me/56900000000")
 class NavidadTests(_Catalogo):
@@ -365,7 +365,9 @@ class BoxConPuntoDeMilesTests(_Catalogo):
         self.assertIn(".replace(/\\B(?=(\\d{3})+(?!\\d))/g, '.')", html)
 
 
-@override_settings(MINIMO_BOX=3, BOX_PRICE=1490, BRAND_NAME="Dulcecita")
+# BOX_MINIMO_TOTAL=0: estas pruebas fijan el calculo del box mas simple; el
+# minimo de $10.000 (11-11-2026) se prueba en tests_box_minimo.py.
+@override_settings(MINIMO_BOX=3, BOX_PRICE=1490, BOX_MINIMO_TOTAL=0, BRAND_NAME="Dulcecita")
 class NavidadBoxDesdeTests(_Catalogo):
     def test_el_box_mas_simple_usa_la_fila_mas_barata_aunque_no_sea_la_primera_cobertura(self):
         # Rellenos fuera: el mas barato pasa a ser el barquillo de chocolate BLANCO.

@@ -17,7 +17,7 @@
   <div class="section-head mb-4">
     <p class="eyebrow">Arma tu box</p>
     <h1>Box de dulces para regalar, a tu gusto</h1>
-    <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. El empaque del box cuesta ${{ precio_caja|pesos }}.</p>
+    <p class="sutil-minimo">Desde {{ minimo_box }} unidades por producto. El empaque del box cuesta ${{ precio_caja|pesos }}.{% if minimo_box_total %} El box parte en ${{ minimo_box_total|pesos }}, con el empaque incluido.{% endif %}</p>
     <p class="box-cabeza__texto">Elige cuántos quieres de cada uno y con qué cobertura. Sirve para un cumpleaños, un aniversario, <a href="{% url 'navidad' %}">Navidad</a> o un simple gracias: va en caja, listo para entregar.</p>
     {% regroup filas by producto as por_producto %}
     {% if por_producto %}
@@ -34,7 +34,7 @@
     vez al carrito. Los botones solo mueven el numero; el servidor vuelve a
     validar el minimo y que cada cobertura exista para ese producto.
   {% endcomment %}
-  <form method="post" class="box-layout" data-box-form data-minimo="{{ minimo_box }}" data-caja="{{ precio_caja }}">
+  <form method="post" class="box-layout" data-box-form data-minimo="{{ minimo_box }}" data-caja="{{ precio_caja }}" data-minimo-total="{{ minimo_box_total }}">
     {% csrf_token %}
     <div class="box-lista">
       {% regroup filas by producto as por_producto %}
@@ -71,6 +71,7 @@
         <li><span>Empaque del box</span><strong>${{ precio_caja|pesos }}</strong></li>
       </ul>
       <p class="cart-summary-total" data-box-total>${{ precio_caja|pesos }}</p>
+      <p class="field-error box-resumen__falta" data-box-falta hidden></p>
       <button type="submit" class="btn-main w-100" data-box-enviar disabled>Agregar box al carrito</button>
       <p class="cart-summary-note">Al primer + se suman {{ minimo_box }}, que es el mínimo por producto. Con − bajas de a uno.</p>
     </aside>
@@ -83,6 +84,9 @@
     if (!form) return;
     var MIN = parseInt(form.dataset.minimo, 10) || 1;
     var CAJA = parseInt(form.dataset.caja, 10) || 0;
+    // Total minimo del box, dulces + empaque (11-11-2026, pedido de la duena).
+    // El servidor lo vuelve a revisar: esto solo avisa antes de enviar.
+    var MIN_TOTAL = parseInt(form.dataset.minimoTotal, 10) || 0;
     // Mismo formato que el servidor (filtro pesos): punto de miles.
     var fmt = function (n) { return '$' + String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, '.'); };
 
@@ -97,7 +101,12 @@
       form.querySelector('[data-box-unidades]').textContent = unidades;
       form.querySelector('[data-box-subtotal]').textContent = fmt(subtotal);
       form.querySelector('[data-box-total]').textContent = fmt(subtotal + CAJA);
-      form.querySelector('[data-box-enviar]').disabled = unidades === 0;
+      var total = subtotal + CAJA;
+      var falta = unidades > 0 ? Math.max(0, MIN_TOTAL - total) : 0;
+      var aviso = form.querySelector('[data-box-falta]');
+      aviso.hidden = falta <= 0;
+      if (falta > 0) aviso.textContent = 'El box parte en ' + fmt(MIN_TOTAL) + ': te faltan ' + fmt(falta) + '.';
+      form.querySelector('[data-box-enviar]').disabled = unidades === 0 || falta > 0;
     }
 
     // Mismo trato que el carrito: de 0 se salta al minimo y bajo el minimo

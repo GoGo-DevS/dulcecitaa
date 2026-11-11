@@ -26,6 +26,22 @@ def precio_caja():
     return int(getattr(settings, "BOX_PRICE", 0))
 
 
+def minimo_total():
+    """Lo minimo que puede costar un box, dulces + empaque (0 = sin minimo).
+
+    11-11-2026, pedido de la duena: "el box desde 10mil hacia arriba, no me
+    conviene que me pidan 3 barquillos en una caja". Se compara con el TOTAL que
+    paga el cliente (con la promocion vigente ya aplicada y el empaque sumado),
+    el mismo numero que ve en pantalla y en el carrito.
+    """
+    return max(0, int(getattr(settings, "BOX_MINIMO_TOTAL", 0)))
+
+
+def falta_para_minimo(total):
+    """Cuanto le falta a un box para llegar al minimo (0 si ya llega)."""
+    return max(0, minimo_total() - int(total))
+
+
 def filas_para_armar():
     """Una fila por cada combinacion vendible: "Alfajores · Chocolate blanco".
 
@@ -86,6 +102,7 @@ def build_boxes(boxes):
         items, subtotal = _build_cart_items(caja)
         if not items:
             continue
+        total = subtotal + precio_caja()
         resultado.append({
             "indice": indice,
             "numero": indice + 1,
@@ -93,7 +110,10 @@ def build_boxes(boxes):
             "unidades": sum(item["cantidad"] for item in items),
             "subtotal": subtotal,
             "caja": precio_caja(),
-            "total": subtotal + precio_caja(),
+            "total": total,
+            # En el carrito se puede bajar de a uno: un box que llego al minimo
+            # puede quedar bajo el. El checkout no deja pagarlo asi.
+            "falta": falta_para_minimo(total),
         })
     return resultado
 
