@@ -2,7 +2,7 @@
 
 - Box navideño a pedido: cinta y tarjeta, sin eleccion de color, mismo precio
   de empaque que el Arma tu box.
-- Pan de pascua: medio kilo, $8.500, desde el 20 de noviembre, por WhatsApp.
+- Pan de pascua: medio kilo, $8.590, desde el 20 de noviembre, por WhatsApp.
 - Pedidos de Navidad hasta el 20 de diciembre.
 
 Todo sale de temporada.OFERTAS_NAVIDAD y se apaga solo despues del 25 de
@@ -35,14 +35,14 @@ class NavidadOferta2026Tests(_Catalogo):
         self.assertEqual(_title(html), "Regalos de Navidad, box navideño y pan de pascua | Dulcecita")
         self.assertLessEqual(len(_title(html)), 60)
         self.assertLessEqual(len(_meta(html)), 155)
-        self.assertIn("pan de pascua artesanal de medio kilo a $8.500", _meta(html))
+        self.assertIn("pan de pascua artesanal de medio kilo a $8.590", _meta(html))
         self.assertIn("Pedidos hasta el 20 de diciembre.", _meta(html))
         self.assertIn("<h1>Regalos de Navidad: box navideño, pan de pascua y dulces artesanales</h1>", html)
 
     def test_pan_de_pascua_con_lo_que_dijo_la_duena(self):
         cuerpo = _cuerpo(self._html())
         self.assertIn("<h2>Pan de pascua artesanal</h2>", cuerpo)
-        self.assertIn("en formato de medio kilo, a $8.500. Lo vendemos desde el 20 de noviembre.", cuerpo)
+        self.assertIn("en formato de medio kilo, a $8.590. Lo vendemos desde el 20 de noviembre.", cuerpo)
         self.assertIn("https://wa.me/56900000000?text=Hola+Dulcecita%2C+quiero+encargar+pan+de+pascua.", cuerpo)
 
     def test_box_navideno_al_precio_del_empaque_de_la_base(self):
@@ -61,7 +61,7 @@ class NavidadOferta2026Tests(_Catalogo):
                          "pan_de_pascua": {**temporada.OFERTAS_NAVIDAD[2026]["pan_de_pascua"], "precio": 9200}}}
         with mock.patch.dict(temporada.OFERTAS_NAVIDAD, oferta):
             html = self._html()
-        self.assertNotIn("8.500", html)
+        self.assertNotIn("8.590", html)
         self.assertIn("a $9.200", _cuerpo(html))
         self.assertIn("a $9.200", _faq(html)["¿Tienen pan de pascua?"])
 
@@ -75,7 +75,7 @@ class NavidadOferta2026Tests(_Catalogo):
         faq = _faq(html)
         self.assertEqual(len(faq), 5)
         self.assertEqual(faq["¿Tienen pan de pascua?"],
-                         "Sí, pan de pascua artesanal en formato de medio kilo, a $8.500. "
+                         "Sí, pan de pascua artesanal en formato de medio kilo, a $8.590. "
                          "Lo vendemos desde el 20 de noviembre. Se encarga por WhatsApp.")
         self.assertEqual(faq["¿Hasta cuándo puedo pedir para Navidad?"],
                          "Recibimos pedidos de Navidad hasta el 20 de diciembre. "
@@ -99,7 +99,7 @@ class NavidadOferta2026Tests(_Catalogo):
     def test_despues_del_25_vuelve_la_pagina_generica_sin_precios_viejos(self):
         for dia in (datetime.date(2026, 12, 26), datetime.date(2027, 3, 1), datetime.date(2027, 11, 5)):
             html = self._html(dia)
-            for viejo in ("pan de pascua", "8.500", "box navideño", "20 de diciembre", "cinta y tarjeta"):
+            for viejo in ("pan de pascua", "8.590", "box navideño", "20 de diciembre", "cinta y tarjeta"):
                 self.assertNotIn(viejo, html, f"{dia}: {viejo}")
             self.assertEqual(_title(html), "Regalos de Navidad: box de dulces artesanales | Dulcecita")
             self.assertEqual(len(_faq(html)), 3)
@@ -182,7 +182,9 @@ class EsteticaNavidenaTests(_Catalogo):
     def test_la_portada_nombra_box_navideno_y_pan(self):
         html = self._get("/", datetime.date(2026, 11, 11))
         aviso = html.split('class="box-invita__caja"', 1)[1].split("</section>", 1)[0]
-        self.assertIn("Box navideño con cinta y tarjeta, pan de pascua artesanal", aviso)
+        self.assertIn("Box navideño con cinta y tarjeta y pan de pascua artesanal.", aviso)
+        # Pedidos de Tamara (11-11): "mucho texto" y "para curso no, los niños ya salen".
+        self.assertNotIn("curso", aviso)
         self.assertIn("Pedidos hasta el 20 de diciembre.", aviso)
         self.assertIn('class="gorro-navidad"', aviso)
 

@@ -63,7 +63,7 @@
 
       {% if para_detalle %}
       <h2>Un detalle para cada persona</h2>
-      <p>Para el curso, los compañeros de trabajo o los profesores. Todo va envuelto por unidad, y los cuchuflís vienen en bolsita de 4. Se piden desde {{ minimo_unidades }} por producto y, por mayor, desde {{ por_mayor_desde }} unidades al mismo precio.</p>
+      <p>Para los compañeros de trabajo, la familia o los amigos. Todo va envuelto por unidad, y los cuchuflís vienen en bolsita de 4. Se piden desde {{ minimo_unidades }} por producto y, por mayor, desde {{ por_mayor_desde }} unidades al mismo precio.</p>
       <ul class="check-list">
         {% for p in para_detalle %}<li><a href="{{ p.get_absolute_url }}">{{ p|ancla }}</a>: ${{ p.precio_desde|pesos }} {{ p.unidad_venta }}</li>
         {% endfor %}

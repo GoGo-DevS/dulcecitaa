@@ -8,7 +8,7 @@ tiene que acordarse de sacarlos en enero.
 
 11-11-2026: la oferta de CADA Navidad (lo que la duena confirmo para ese año)
 vive aca, en un solo lugar, y se apaga sola despues del 25 de diciembre. Asi el
-pan de pascua de $8.500 no sigue publicado en 2027 con el precio viejo: un año
+pan de pascua de $8.590 no sigue publicado en 2027 con el precio viejo: un año
 sin entrada en OFERTAS_NAVIDAD muestra la pagina generica.
 """
 import datetime
@@ -22,7 +22,9 @@ MESES = ("enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto
 # el 03-11:
 #   - box navideño: SI, a pedido, igual que el Arma tu box (box + empaque), con
 #     cinta y tarjeta navideña y sin eleccion de color.
-#   - pan de pascua: solo medio kilo, $8.500, desde el 20 de noviembre.
+#   - pan de pascua: solo medio kilo, $8.590, desde el 20 de noviembre. (El audio
+#     se transcribio "8.500"; Tamara lo corrigio por WhatsApp el 11-11 a las 16:19:
+#     "el precio del pan de pascua pone 8.590".)
 #   - pedidos de Navidad: hasta el 20 (de diciembre: se le pregunto por entregar
 #     antes del 24, y el pan recien parte el 20 de noviembre).
 # Lo que NO dijo (no se publica): cupos, precio por cantidad del pan, despacho
@@ -32,7 +34,7 @@ OFERTAS_NAVIDAD = {
         "pedidos_hasta": datetime.date(2026, 12, 20),
         "pan_de_pascua": {
             "formato": "medio kilo",
-            "precio": 8500,
+            "precio": 8590,
             "desde": datetime.date(2026, 11, 20),
         },
     },
