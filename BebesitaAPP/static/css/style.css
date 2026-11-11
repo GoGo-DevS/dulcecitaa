@@ -3253,3 +3253,9 @@ a.dr-topbar--promo:hover { filter: brightness(1.05); }
   .corp-intro--texto-primero .corp-foto { order: 0; }
   .corp-intro--texto-primero .corp-foto--doble img { max-height: 420px; }
 }
+
+/* 11-11-2026: gorro del Viejito Pascuero junto al "Navidad" de /navidad/, solo
+   en temporada (pedido de la duena). */
+.eyebrow--navidad { display: inline-flex; align-items: center; gap: .5em; }
+.eyebrow--navidad .gorro-navidad { flex: none; margin-top: -.2em; }
+.section-head-center .eyebrow--navidad { justify-content: center; }

@@ -202,8 +202,16 @@ class SchemaMinimoTests(_Catalogo):
                    BRAND_NAME="Dulcecita", SITE_URL="https://dulcecita.cl",
                    WHATSAPP_URL="https://wa.me/56900000000")
 class NavidadTests(_Catalogo):
+    """La pagina GENERICA: un año sin oferta confirmada por la duena.
+
+    Desde el 11-11-2026 la oferta de cada Navidad (temporada.OFERTAS_NAVIDAD) se
+    prueba en tests_navidad_1111.py; aca se fija un dia de un año sin oferta para
+    que estas pruebas no dependan de la fecha en que se corran.
+    """
+
     def _html(self):
-        respuesta = self.client.get("/navidad/")
+        with mock.patch("BebesitaAPP.temporada._hoy", return_value=datetime.date(2027, 11, 5)):
+            respuesta = self.client.get("/navidad/")
         self.assertEqual(respuesta.status_code, 200)
         return respuesta.content.decode()
 

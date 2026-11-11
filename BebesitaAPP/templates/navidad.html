@@ -13,10 +13,15 @@
   (respuestas de la duena del 16 y 19-10). NO hay box navideño con precio,
   empaque navideño, fecha limite ni cupos: eso lo decide la duena y quedo
   preguntado. Cuando responda, se completa ESTA misma pagina.
+
+  11-11-2026: respondio. Box navideño a pedido (cinta, tarjeta, sin eleccion de
+  color, mismo precio de empaque), pan de pascua y pedidos hasta el 20 de
+  diciembre. Todo eso sale de `oferta_navidad` (temporada.py) y desaparece solo
+  despues del 25 de diciembre: sin oferta cargada, la pagina es la generica.
 {% endcomment %}
-{% block title %}Regalos de Navidad: box de dulces artesanales | {{ site_brand }}{% endblock %}
-{% block meta_description %}Regalos de Navidad hechos a mano en Santiago: arma tu box de alfajores, barquillos y cuchuflís, detalles por cantidad y torta de cuchuflís.{% endblock %}
-{% block og_title %}Regalos de Navidad: box de dulces artesanales | {{ site_brand }}{% endblock %}
+{% block title %}{% if oferta_navidad %}Regalos de Navidad, box navideño y pan de pascua{% else %}Regalos de Navidad: box de dulces artesanales{% endif %} | {{ site_brand }}{% endblock %}
+{% block meta_description %}{% if oferta_navidad %}Box navideño con cinta y tarjeta, pan de pascua artesanal de {{ oferta_navidad.pan.formato }} a ${{ oferta_navidad.pan.precio|pesos }} y dulces hechos a mano en Santiago.{% if not oferta_navidad.cerrado %} Pedidos hasta el {{ oferta_navidad.pedidos_hasta_texto }}.{% endif %}{% else %}Regalos de Navidad hechos a mano en Santiago: arma tu box de alfajores, barquillos y cuchuflís, detalles por cantidad y torta de cuchuflís.{% endif %}{% endblock %}
+{% block og_title %}{% if oferta_navidad %}Regalos de Navidad, box navideño y pan de pascua{% else %}Regalos de Navidad: box de dulces artesanales{% endif %} | {{ site_brand }}{% endblock %}
 {% block og_description %}Arma tu box de alfajores, barquillos y cuchuflís para regalar en Navidad, con los precios a la vista. Despacho a todo Chile.{% endblock %}
 {% block twitter_description %}Arma tu box de alfajores, barquillos y cuchuflís para regalar en Navidad, con los precios a la vista.{% endblock %}
 {% block schema %}<script type="application/ld+json">{{ schema }}</script>{% endblock %}
@@ -26,8 +31,8 @@
 <section class="container corp-seccion">
   <div class="corp-intro corp-intro--texto-primero">
     <div class="corp-texto" data-reveal-item>
-      <p class="eyebrow">Navidad</p>
-      <h1>Regalos de Navidad: box de dulces, detalles y tortas</h1>
+      <p class="eyebrow{% if temporada_navidad %} eyebrow--navidad{% endif %}">{% if temporada_navidad %}{% include '_gorro_navidad.html' with tam=34 %}{% endif %}Navidad</p>
+      <h1>{% if oferta_navidad %}Regalos de Navidad: box navideño, pan de pascua y dulces artesanales{% else %}Regalos de Navidad: box de dulces, detalles y tortas{% endif %}</h1>
       <p>Alfajores, barquillos y cuchuflís hechos a mano en Santiago para regalar esta Navidad. Aquí están los dulces que ya vendemos, con sus precios: eliges, pagas por transferencia y coordinamos la entrega.</p>
       <div class="hero-actions">
         <a href="{% url 'arma_tu_box' %}" class="btn-main">Arma tu box</a>
@@ -39,7 +44,22 @@
       {% if ejemplo_total %}
       <p>Por ejemplo, un box con {% for f in ejemplo_box %}{{ f.cantidad }} {% if f.producto.unidades_por_pack > 1 %}bolsitas de {{ f.producto.unidades_por_pack }} {% endif %}{{ f.producto|ancla|lower }}{% if forloop.revcounter0 == 1 %} y {% elif not forloop.last %}, {% endif %}{% endfor %} cuesta ${{ ejemplo_total|pesos }} con el empaque{% if promocion_vigente %}, con el descuento de {{ promocion_vigente.etiqueta }} ya aplicado{% endif %}.</p>
       {% endif %}
+      {% if oferta_navidad %}
+      <p><b>Box navideño:</b> en Navidad tu box puede ir en empaque navideño con cinta y tarjeta, por los mismos ${{ precio_caja|pesos }} del empaque. Viene en un solo diseño, así que no se elige color. Al hacer el pedido, cuéntanos en «¿Para qué ocasión es?» que lo quieres navideño, o escríbenos por WhatsApp.</p>
+      {% endif %}
       <p>¿Buscas un surtido distinto? También armamos box a pedido: el surtido, la cantidad y la presentación se definen contigo, como el box dieciochero que hicimos para Fiestas Patrias.</p>
+
+      {% if oferta_navidad %}
+      <h2>Pan de pascua artesanal</h2>
+      <p>Esta Navidad también hacemos pan de pascua artesanal, en formato de {{ oferta_navidad.pan.formato }}, a ${{ oferta_navidad.pan.precio|pesos }}. Lo vendemos desde el {{ oferta_navidad.pan.desde_texto }}.</p>
+      {% if oferta_navidad.cerrado %}
+      <p>Los pedidos de Navidad cerraron el {{ oferta_navidad.pedidos_hasta_texto }}.</p>
+      {% elif whatsapp_pan %}
+      <div class="hero-actions">
+        <a href="{{ whatsapp_pan }}" class="btn-ghost" target="_blank" rel="noopener">Encargar pan de pascua por WhatsApp</a>
+      </div>
+      {% endif %}
+      {% endif %}
 
       {% if para_detalle %}
       <h2>Un detalle para cada persona</h2>
@@ -62,9 +82,10 @@
 
       <h2>Cuándo pedir y cómo llega</h2>
       <ul class="check-list">
-        <li><b>Sale {{ despacho_horas }} horas después del pago.</b> Todo se hace a mano.</li>
+        {% if oferta_navidad %}{% if oferta_navidad.cerrado %}<li><b>Los pedidos de Navidad cerraron el {{ oferta_navidad.pedidos_hasta_texto }}.</b></li>{% else %}<li><b>Recibimos pedidos de Navidad hasta el {{ oferta_navidad.pedidos_hasta_texto }}.</b></li>{% endif %}
+        {% endif %}<li><b>Sale {{ despacho_horas }} horas después del pago.</b> Todo se hace a mano.</li>
         <li><b>En Santiago</b> coordinamos la entrega por WhatsApp; <b>a regiones</b> viaja por Paket con seguimiento. <a href="{% url 'delivery' %}">Delivery y retiro</a>.</li>
-        <li><b>Duran aproximadamente un mes</b> guardados en un ambiente fresco y seco, así que puedes pedir con tiempo.</li>
+        <li><b>Los dulces duran aproximadamente un mes</b> guardados en un ambiente fresco y seco, así que puedes pedir con tiempo.</li>
       </ul>
     </div>
 
@@ -85,7 +106,7 @@
 <section class="section-soft">
   <div class="container">
     <div class="section-head section-head-center">
-      <p class="eyebrow">Navidad</p>
+      <p class="eyebrow{% if temporada_navidad %} eyebrow--navidad{% endif %}">{% if temporada_navidad %}{% include '_gorro_navidad.html' with tam=28 %}{% endif %}Navidad</p>
       <h2>Lo que más nos preguntan antes de regalar</h2>
     </div>
     <div class="faq-list">

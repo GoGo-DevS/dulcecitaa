@@ -622,7 +622,13 @@ def navidad(request):
     del carrito, con la promocion vigente). Nada de box navideños con precio,
     empaque navideño, fechas limite ni cupos: eso lo tiene que decidir la duena
     y queda preguntado. Cuando responda, esta misma URL se completa.
+
+    11-11-2026: la duena respondio (box navideño a pedido con cinta y tarjeta,
+    pan de pascua, pedidos hasta el 20 de diciembre). Esa oferta sale de
+    temporada.oferta_navidad(), que se apaga sola despues del 25 de diciembre;
+    sin oferta cargada, la pagina vuelve a ser la generica de arriba.
     """
+    from . import temporada
     from .models import Promocion
 
     productos = list(Producto.objects.filter(visible=True, disponible=True, variante_de__isnull=True)
@@ -649,12 +655,32 @@ def navidad(request):
 
     horas = getattr(settings, "DESPACHO_HORAS", 48)
     pesos = fichas_seo._pesos
+    oferta = temporada.oferta_navidad()
     preguntas = []
     if box_desde:
+        navideno = (" En Navidad va en empaque navideño con cinta y tarjeta, al mismo precio."
+                    if oferta else "")
         preguntas.append(fichas_seo._Pregunta(
             "¿Cuánto cuesta un box de dulces para Navidad?",
             f"Depende de lo que elijas: cada dulce va a su precio del catálogo, desde {minimo} por "
-            f"producto, más ${pesos(caja)} del empaque. El box más simple parte en ${pesos(box_desde)}."))
+            f"producto, más ${pesos(caja)} del empaque. El box más simple parte en ${pesos(box_desde)}."
+            f"{navideno}"))
+    if oferta:
+        pan = oferta["pan"]
+        if oferta["cerrado"]:
+            como_pedir = f"Los pedidos de Navidad cerraron el {oferta['pedidos_hasta_texto']}."
+        else:
+            como_pedir = "Se encarga por WhatsApp."
+        preguntas.append(fichas_seo._Pregunta(
+            "¿Tienen pan de pascua?",
+            f"Sí, pan de pascua artesanal en formato de {pan['formato']}, a ${pesos(pan['precio'])}. "
+            f"Lo vendemos desde el {pan['desde_texto']}. {como_pedir}"))
+        if oferta["cerrado"]:
+            hasta = f"Los pedidos de Navidad cerraron el {oferta['pedidos_hasta_texto']}."
+        else:
+            hasta = (f"Recibimos pedidos de Navidad hasta el {oferta['pedidos_hasta_texto']}. "
+                     f"Cada pedido sale {horas} horas después del pago.")
+        preguntas.append(fichas_seo._Pregunta("¿Hasta cuándo puedo pedir para Navidad?", hasta))
     preguntas.append(fichas_seo._Pregunta(
         "¿Hacen regalos de Navidad para empresas?",
         f"Sí. Para el equipo o los clientes de una empresa armamos box con tu logo en el empaque, "
@@ -686,6 +712,9 @@ def navidad(request):
         "promocion_vigente": Promocion.vigente(),
         "whatsapp_navidad": _whatsapp_con_texto(
             f"Hola {settings.BRAND_NAME}, quiero dulces para regalar en Navidad."),
+        "oferta_navidad": oferta,
+        "whatsapp_pan": _whatsapp_con_texto(
+            f"Hola {settings.BRAND_NAME}, quiero encargar pan de pascua.") if oferta else "",
     })
 
 
