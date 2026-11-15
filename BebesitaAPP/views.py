@@ -376,6 +376,21 @@ def checkout(request):
         return redirect("carrito")
 
     productos, subtotal = _build_cart_items(cart)
+    # Minimo por linea (15-11-2026). El carrito solo deja entrar y bajar
+    # respetando el minimo, pero el minimo de un producto puede SUBIR con el
+    # carrito ya armado: los cuchuflis pasaron de bolsita (desde 10) a unidad
+    # (desde 30), y "10" en un carrito viejo dejo de ser 10 bolsitas para ser 10
+    # cuchuflis. Esa linea no se cobra asi: sube al minimo y vuelve al carrito,
+    # para que el cliente vea la cantidad y el total antes de pagar.
+    cortas = [item for item in productos if item["cantidad"] < item["producto"].minimo_efectivo()]
+    if cortas:
+        for item in cortas:
+            minimo = item["producto"].minimo_efectivo()
+            cart[item["linea"]] = minimo
+            messages.warning(request, f"{item['producto'].nombre} se vende desde {minimo} unidades: "
+                                      f"dejamos {minimo} en tu carrito. Revísalo antes de pagar.")
+        _save_cart(request, cart)
+        return redirect("carrito")
     # Las lineas de cada box entran al pedido marcadas con su numero de caja:
     # la duena tiene que saber que va junto en la misma caja.
     for caja in boxes:

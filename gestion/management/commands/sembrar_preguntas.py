@@ -25,9 +25,16 @@ def preguntas():
     minimo_box = getattr(settings, "MINIMO_BOX", 3)
     box = getattr(settings, "BOX_PRICE", 1490)
     horas = getattr(settings, "DESPACHO_HORAS", 48)
+    # 15-11-2026: los cuchuflis se venden desde 30. Sale de la base, igual que
+    # en el catalogo y el carrito (fichas_seo.minimos_propios).
+    from BebesitaAPP.fichas_seo import minimos_propios
+    from BebesitaAPP.models import Producto
+    propios = minimos_propios(Producto.objects.filter(visible=True, variante_de__isnull=True)
+                              .order_by("orden", "pk"))
+    excepcion = f" ({propios})" if propios else ""
     return [
         (10, "¿Cuál es el pedido mínimo?",
-         f"El mínimo es de {minimo} unidades por producto. Si quieres mezclar varios "
+         f"El mínimo es de {minimo} unidades por producto{excepcion}. Si quieres mezclar varios "
          f"sabores, en Arma tu box el mínimo baja a {minimo_box} unidades por producto."),
         (20, "¿Hacen despacho a regiones?",
          "Sí, despachamos a todo Chile por Paket. Cuando el pedido sale te entregamos "

@@ -137,6 +137,9 @@ class FormulariosYCheckoutTests(TestCase):
             nombre="Brownie",
             descripcion="Brownie de prueba",
             precio=5000,
+            # Se vende desde 1: estas pruebas pagan carritos de 1 o 2 unidades, y
+            # desde el 15-11-2026 el checkout no cobra una linea bajo su minimo.
+            minimo=1,
             imagen=SimpleUploadedFile("test2.jpg", b"fake-image-content", content_type="image/jpeg"),
         )
 
@@ -438,7 +441,12 @@ class CatalogoInicialTests(TestCase):
             esperado = [] if p.nombre == "Cuchuflís rellenos" else ["Chocolate", "Chocolate blanco"]
             self.assertEqual([o.nombre for o in p.opciones.all()], esperado)
             self.assertTrue(p.imagen.storage.exists(p.imagen.name))
-        self.assertEqual(Producto.objects.get(nombre="Cuchuflís rellenos").precio, 1190)
+        # 15-11-2026: los cuchuflis nacen por unidad, desde 30 (antes bolsita de 4).
+        rellenos = Producto.objects.get(nombre="Cuchuflís rellenos")
+        banados = Producto.objects.get(nombre="Cuchuflís bañados")
+        self.assertEqual((rellenos.precio, rellenos.unidades_por_pack, rellenos.minimo), (300, 1, 30))
+        self.assertEqual((banados.precio, banados.unidades_por_pack, banados.minimo), (350, 1, 30))
+        self.assertNotIn("bolsita", rellenos.descripcion + banados.descripcion)
         self.viejo.refresh_from_db()
         self.assertFalse(self.viejo.visible)
 

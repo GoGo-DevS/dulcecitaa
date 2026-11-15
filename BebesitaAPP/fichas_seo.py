@@ -30,9 +30,24 @@ def _pesos(valor):
     return "{:,}".format(int(valor)).replace(",", ".")
 
 
-def _fichas():
+def como_se_vende(producto):
+    """"Se venden por unidad, desde 30" o "Se venden en bolsita de 4".
+
+    15-11-2026: los cuchuflis dejaron la bolsita de 4 y pasaron a venderse por
+    unidad, desde 30 (pedido de la duena). La frase sale de la BASE
+    (unidades_por_pack y el minimo del producto) y no va escrita a mano: una
+    ficha que dice "bolsita de 4" junto a un precio por unidad es un precio mal
+    publicado.
+    """
+    if producto.unidades_por_pack > 1:
+        return f"Se venden en bolsita de {producto.unidades_por_pack}"
+    return f"Se venden por unidad, desde {producto.minimo_efectivo()}"
+
+
+def _fichas(producto):
     minimo = getattr(settings, "MINIMO_UNIDADES", 10)
     horas = getattr(settings, "DESPACHO_HORAS", 48)
+    venta = como_se_vende(producto)
     return {
         "barquillos-rellenos-banados-en-chocolate": {
             # 03-11-2026: Search Console muestra la ficha para "barquillos
@@ -92,14 +107,16 @@ def _fichas():
             "pregunta_precio": "¿Cuánto cuestan los cuchuflís bañados en chocolate?",
             "titulo": "Cuchuflís bañados en chocolate",
             "h1": "Cuchuflís bañados en chocolate",
+            # 15-11-2026: como se venden (por unidad desde 30, antes bolsita de
+            # 4) sale de la base, ver como_se_vende().
             "descripcion": (
                 "Cuchuflís rellenos de manjar y bañados enteros en chocolate o chocolate "
-                "blanco, en bolsita de 4. Despacho a todo Chile por Paket."),
+                f"blanco. {venta}. Despacho a todo Chile por Paket."),
             "parrafos": [
                 "A diferencia de los cuchuflís rellenos, que van sin cobertura, estos se "
                 "bañan enteros en chocolate. Eliges la cobertura al pedir: chocolate o "
                 "chocolate blanco.",
-                "Vienen en bolsita de 4 unidades, y también puedes sumarlos a tu box. "
+                f"{venta}, y también puedes sumarlos a tu box. "
                 f"Tu pedido sale {horas} horas después del pago.",
                 "Cuchuflís bañados en chocolate hechos a mano en Santiago, con entrega "
                 "coordinada por WhatsApp en la ciudad y despacho a regiones por Paket. "
@@ -114,14 +131,16 @@ def _fichas():
             "pregunta_precio": "¿Cuánto cuestan los cuchuflís rellenos?",
             "titulo": "Cuchuflís rellenos de manjar",
             "h1": "Cuchuflís rellenos de manjar",
+            # Sin "crujientes" en la description: con "por unidad, desde 30"
+            # pasaba de 155 caracteres y Google la cortaba.
             "descripcion": (
-                "Cuchuflís crujientes rellenos de manjar, sin baño de chocolate, en bolsita "
-                "de 4. La base de nuestra torta de cuchuflís. Despacho a todo Chile."),
+                f"Cuchuflís rellenos de manjar, sin baño de chocolate. {venta}. "
+                "La base de nuestra torta de cuchuflís. Despacho a todo Chile."),
             "parrafos": [
                 "Cuchuflís crujientes rellenos de manjar y sin cobertura. Por eso cuestan "
                 "menos que los bañados y no llevan chocolate a elegir.",
                 "La torta de cuchuflís se arma con cuchuflís rellenos de manjar como estos. "
-                "Vienen en bolsita de 4 unidades y se despachan a todo Chile por Paket.",
+                f"{venta} y se despachan a todo Chile por Paket.",
                 "Se hacen a mano en Santiago, donde la entrega se coordina por WhatsApp, y "
                 "también se venden por mayor al mismo precio del catálogo.",
             ],
@@ -161,7 +180,7 @@ def _fichas():
 
 def ficha(producto):
     """El dict de la ficha, o None si el producto no tiene textos propios."""
-    return _fichas().get(producto.slug or "")
+    return _fichas(producto).get(producto.slug or "")
 
 
 def titulo(producto, marca=None):
@@ -229,10 +248,45 @@ PREGUNTAS_COMUNES = [
     ("¿Se pueden personalizar?",
      "Sí. Se pueden personalizar para regalos y eventos: cuéntanos qué necesitas al hacer "
      "el pedido."),
+    # {por_mayor} se completa por producto, ver por_mayor_desde().
     ("¿Venden por mayor?",
-     f"Sí, desde {POR_MAYOR_DESDE} unidades. Si es para una empresa o un evento, también lo "
+     "Sí, desde {por_mayor} unidades. Si es para una empresa o un evento, también lo "
      "cotizamos en venta corporativa."),
 ]
+
+
+def por_mayor_desde(producto):
+    """Desde cuantas unidades es "por mayor" en ESTE producto.
+
+    15-11-2026: los cuchuflis se venden desde 30. Responder "por mayor desde 20"
+    en una ficha donde no se puede comprar menos de 30 se contradice sola.
+    """
+    return max(POR_MAYOR_DESDE, producto.minimo_efectivo())
+
+
+def _enumerar(nombres):
+    """["a", "b", "c"] -> "a, b y c"."""
+    nombres = list(nombres)
+    if len(nombres) <= 1:
+        return "".join(nombres)
+    return f"{', '.join(nombres[:-1])} y {nombres[-1]}"
+
+
+def minimos_propios(productos):
+    """"cuchuflís bañados y cuchuflís rellenos, desde 30", o "" si no hay.
+
+    Los productos que piden MAS que el minimo general de la tienda. El sitio
+    dice "pedido mínimo de 10 unidades por producto" en el catalogo, el carrito
+    y Navidad; con los cuchuflis desde 30 esa frase sola ya no es cierta. Sale
+    de la base: si la duena cambia un minimo en el panel, la frase cambia sola.
+    """
+    general = max(1, int(getattr(settings, "MINIMO_UNIDADES", 1)))
+    por_minimo = {}
+    for p in productos:
+        if p.minimo > general:
+            por_minimo.setdefault(p.minimo, []).append(p.nombre.lower())
+    return "; ".join(f"{_enumerar(nombres)}, desde {minimo}"
+                     for minimo, nombres in sorted(por_minimo.items()))
 
 
 class _Pregunta:
@@ -332,5 +386,6 @@ def preguntas(producto, limite=8):
     vistas = {_norma(p.pregunta) for p in propias}
     precio = pregunta_precio(producto)
     generadas = [precio] if precio and _norma(precio.pregunta) not in vistas else []
-    comunes = [_Pregunta(p, r) for p, r in PREGUNTAS_COMUNES if _norma(p) not in vistas]
+    comunes = [_Pregunta(p, r.format(por_mayor=por_mayor_desde(producto)))
+               for p, r in PREGUNTAS_COMUNES if _norma(p) not in vistas]
     return (propias + generadas + comunes)[:limite]

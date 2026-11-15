@@ -40,22 +40,25 @@ CATALOGO = [
         ),
         "precio": 1590, "orden": 1, "unidades_por_pack": 1, "foto": "alfajor-chocolate-negro.jpg",
     },
+    # 15-11-2026 (pedido de la duena): los cuchuflis ya no van en bolsita de 4
+    # ($1.590 y $1.190); se venden por unidad, desde 30. La base que ya existia
+    # se actualizo con la migracion 0018_cuchuflis_por_unidad.
     {
         "nombre": "Cuchuflís bañados",
         "descripcion": (
             "Cuchuflís crujientes rellenos de manjar y bañados enteros en chocolate. "
-            "Se venden en bolsita de 4 unidades."
+            "Se venden por unidad, desde 30."
         ),
-        "precio": 1590, "orden": 3, "unidades_por_pack": 4, "foto": "cuchuflis-bolsita.jpg",
+        "precio": 350, "orden": 3, "unidades_por_pack": 1, "minimo": 30, "foto": "cuchuflis-bolsita.jpg",
     },
     {
         # Sin baño y sin cobertura a elegir: por eso es mas barato y va aparte.
         "nombre": "Cuchuflís rellenos",
         "descripcion": (
             "Cuchuflís crujientes rellenos de manjar, sin baño de chocolate. "
-            "Se venden en bolsita de 4 unidades."
+            "Se venden por unidad, desde 30."
         ),
-        "precio": 1190, "orden": 4, "unidades_por_pack": 4, "foto": "cuchuflis-rellenos.jpg",
+        "precio": 300, "orden": 4, "unidades_por_pack": 1, "minimo": 30, "foto": "cuchuflis-rellenos.jpg",
         "sin_cobertura": True,
     },
 ]
@@ -142,6 +145,7 @@ class Command(BaseCommand):
                 nombre=item["nombre"], descripcion=item["descripcion"], precio=item["precio"],
                 categoria=categoria, destacado=True, visible=True, disponible=True,
                 orden=item["orden"], unidades_por_pack=item["unidades_por_pack"],
+                minimo=item.get("minimo", 0),
             )
             self._poner_foto(producto, item["foto"])
             producto.save()

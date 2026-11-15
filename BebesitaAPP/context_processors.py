@@ -7,7 +7,7 @@ def cart_count(request):
 
 def site_config(request):
     from django.conf import settings
-    from .fichas_seo import POR_MAYOR_DESDE
+    from .fichas_seo import POR_MAYOR_DESDE, minimos_propios
     from .models import Producto
     from .temporada import es_navidad, oferta_navidad
 
@@ -17,7 +17,11 @@ def site_config(request):
     # dos de ellas llevaban 12 dias "descubiertas, sin indexar" (19-10-2026).
     # Una sola consulta por visita; se lee desde el template, no aca.
     productos_pie = (Producto.objects.filter(visible=True, variante_de__isnull=True)
-                     .only("nombre", "slug", "en_box").order_by("orden", "pk"))
+                     # minimo y unidades_por_pack: los lee el texto de cada ficha
+                     # (fichas_seo.como_se_vende). Si no vinieran aqui, cada
+                     # enlace del pie haria su propia consulta.
+                     .only("nombre", "slug", "en_box", "minimo", "unidades_por_pack")
+                     .order_by("orden", "pk"))
     if default_og_image and not default_og_image.startswith("http"):
         default_og_image_url = request.build_absolute_uri(default_og_image)
     else:
@@ -33,6 +37,11 @@ def site_config(request):
         "despacho_horas": getattr(settings, "DESPACHO_HORAS", 48),
         "por_mayor_desde": POR_MAYOR_DESDE,
         "productos_pie": productos_pie,
+        # 15-11-2026: "cuchuflís bañados y cuchuflís rellenos, desde 30". Es una
+        # funcion a proposito: la plantilla la llama solo donde dice el minimo,
+        # y usa la MISMA consulta del pie (el queryset recuerda su resultado),
+        # asi que no agrega ninguna.
+        "minimos_propios": lambda: minimos_propios(productos_pie),
         "transferencia": _transferencia(settings),
         "default_og_image_url": default_og_image_url,
         "temporada_navidad": es_navidad(),
