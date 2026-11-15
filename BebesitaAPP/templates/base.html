@@ -97,7 +97,13 @@
   <nav class="navbar navbar-expand-lg navbar-light site-navbar dr-nav" aria-label="Navegación principal">
     <div class="container">
       <a class="navbar-brand dr-brand" href="{% url 'home' %}">
-        <img src="{% static 'img/logo-dulcecita-rosado.png' %}?v=5" alt="{{ site_brand }}" class="dr-logo-img" width="879" height="331">
+        {% comment %}
+          15-11-2026: en temporada el logo ES el navideño (el mismo logotipo con el
+          gorro del Viejito Pascuero en la "a" final, diseño que mandó Diego). Antes
+          el gorro era un dibujo en CSS sobre la "d". Se apaga solo con la temporada.
+        {% endcomment %}
+        {% if temporada_navidad %}<img src="{% static 'img/logo-dulcecita-navidad.webp' %}?v=1" alt="{{ site_brand }}" class="dr-logo-img dr-logo-img--navidad" width="879" height="331">
+        {% else %}<img src="{% static 'img/logo-dulcecita-rosado.png' %}?v=5" alt="{{ site_brand }}" class="dr-logo-img" width="879" height="331">{% endif %}
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Abrir menú">
         <span class="navbar-toggler-icon"></span>
