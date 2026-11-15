@@ -1,7 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from . import views
+from . import productos, seo_panel, views
 from .forms import GestionLoginForm
 
 app_name = "gestion"
@@ -49,7 +49,18 @@ urlpatterns = [
     path("promos/<int:pk>/encender/", views.promo_toggle, name="promo_toggle"),
     path("promos/<int:pk>/eliminar/", views.promo_eliminar, name="promo_eliminar"),
 
+    # Productos de la tienda web (15-11-2026): antes solo se editaban en /admin/.
+    # No hay ruta para borrar a proposito: un producto se oculta, no se borra
+    # (los pedidos apuntan a el con CASCADE).
+    path("productos/", productos.productos_lista, name="productos"),
+    path("productos/nuevo/", productos.producto_form, name="producto_nuevo"),
+    path("productos/<int:pk>/editar/", productos.producto_form, name="producto_editar"),
+    path("productos/<int:pk>/visible/", productos.producto_toggle, {"campo": "visible"}, name="producto_visible"),
+    path("productos/<int:pk>/disponible/", productos.producto_toggle, {"campo": "disponible"},
+         name="producto_disponible"),
+
     # Costos por unidad
     path("costos/", views.costos, name="costos"),
     path("web/", views.web, name="web"),
+    path("web/seo/", seo_panel.seo, name="seo"),
 ]

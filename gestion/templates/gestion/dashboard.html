@@ -1,5 +1,5 @@
 {% extends "gestion/base.html" %}
-{% load humanize %}
+{% load humanize plata %}
 
 {% block title %}Inicio | Gestión Dulcecita{% endblock %}
 {% block nav_inicio %}active{% endblock %}
@@ -38,8 +38,23 @@
     </div>
 </div>
 
+{% comment %}
+  15-11-2026: la tienda web vivia escondida en la pestaña Web. Aca va lo
+  minimo para saber, al entrar, si llego un pedido por dulcecita.cl.
+{% endcomment %}
+<a href="{% url 'gestion:web' %}" class="card mb-3 text-decoration-none inicio-web">
+    <div class="card-body d-flex justify-content-between align-items-center gap-2">
+        <span class="min-w-0">
+            <span class="item-title d-block"><i class="bi bi-shop"></i> Tienda web</span>
+            <span class="item-meta d-block">{% if web_hoy %}{{ web_hoy }} pedido{{ web_hoy|pluralize }} hoy{% else %}Sin pedidos hoy{% endif %} · {{ web_semana.pedidos }} en los últimos 7 días</span>
+        </span>
+        <span class="item-title num flex-shrink-0">${{ web_semana.ventas|pesos }}</span>
+    </div>
+</a>
+
 <div class="d-grid gap-2 mb-4">
     <a href="{% url 'gestion:pedido_nuevo' %}" class="btn btn-dc"><i class="bi bi-plus-lg"></i> Nuevo pedido</a>
+    <a href="{% url 'gestion:productos' %}" class="btn btn-outline-dc"><i class="bi bi-bag-heart"></i> Productos y precios de la web</a>
     <div class="row g-2">
         <div class="col-6"><a href="{% url 'gestion:compra_granel' %}" class="btn btn-outline-dc btn-sm w-100 h-100"><i class="bi bi-cart-plus"></i> Compra a granel</a></div>
         <div class="col-6"><a href="{% url 'gestion:costos' %}" class="btn btn-outline-dc btn-sm w-100 h-100"><i class="bi bi-calculator"></i> Costos por unidad</a></div>

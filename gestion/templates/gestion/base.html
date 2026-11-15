@@ -28,6 +28,7 @@
                 <a href="{% url 'gestion:dashboard' %}"><i class="bi bi-house-door"></i> Inicio</a>
                 <a href="{% url 'gestion:pedidos' %}"><i class="bi bi-receipt"></i> Pedidos</a>
                 <a href="{% url 'gestion:clientes' %}"><i class="bi bi-people"></i> Clientes</a>
+                <a href="{% url 'gestion:productos' %}"><i class="bi bi-bag-heart"></i> Productos</a>
                 <a href="{% url 'gestion:promos' %}"><i class="bi bi-tag"></i> Promos</a>
                 <a href="{% url 'gestion:web' %}"><i class="bi bi-graph-up-arrow"></i> Web</a>
             </div>
@@ -62,6 +63,13 @@
         </a>
         <a href="{% url 'gestion:clientes' %}" class="{% block nav_clientes %}{% endblock %}">
             <i class="bi bi-people" aria-hidden="true"></i>Clientes
+        </a>
+        {% comment %}
+          15-11-2026: Productos entra al menu. El orden de esta barra y el de
+          arriba tienen que ser el MISMO: el script de abajo marca el activo por posicion.
+        {% endcomment %}
+        <a href="{% url 'gestion:productos' %}" class="{% block nav_productos %}{% endblock %}">
+            <i class="bi bi-bag-heart" aria-hidden="true"></i>Productos
         </a>
         <a href="{% url 'gestion:promos' %}" class="{% block nav_promos %}{% endblock %}">
             <i class="bi bi-tag" aria-hidden="true"></i>Promos

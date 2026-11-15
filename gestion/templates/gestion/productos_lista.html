@@ -1,0 +1,87 @@
+{% extends "gestion/base.html" %}
+{% load plata %}
+
+{% block title %}Productos | Gestión Dulcecita{% endblock %}
+{% block nav_productos %}active{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center gap-2 mb-2">
+    <h1 class="page-title mb-0">Productos</h1>
+    <a href="{% url 'gestion:producto_nuevo' %}" class="btn btn-dc flex-shrink-0"><i class="bi bi-plus-lg"></i> Nuevo</a>
+</div>
+<p class="page-lead">Lo que se vende en dulcecita.cl. Cambia el precio, la foto o el mínimo y queda en la web al guardar.</p>
+
+{% if promo %}
+<div class="alert alert-info" role="status">
+    Está corriendo «{{ promo.nombre }}» ({{ promo.porcentaje }}% de descuento). Aquí ves el precio normal; en la web se cobra con el descuento.
+</div>
+{% endif %}
+
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-shop"></i> En la web <span class="item-meta">({{ en_web|length }})</span></div>
+    <div class="list-group list-group-flush">
+        {% for p in en_web %}
+            <div class="list-group-item prod-fila">
+                <a href="{% url 'gestion:producto_editar' p.pk %}" class="prod-foto" aria-label="Editar {{ p.nombre }}">
+                    {% if p.imagen %}<img src="{{ p.imagen.url }}" alt="" width="64" height="64" loading="lazy">{% else %}<span class="prod-sin-foto"><i class="bi bi-image"></i></span>{% endif %}
+                </a>
+                <div class="min-w-0 flex-grow-1">
+                    <a href="{% url 'gestion:producto_editar' p.pk %}" class="item-title d-block text-decoration-none">{{ p.nombre }}</a>
+                    <span class="item-meta d-block num">{{ p.cobro }} · desde {{ p.minimo_real }}</span>
+                    <span class="d-block mt-1">
+                        {% if not p.disponible %}<span class="badge bg-warning text-dark">No disponible</span>{% endif %}
+                        {% if p.destacado %}<span class="badge bg-secondary">Destacado</span>{% endif %}
+                        {% if not p.imagen %}<span class="badge bg-warning text-dark">Sin foto</span>{% endif %}
+                    </span>
+                </div>
+                <div class="prod-acciones flex-shrink-0">
+                    <a href="{% url 'gestion:producto_editar' p.pk %}" class="btn btn-sm btn-outline-dc">Editar</a>
+                    <a href="{{ p.get_absolute_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-link text-muted" aria-label="Ver {{ p.nombre }} en la web"><i class="bi bi-box-arrow-up-right"></i> Ver</a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="list-group-item item-meta">No hay productos a la vista en la web. Crea uno con «Nuevo».</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if ocultos %}
+<details class="card mb-3">
+    <summary class="card-header"><i class="bi bi-eye-slash"></i> Ocultos <span class="item-meta">({{ ocultos|length }})</span></summary>
+    <div class="list-group list-group-flush">
+        <div class="list-group-item item-meta">No salen en la web. Aquí quedan los productos antiguos y las cajas que creaste en un pedido. No se borran para que los pedidos anteriores sigan completos.</div>
+        {% for p in ocultos %}
+            <div class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                <span class="min-w-0">
+                    <span class="item-title d-block">{{ p.nombre }}</span>
+                    <span class="item-meta d-block num">{{ p.cobro }}</span>
+                </span>
+                <span class="d-flex gap-1 flex-shrink-0">
+                    <a href="{% url 'gestion:producto_editar' p.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                    <form method="post" action="{% url 'gestion:producto_visible' p.pk %}" class="m-0">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-dc">Mostrar</button>
+                    </form>
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+</details>
+{% endif %}
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a href="{% url 'gestion:costos' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-calculator"></i> Costos por unidad</a>
+    <a href="{% url 'gestion:promos' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-tag"></i> Promociones</a>
+    <a href="{% url 'gestion:seo' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-google"></i> Cómo salen en Google</a>
+</div>
+
+<style>
+    .prod-fila { display: flex; align-items: center; gap: .8rem; }
+    .prod-foto img, .prod-sin-foto { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; display: block; }
+    .prod-sin-foto { display: flex; align-items: center; justify-content: center; background: var(--surface, #f6f8fb); color: var(--muted, #5a6b7e); font-size: 1.4rem; }
+    .prod-acciones { display: flex; flex-direction: column; align-items: flex-end; gap: .15rem; }
+    details > summary { cursor: pointer; list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    .num { font-variant-numeric: tabular-nums; }
+</style>
+{% endblock %}

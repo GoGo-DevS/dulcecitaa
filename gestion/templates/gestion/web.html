@@ -1,5 +1,5 @@
 {% extends "gestion/base.html" %}
-{% load humanize %}
+{% load humanize plata %}
 
 {% block title %}Web | Gestión Dulcecita{% endblock %}
 {% block nav_web %}active{% endblock %}
@@ -7,6 +7,11 @@
 {% block content %}
 <h1 class="page-title">Tienda web</h1>
 <p class="page-lead">Pedidos y clics de dulcecita.cl, al momento. Las visitas y los mapas de calor están en las herramientas de abajo.</p>
+
+<nav class="chip-row" aria-label="Secciones de la web">
+    <a href="{% url 'gestion:web' %}" class="btn btn-sm btn-dc" aria-current="true">Ventas</a>
+    <a href="{% url 'gestion:seo' %}" class="btn btn-sm btn-outline-secondary">Google</a>
+</nav>
 
 <nav class="chip-row" aria-label="Periodo">
     {% for valor, etiqueta in opciones_dias %}
@@ -22,6 +27,19 @@
             <span class="kpi-chip num"><span>Pedidos</span>{{ n_pedidos }}</span>
             <span class="kpi-chip num"><span>Ticket promedio</span>${{ ticket|intcomma }}</span>
         </div>
+        {% comment %}
+          15-11-2026: contra el periodo anterior del mismo largo. Sin ventas
+          antes no hay porcentaje que mostrar (dividir por cero no dice nada).
+        {% endcomment %}
+        <p class="web-compara mb-0">
+            {% if variacion is None %}
+                {% if dias == 1 %}Ayer{% else %}En los {{ dias }} días anteriores{% endif %} no hubo ventas web.
+            {% else %}
+                {% if variacion > 0 %}<b class="web-sube">▲ {{ variacion }}%</b>{% elif variacion < 0 %}<b class="web-baja">▼ {{ variacion|cut:"-" }}%</b>{% else %}<b>Igual</b>{% endif %}
+                que {% if dias == 1 %}ayer{% else %}los {{ dias }} días anteriores{% endif %}
+                (${{ ventas_anteriores|pesos }} en {{ n_anteriores }} pedido{{ n_anteriores|pluralize }}).
+            {% endif %}
+        </p>
     </div>
 </section>
 
@@ -51,6 +69,43 @@
         </div></div>
     </div>
 </div>
+
+{% if serie %}
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-calendar3"></i> Ventas por {% if dias > 30 %}semana{% else %}día{% endif %}</div>
+    <div class="list-group list-group-flush web-serie">
+        {% for punto in serie %}
+            <div class="list-group-item py-2">
+                <div class="d-flex justify-content-between gap-2">
+                    <span class="item-meta">{{ punto.etiqueta }}</span>
+                    <span class="num {% if punto.ventas %}item-title{% else %}item-meta{% endif %}">{% if punto.ventas %}${{ punto.ventas|pesos }} <span class="item-meta">· {{ punto.pedidos }} pedido{{ punto.pedidos|pluralize }}</span>{% else %}Sin ventas{% endif %}</span>
+                </div>
+                {% if punto.ventas %}<div class="web-barra" aria-hidden="true"><span style="width: {{ punto.pct }}%"></span></div>{% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if n_pedidos %}
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-truck"></i> Cómo y dónde entregas</div>
+    <div class="list-group list-group-flush">
+        <div class="list-group-item d-flex justify-content-between gap-2">
+            <span class="item-title">Retiro en punto</span><span class="item-title num">{{ retiros }}</span>
+        </div>
+        <div class="list-group-item d-flex justify-content-between gap-2">
+            <span class="item-title">Despacho a domicilio</span><span class="item-title num">{{ despachos }}</span>
+        </div>
+        {% for comuna in comunas %}
+        <div class="list-group-item d-flex justify-content-between gap-2">
+            <span class="item-meta">{{ comuna.comuna_sector }}</span>
+            <span class="item-meta num">{{ comuna.n }} pedido{{ comuna.n|pluralize }} · ${{ comuna.monto|pesos }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
 
 <div class="row g-3">
     <div class="col-lg-6">
@@ -130,6 +185,11 @@
 </div>
 
 <style>
+    .web-compara { margin-top: .9rem; font-size: .9rem; }
+    /* Sobre el azul de la tarjeta: el verde y el rojo de Bootstrap no se leen (2:1). */
+    .web-sube { color: #8fe3b0; }
+    .web-baja { color: #ffb4b4; }
+    .web-serie { max-height: 26rem; overflow-y: auto; }
     .web-barra { height: 6px; border-radius: 999px; margin-top: .45rem; overflow: hidden; }
     .web-barra span { display: block; height: 100%; border-radius: 999px; background: var(--pink, #f5a7d6); min-width: 4px; }
     .num { font-variant-numeric: tabular-nums; }

@@ -78,7 +78,19 @@ def dashboard(request):
     py, pm = _mes_anterior(y, m)
     ny, nm = _mes_siguiente(y, m)
 
+    # La tienda web, en una linea: si llego un pedido hoy y cuanto vendio la semana.
+    from datetime import timedelta
+
+    from django.db.models import Count, Sum
+
+    from BebesitaAPP.models import Pedido as PedidoWeb
+
+    semana = (PedidoWeb.objects.filter(creado__gte=timezone.now() - timedelta(days=7))
+              .aggregate(pedidos=Count("id"), ventas=Sum("total")))
+
     context = {
+        "web_hoy": PedidoWeb.objects.filter(creado__date=hoy).count(),
+        "web_semana": {"pedidos": semana["pedidos"], "ventas": int(semana["ventas"] or 0)},
         "y": y, "m": m, "mes_nombre": MESES_ES[m],
         "mes_prev": f"{py}-{pm:02d}", "mes_next": f"{ny}-{nm:02d}",
         "ventas": ventas, "costos": costos, "utilidad": utilidad,
@@ -464,6 +476,53 @@ def compra_granel(request):
 # ----------------------------------------------------------------------------
 # Web: como le va a la tienda online
 # ----------------------------------------------------------------------------
+DIAS_CORTOS = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
+
+
+def _variacion(actual, anterior):
+    """Cuanto subio o bajo contra el periodo anterior, en %. None si no hay con que comparar."""
+    if not anterior:
+        return None
+    return round((actual - anterior) * 100 / anterior)
+
+
+def _serie_ventas(filas, dias, hoy):
+    """Ventas por dia (por semana en 90 dias) para el periodo, con los dias sin ventas en cero.
+
+    `filas` son pares (creado, total). Devuelve [] para "Hoy": un solo dia no
+    es una serie. Cada punto trae `pct`, su tamaño contra el mejor del periodo.
+    """
+    from datetime import timedelta
+
+    if dias <= 1:
+        return []
+    por_dia = {}
+    for creado, total in filas:
+        dia = timezone.localtime(creado).date()
+        monto, cuantos = por_dia.get(dia, (0, 0))
+        por_dia[dia] = (monto + int(total or 0), cuantos + 1)
+
+    puntos = []
+    if dias <= 30:
+        for atras in range(dias, -1, -1):
+            dia = hoy - timedelta(days=atras)
+            monto, cuantos = por_dia.get(dia, (0, 0))
+            puntos.append({"etiqueta": f"{DIAS_CORTOS[dia.weekday()]} {dia.day}", "ventas": monto, "pedidos": cuantos})
+    else:
+        lunes = hoy - timedelta(days=hoy.weekday())
+        for semanas in range(dias // 7, -1, -1):
+            inicio = lunes - timedelta(weeks=semanas)
+            monto = cuantos = 0
+            for i in range(7):
+                m, c = por_dia.get(inicio + timedelta(days=i), (0, 0))
+                monto, cuantos = monto + m, cuantos + c
+            puntos.append({"etiqueta": f"Sem. del {inicio.day}/{inicio.month}", "ventas": monto, "pedidos": cuantos})
+    tope = max((p["ventas"] for p in puntos), default=0)
+    for p in puntos:
+        p["pct"] = round(p["ventas"] * 100 / tope) if tope else 0
+    return puntos
+
+
 def web(request):
     """Numeros de la tienda web en el panel, sin tener que abrir Analytics.
 
@@ -496,6 +555,21 @@ def web(request):
     ventas = int(pedidos.aggregate(t=Sum("total"))["t"] or 0)
     cajas_box = int(pedidos.aggregate(c=Sum("cantidad_cajas"))["c"] or 0)
 
+    # 15-11-2026: un numero solo no dice si va bien o mal. Se compara con el
+    # periodo anterior del mismo largo (los 7 dias previos, los 30 previos...).
+    anteriores = PedidoWeb.objects.filter(creado__gte=desde - timedelta(days=dias), creado__lt=desde)
+    n_anteriores = anteriores.count()
+    ventas_anteriores = int(anteriores.aggregate(t=Sum("total"))["t"] or 0)
+
+    # Ventas por dia (o por semana en 90 dias). Son pocos pedidos: se agrupan
+    # aca, en la hora de Chile, con una sola consulta.
+    serie = _serie_ventas(pedidos.values_list("creado", "total"), dias, timezone.localdate())
+
+    entregas = {fila["tipo_entrega"]: fila["n"]
+                for fila in pedidos.values("tipo_entrega").annotate(n=Count("id"))}
+    comunas = (pedidos.exclude(comuna_sector="").values("comuna_sector")
+               .annotate(n=Count("id"), monto=Sum("total")).order_by("-n", "-monto")[:5])
+
     top = (PedidoItemWeb.objects.filter(pedido__creado__gte=desde)
            .values("producto__nombre", "detalle")
            .annotate(unidades=Sum("cantidad"), monto=Sum(F("cantidad") * F("precio")))
@@ -520,9 +594,13 @@ def web(request):
          "ok": bool(settings.GA4_ID), "url": "https://analytics.google.com/analytics/web/#/realtime", "falta": "GA4_ID"},
         {"nombre": "Microsoft Clarity", "para": "Mapas de calor y grabaciones de cómo navegan",
          "ok": bool(settings.CLARITY_ID), "url": "https://clarity.microsoft.com/projects", "falta": "CLARITY_ID"},
+        # 15-11-2026: decia "Falta configurar" porque miraba GOOGLE_SITE_VERIFICATION
+        # (la etiqueta HTML). El dominio esta verificado por DNS y Search Console
+        # funciona hace meses: el aviso era falso. Ahora solo abre el informe.
         {"nombre": "Google Search Console", "para": "Qué buscan en Google para llegar y en qué posición sale",
-         "ok": bool(settings.GOOGLE_SITE_VERIFICATION),
-         "url": f"https://search.google.com/search-console?resource_id={quote(sitio + '/', safe='')}", "falta": "GOOGLE_SITE_VERIFICATION"},
+         "ok": True,
+         "url": ("https://search.google.com/search-console/performance/search-analytics?resource_id="
+                 + quote("sc-domain:" + sitio.split("://", 1)[-1], safe="")), "falta": ""},
         {"nombre": "Pixel de Meta", "para": "Ventas y contactos que vienen de anuncios en Instagram",
          "ok": bool(settings.META_PIXEL_ID), "url": "https://business.facebook.com/events_manager2", "falta": "META_PIXEL_ID"},
         {"nombre": "PageSpeed Insights", "para": "Velocidad del sitio en celular (Core Web Vitals)",
@@ -538,6 +616,13 @@ def web(request):
         "ventas": ventas,
         "ticket": round(ventas / n_pedidos) if n_pedidos else 0,
         "cajas_box": cajas_box,
+        "ventas_anteriores": ventas_anteriores,
+        "n_anteriores": n_anteriores,
+        "variacion": _variacion(ventas, ventas_anteriores),
+        "serie": serie,
+        "retiros": entregas.get(PedidoWeb.TIPO_ENTREGA_RETIRO, 0),
+        "despachos": entregas.get(PedidoWeb.TIPO_ENTREGA_DESPACHO, 0),
+        "comunas": comunas,
         "pedidos_hoy": PedidoWeb.objects.filter(creado__date=timezone.localdate()).count(),
         "top": top,
         "clics_filas": clics_filas,

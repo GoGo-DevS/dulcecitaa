@@ -1,0 +1,92 @@
+{% extends "gestion/base.html" %}
+
+{% block title %}Google | Gestión Dulcecita{% endblock %}
+{% block nav_web %}active{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Cómo sales en Google</h1>
+<p class="page-lead">Así muestra Google cada página de dulcecita.cl, revisada recién. Lo que puedes mejorar tú está marcado.</p>
+
+<nav class="chip-row" aria-label="Secciones de la web">
+    <a href="{% url 'gestion:web' %}" class="btn btn-sm btn-outline-secondary">Ventas</a>
+    <a href="{% url 'gestion:seo' %}" class="btn btn-sm btn-dc" aria-current="true">Google</a>
+</nav>
+
+<section class="card surface-rose kpi-hero mb-3" aria-label="Resumen">
+    <div class="card-body text-center py-4">
+        <div class="kpi-label">Páginas bien presentadas</div>
+        <div class="kpi-value">{{ listas }} de {{ total }}</div>
+        <div class="kpi-split">
+            <span class="kpi-chip num"><span>Para ti</span>{{ pendientes_tuyos }}</span>
+            <span class="kpi-chip num"><span>Para Diego</span>{{ pendientes_diego }}</span>
+        </div>
+    </div>
+</section>
+
+{% for p in paginas %}
+<article class="card mb-3 seo-pagina">
+    <div class="card-header d-flex justify-content-between align-items-center gap-2">
+        <span class="min-w-0 text-truncate">{% if p.producto %}<i class="bi bi-bag-heart"></i>{% else %}<i class="bi bi-file-earmark-text"></i>{% endif %} {{ p.nombre }}</span>
+        {% if p.lista %}<span class="badge bg-success flex-shrink-0">Lista</span>{% else %}<span class="badge bg-warning text-dark flex-shrink-0">Revisar</span>{% endif %}
+    </div>
+    <div class="card-body">
+        {% if p.error %}
+            <p class="item-meta mb-0">{{ p.error }}</p>
+        {% else %}
+        <div class="seo-vista" aria-label="Vista previa en Google">
+            <span class="seo-vista__url">{{ p.url }}</span>
+            <span class="seo-vista__titulo">{{ p.titulo|default:"(sin título)" }}</span>
+            <span class="seo-vista__desc">{{ p.descripcion|default:"(sin descripción)" }}</span>
+        </div>
+        <p class="item-meta num mt-2 mb-0">Título: {{ p.largo_titulo }} de {{ titulo_max }} caracteres · Descripción: {{ p.largo_descripcion }} de {{ descripcion_max }}</p>
+        {% endif %}
+
+        {% if p.para_ti %}
+        <ul class="seo-avisos mt-3 mb-0">
+            {% for aviso in p.para_ti %}<li><b>Lo arreglas tú:</b> {{ aviso.texto }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% if p.para_diego %}
+        <ul class="seo-avisos seo-avisos--diego mt-3 mb-0">
+            {% for aviso in p.para_diego %}<li><b>Para Diego:</b> {{ aviso.texto }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+
+        <div class="d-flex flex-wrap gap-2 mt-3">
+            {% if p.producto %}<a href="{% url 'gestion:producto_editar' p.producto.pk %}" class="btn btn-sm btn-outline-dc"><i class="bi bi-pencil"></i> Editar producto</a>{% endif %}
+            <a href="{{ p.url }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary"><i class="bi bi-box-arrow-up-right"></i> Ver página</a>
+            <a href="{{ p.herramientas.google }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">Probar en Google</a>
+            <a href="{{ p.herramientas.velocidad }}" target="_blank" rel="noopener" class="btn btn-sm btn-outline-secondary">Velocidad</a>
+        </div>
+    </div>
+</article>
+{% endfor %}
+
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-google"></i> Lo que solo sabe Google</div>
+    <div class="list-group list-group-flush">
+        <div class="list-group-item item-meta">Cuánta gente te busca, con qué palabras y en qué posición apareces no se puede medir desde el sitio: lo tiene Google. Se abre con tu cuenta.</div>
+        {% for e in enlaces %}
+            <a href="{{ e.url }}" target="_blank" rel="noopener" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2">
+                <span class="min-w-0">
+                    <span class="item-title d-block">{{ e.nombre }}</span>
+                    <span class="item-meta d-block">{{ e.para }}</span>
+                </span>
+                <span class="badge bg-secondary flex-shrink-0">Abrir</span>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .seo-vista { display: block; padding: .8rem 1rem; border: 1px solid var(--line, #e6eaf0); border-radius: 14px; background: #fff; }
+    .seo-vista > span { display: block; overflow-wrap: anywhere; }
+    .seo-vista__url { font-size: .78rem; color: #4d5156; }
+    .seo-vista__titulo { font-size: 1.08rem; line-height: 1.3; color: #1a0dab; margin: .15rem 0; }
+    .seo-vista__desc { font-size: .86rem; line-height: 1.45; color: #4d5156; }
+    .seo-avisos { padding-left: 1.1rem; font-size: .9rem; }
+    .seo-avisos li + li { margin-top: .3rem; }
+    .seo-avisos--diego { color: var(--muted, #5a6b7e); }
+    .num { font-variant-numeric: tabular-nums; }
+</style>
+{% endblock %}
