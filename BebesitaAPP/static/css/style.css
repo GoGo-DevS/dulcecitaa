@@ -3259,3 +3259,57 @@ a.dr-topbar--promo:hover { filter: brightness(1.05); }
 .eyebrow--navidad { display: inline-flex; align-items: center; gap: .5em; }
 .eyebrow--navidad .gorro-navidad { flex: none; margin-top: -.2em; }
 .section-head-center .eyebrow--navidad { justify-content: center; }
+
+/* 15-11-2026 — /navidad/ con menos texto (pedido de Diego: "hay mucho, mucho
+   texto"). La pagina era una columna de parrafos; ahora cada regalo es una
+   tarjeta con su foto, el dato y el boton, y el detalle queda plegado.
+   Va aca y no en navidad.css porque /navidad/ existe todo el año y ese archivo
+   solo se carga en temporada. */
+.nav-intro { align-items: center; margin-bottom: 2.5rem; }
+/* Las fotos traen width y height (para que la pagina no salte al cargar). Sin
+   height:auto ese alto manda sobre aspect-ratio y la portada media 960 px. */
+.nav-intro .corp-foto img { height: auto; max-height: 540px; }
+.corp-texto .nav-bajada { font-size: 1.12rem; }
+.nav-regalos { padding-bottom: 3rem; }
+.nav-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 1.4rem; }
+.nav-card {
+  display: flex; flex-direction: column; overflow: hidden;
+  background: #fff; border: 1px solid var(--rosa-suave); border-radius: var(--radius-md);
+  box-shadow: 0 8px 26px rgba(42, 64, 87, .07);
+}
+.nav-card__foto { display: block; width: 100%; height: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.nav-card__cuerpo { display: flex; flex-direction: column; gap: .7rem; flex: 1; padding: 1.2rem 1.3rem 1.4rem; }
+.nav-card__cuerpo h2 { margin: 0; font-size: 1.2rem; font-weight: 800; line-height: 1.25; }
+.nav-card__cuerpo p { margin: 0; font-size: .97rem; line-height: 1.55; }
+.nav-card__cuerpo > .btn-main, .nav-card__cuerpo > .btn-ghost { align-self: flex-start; margin-top: auto; }
+/* Tarjeta sin foto (el pan de pascua todavia no tiene): el precio hace de imagen.
+   Son span y b a proposito: `.corp-blanco p` forzaria el texto a azul sobre azul. */
+.nav-card__sello {
+  display: grid; place-content: center; gap: .35rem; aspect-ratio: 4 / 3; padding: 1rem; text-align: center;
+  background-color: var(--azul);
+  background-image: radial-gradient(rgba(255, 255, 255, .16) 1.4px, transparent 1.6px);
+  background-size: 22px 22px;
+}
+.nav-card__sello span { color: #fff; font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.nav-card__sello b { color: var(--rosa); font-size: clamp(2.4rem, 6vw, 3.2rem); line-height: 1; }
+.nav-precios { margin: 0; padding: 0; list-style: none; }
+.nav-precios li { padding: .5rem 0; border-top: 1px solid var(--rosa-suave); font-size: .95rem; line-height: 1.35; }
+.nav-precios a { font-weight: 700; }
+.nav-mas summary { cursor: pointer; font-size: .92rem; font-weight: 700; }
+.nav-mas p { margin-top: .55rem; }
+.nav-entrega { padding-bottom: 3.5rem; }
+.nav-entrega h2 { margin: 0 0 1rem; font-size: 1.3rem; font-weight: 800; }
+.nav-datos { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: .8rem; margin: 0; padding: 0; list-style: none; }
+.nav-datos li {
+  display: flex; align-items: flex-start; gap: .7rem; padding: .9rem 1rem;
+  border-radius: var(--radius-md); background: rgba(245, 167, 214, .16); font-size: .95rem; line-height: 1.45;
+}
+.nav-datos i { flex: none; font-size: 1.25rem; line-height: 1.2; }
+.nav-empresa { margin: 1.2rem 0 0; }
+/* Preguntas plegadas: se abren con un toque y el texto sigue en la pagina. */
+.nav-faq summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; cursor: pointer; list-style: none; }
+.nav-faq summary::-webkit-details-marker { display: none; }
+.nav-faq summary::after { content: "+"; flex: none; font-size: 1.5rem; font-weight: 700; line-height: 1; }
+.nav-faq[open] summary::after { content: "−"; }
+.nav-faq summary h3 { margin: 0; font-size: 1.05rem; }
+.nav-faq[open] summary { margin-bottom: .6rem; }

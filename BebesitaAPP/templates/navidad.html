@@ -9,99 +9,150 @@
 
   Todo lo que dice esta pagina ya se vende y ya esta publicado: los precios
   salen de la base (los mismos del carrito), el box de /arma-tu-box/, el
-  minimo, Paket, las 48 horas, la duracion de un mes y la personalizacion
-  (respuestas de la duena del 16 y 19-10). NO hay box navideño con precio,
-  empaque navideño, fecha limite ni cupos: eso lo decide la duena y quedo
-  preguntado. Cuando responda, se completa ESTA misma pagina.
+  minimo, Paket, las 48 horas y la duracion de un mes (respuestas de la duena
+  del 16 y 19-10).
 
-  11-11-2026: respondio. Box navideño a pedido (cinta, tarjeta, sin eleccion de
-  color, mismo precio de empaque), pan de pascua y pedidos hasta el 20 de
+  11-11-2026: la duena confirmo el box navideño (cinta, tarjeta, sin eleccion de
+  color, mismo precio de empaque), el pan de pascua y pedidos hasta el 20 de
   diciembre. Todo eso sale de `oferta_navidad` (temporada.py) y desaparece solo
   despues del 25 de diciembre: sin oferta cargada, la pagina es la generica.
+
+  15-11-2026 (pedido de Diego: "hay mucho, mucho texto" + fotos de Tamara):
+  - La pagina era una columna de parrafos. Ahora cada regalo es una tarjeta con
+    su foto, el dato y el boton; lo que es detalle queda plegado (el ejemplo de
+    box y las preguntas), que sigue en la pagina para Google y para el FAQPage.
+  - Las fotos navideñas (bolsas kraft con cinta y tarjeta de "Feliz Navidad")
+    solo salen con oferta confirmada: en un año sin oferta prometerian un
+    empaque que nadie confirmo.
+  - La foto de portada NO va con carga diferida: es lo primero que se ve y lo
+    que Google mide (LCP).
 {% endcomment %}
 {% block title %}{% if oferta_navidad %}Regalos de Navidad, box navideño y pan de pascua{% else %}Regalos de Navidad: box de dulces artesanales{% endif %} | {{ site_brand }}{% endblock %}
 {% block meta_description %}{% if oferta_navidad %}Box navideño con cinta y tarjeta, pan de pascua artesanal de {{ oferta_navidad.pan.formato }} a ${{ oferta_navidad.pan.precio|pesos }} y dulces hechos a mano en Santiago.{% if not oferta_navidad.cerrado %} Pedidos hasta el {{ oferta_navidad.pedidos_hasta_texto }}.{% endif %}{% else %}Regalos de Navidad hechos a mano en Santiago: arma tu box de alfajores, barquillos y cuchuflís, detalles por cantidad y torta de cuchuflís.{% endif %}{% endblock %}
 {% block og_title %}{% if oferta_navidad %}Regalos de Navidad, box navideño y pan de pascua{% else %}Regalos de Navidad: box de dulces artesanales{% endif %} | {{ site_brand }}{% endblock %}
 {% block og_description %}Arma tu box de alfajores, barquillos y cuchuflís para regalar en Navidad, con los precios a la vista. Despacho a todo Chile.{% endblock %}
 {% block twitter_description %}Arma tu box de alfajores, barquillos y cuchuflís para regalar en Navidad, con los precios a la vista.{% endblock %}
+{% block og_image %}{% if oferta_navidad %}{{ site_url }}{% static 'img/og-navidad.jpg' %}{% else %}{{ default_og_image_url }}{% endif %}{% endblock %}
+{% block og_image_meta %}<meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="{% if oferta_navidad %}Regalos de Navidad de Dulcecita: bolsas con cinta roja y verde y tarjeta de Feliz Navidad{% else %}Dulcecita Bakery: alfajores, barquillos y cuchuflís hechos a mano{% endif %}">{% endblock %}
+{% block twitter_image %}{% if oferta_navidad %}{{ site_url }}{% static 'img/og-navidad.jpg' %}{% else %}{{ default_og_image_url }}{% endif %}{% endblock %}
 {% block schema %}<script type="application/ld+json">{{ schema }}</script>{% endblock %}
 
 {% block content %}
 <div class="corp-blanco">
-<section class="container corp-seccion">
-  <div class="corp-intro corp-intro--texto-primero">
+<section class="container corp-seccion nav-portada">
+  <div class="corp-intro corp-intro--texto-primero nav-intro">
     <div class="corp-texto" data-reveal-item>
       <p class="eyebrow{% if temporada_navidad %} eyebrow--navidad{% endif %}">{% if temporada_navidad %}{% include '_gorro_navidad.html' with tam=34 %}{% endif %}Navidad</p>
       <h1>{% if oferta_navidad %}Regalos de Navidad: box navideño, pan de pascua y dulces artesanales{% else %}Regalos de Navidad: box de dulces, detalles y tortas{% endif %}</h1>
-      <p>Alfajores, barquillos y cuchuflís hechos a mano en Santiago para regalar esta Navidad. Aquí están los dulces que ya vendemos, con sus precios: eliges, pagas por transferencia y coordinamos la entrega.</p>
+      <p class="nav-bajada">Alfajores, barquillos y cuchuflís hechos a mano en Santiago, listos para regalar.</p>
       <div class="hero-actions">
         <a href="{% url 'arma_tu_box' %}" class="btn-main">Arma tu box</a>
         {% if whatsapp_navidad %}<a href="{{ whatsapp_navidad }}" class="btn-ghost" target="_blank" rel="noopener">Escríbenos por WhatsApp</a>{% endif %}
       </div>
-
-      <h2>Un box de dulces para regalar</h2>
-      <p>En <a href="{% url 'arma_tu_box' %}">Arma tu box</a> eliges cuántos quieres de cada dulce, desde {{ minimo_box }} por producto, y con qué cobertura. Va en caja, listo para entregar, y el empaque cuesta ${{ precio_caja|pesos }}.{% if minimo_box_total %} El box parte en ${{ minimo_box_total|pesos }}, con el empaque incluido.{% endif %}</p>
-      {% if ejemplo_total %}
-      <p>Por ejemplo, un box con {% for f in ejemplo_box %}{{ f.cantidad }} {% if f.producto.unidades_por_pack > 1 %}bolsitas de {{ f.producto.unidades_por_pack }} {% endif %}{{ f.producto|ancla|lower }}{% if forloop.revcounter0 == 1 %} y {% elif not forloop.last %}, {% endif %}{% endfor %} cuesta ${{ ejemplo_total|pesos }} con el empaque{% if promocion_vigente %}, con el descuento de {{ promocion_vigente.etiqueta }} ya aplicado{% endif %}.</p>
-      {% endif %}
-      {% if oferta_navidad %}
-      <p><b>Box navideño:</b> en Navidad tu box puede ir en empaque navideño con cinta y tarjeta, por los mismos ${{ precio_caja|pesos }} del empaque. Viene en un solo diseño, así que no se elige color. Al hacer el pedido, cuéntanos en «¿Para qué ocasión es?» que lo quieres navideño, o escríbenos por WhatsApp.</p>
-      {% endif %}
-      <p>¿Buscas un surtido distinto? También armamos box a pedido: el surtido, la cantidad y la presentación se definen contigo, como el box dieciochero que hicimos para Fiestas Patrias.</p>
-
-      {% if oferta_navidad %}
-      <h2>Pan de pascua artesanal</h2>
-      <p>Esta Navidad también hacemos pan de pascua artesanal, en formato de {{ oferta_navidad.pan.formato }}, a ${{ oferta_navidad.pan.precio|pesos }}. Lo vendemos desde el {{ oferta_navidad.pan.desde_texto }}.</p>
-      {% if oferta_navidad.cerrado %}
-      <p>Los pedidos de Navidad cerraron el {{ oferta_navidad.pedidos_hasta_texto }}.</p>
-      {% elif whatsapp_pan %}
-      <div class="hero-actions">
-        <a href="{{ whatsapp_pan }}" class="btn-ghost" target="_blank" rel="noopener">Encargar pan de pascua por WhatsApp</a>
-      </div>
-      {% endif %}
-      {% endif %}
-
-      {% if para_detalle %}
-      <h2>Un detalle para cada persona</h2>
-      <p>Para los compañeros de trabajo, la familia o los amigos. Todo va envuelto por unidad. Se piden desde {{ minimo_unidades }} por producto{% if minimos_propios %} ({{ minimos_propios }}){% endif %} y, por mayor, desde {{ por_mayor_desde }} unidades al mismo precio.</p>
-      <ul class="check-list">
-        {% for p in para_detalle %}<li><a href="{{ p.get_absolute_url }}">{{ p|ancla }}</a>: ${{ p.precio_desde|pesos }} {{ p.unidad_venta }}</li>
-        {% endfor %}
-      </ul>
-      <p>Se pueden personalizar para regalos y eventos: cuéntanos qué necesitas al hacer el pedido.</p>
-      {% endif %}
-
-      {% for t in tortas %}
-      <h2>Para compartir en la celebración: {{ t|ancla|lower }}</h2>
-      <p>{{ t.texto_precios }}</p>
-      <p>Va terminada con cinta y decoración: al pedir nos cuentas los colores que quieres. <a href="{{ t.get_absolute_url }}">Ver la {{ t|ancla|lower }}</a>.</p>
-      {% endfor %}
-
-      <h2>¿Es para tu empresa?</h2>
-      <p>Los regalos de fin de año para el equipo o los clientes de una empresa, con su logo en el empaque, se cotizan en <a href="{% url 'corporativo' %}">venta corporativa</a>.</p>
-
-      <h2>Cuándo pedir y cómo llega</h2>
-      <ul class="check-list">
-        {% if oferta_navidad %}{% if oferta_navidad.cerrado %}<li><b>Los pedidos de Navidad cerraron el {{ oferta_navidad.pedidos_hasta_texto }}.</b></li>{% else %}<li><b>Recibimos pedidos de Navidad hasta el {{ oferta_navidad.pedidos_hasta_texto }}.</b></li>{% endif %}
-        {% endif %}<li><b>Sale {{ despacho_horas }} horas después del pago.</b> Todo se hace a mano.</li>
-        <li><b>En Santiago</b> coordinamos la entrega por WhatsApp; <b>a regiones</b> viaja por Paket con seguimiento. <a href="{% url 'delivery' %}">Delivery y retiro</a>.</li>
-        <li><b>Los dulces duran aproximadamente un mes</b> guardados en un ambiente fresco y seco, así que puedes pedir con tiempo.</li>
-      </ul>
     </div>
 
     <figure class="corp-foto corp-foto--doble" data-reveal-item>
-      <img class="corp-foto__principal" src="{% static 'img/galeria/torta-cuchuflis-papel-colores.webp' %}" alt="Torta de cuchuflís terminada con cinta y papel de colores" loading="lazy" width="720" height="900">
-      <img class="corp-foto__segunda" src="{% static 'img/galeria/corporativo-empaques-aza.webp' %}" alt="Cuchuflís bañados embolsados con un sticker de agradecimiento personalizado" loading="lazy" width="499" height="900">
-      <figcaption class="corp-foto__pie">Fotos reales: una torta de cuchuflís y cuchuflís bañados con el sticker de agradecimiento de un cliente.</figcaption>
+      {% if oferta_navidad %}
+      <img class="corp-foto__principal" src="{% static 'img/galeria/regalos-de-navidad-dulcecita.webp' %}" alt="Regalos de Navidad de Dulcecita: bolsas kraft con cinta roja y verde y tarjeta de Feliz Navidad" fetchpriority="high" decoding="async" width="720" height="960">
+      <img class="corp-foto__segunda" src="{% static 'img/galeria/regalo-navideno-cinta-y-tarjeta.webp' %}" alt="Regalos navideños de Dulcecita en fila, cada uno con su cinta y su tarjeta" loading="lazy" decoding="async" width="540" height="960">
+      {% else %}
+      <img class="corp-foto__principal" src="{% static 'img/galeria/cajas-cuchuflis-para-regalar.webp' %}" alt="Cajas de Dulcecita con ventana: cuchuflís bañados en chocolate y cuchuflís rellenos" fetchpriority="high" decoding="async" width="960" height="720">
+      <img class="corp-foto__segunda" src="{% static 'img/galeria/torta-cuchuflis-papel-colores.webp' %}" alt="Torta de cuchuflís terminada con cinta y papel de colores" loading="lazy" decoding="async" width="720" height="900">
+      {% endif %}
     </figure>
   </div>
+</section>
+
+<section class="container nav-regalos" aria-label="Qué puedes regalar">
+  <div class="nav-grid">
+
+    <article class="nav-card">
+      {% if oferta_navidad %}
+      <img class="nav-card__foto" src="{% static 'img/galeria/box-navideno-bolsas-kraft.webp' %}" alt="Regalos de Dulcecita en bolsa kraft con cinta verde y tarjeta navideña" loading="lazy" decoding="async" width="960" height="720">
+      {% else %}
+      <img class="nav-card__foto" src="{% static 'img/galeria/caja-surtida.webp' %}" alt="Caja surtida de dulces artesanales de Dulcecita" loading="lazy" decoding="async" width="675" height="900">
+      {% endif %}
+      <div class="nav-card__cuerpo">
+        <h2>{% if oferta_navidad %}Box navideño para regalar{% else %}Un box de dulces para regalar{% endif %}</h2>
+        <p>Eliges los dulces y la cobertura en <a href="{% url 'arma_tu_box' %}">Arma tu box</a>, desde {{ minimo_box }} por producto; el empaque cuesta ${{ precio_caja|pesos }}.{% if minimo_box_total %} El box parte en ${{ minimo_box_total|pesos }}, con el empaque incluido.{% endif %}</p>
+        {% if oferta_navidad %}
+        <p>En Navidad va en empaque navideño con cinta y tarjeta, por los mismos ${{ precio_caja|pesos }} del empaque.</p>
+        {% endif %}
+        <details class="nav-mas">
+          <summary>Más sobre el box</summary>
+          {% if oferta_navidad %}<p>El empaque navideño es un solo diseño: no se elige color. Pídelo en «¿Para qué ocasión es?» al comprar, o escríbenos por WhatsApp.</p>{% endif %}
+          {% if ejemplo_total %}
+          <p>Un box con {% for f in ejemplo_box %}{{ f.cantidad }} {% if f.producto.unidades_por_pack > 1 %}bolsitas de {{ f.producto.unidades_por_pack }} {% endif %}{{ f.producto|ancla|lower }}{% if forloop.revcounter0 == 1 %} y {% elif not forloop.last %}, {% endif %}{% endfor %} cuesta ${{ ejemplo_total|pesos }} con el empaque{% if promocion_vigente %}, con el descuento de {{ promocion_vigente.etiqueta }} ya aplicado{% endif %}.</p>
+          {% endif %}
+          <p>¿Buscas otro surtido? También armamos box a pedido, como el dieciochero que hicimos para Fiestas Patrias.</p>
+        </details>
+        <a href="{% url 'arma_tu_box' %}" class="btn-main">Arma tu box</a>
+      </div>
+    </article>
+
+    {% if oferta_navidad %}
+    <article class="nav-card">
+      <div class="nav-card__sello" aria-hidden="true">
+        <span>Pan de pascua · {{ oferta_navidad.pan.formato }}</span>
+        <b>${{ oferta_navidad.pan.precio|pesos }}</b>
+      </div>
+      <div class="nav-card__cuerpo">
+        <h2>Pan de pascua artesanal</h2>
+        <p>Pan de pascua artesanal en formato de {{ oferta_navidad.pan.formato }}, a ${{ oferta_navidad.pan.precio|pesos }}. Lo vendemos desde el {{ oferta_navidad.pan.desde_texto }}.</p>
+        {% if not oferta_navidad.cerrado and whatsapp_pan %}
+        <a href="{{ whatsapp_pan }}" class="btn-ghost" target="_blank" rel="noopener">Encargar pan de pascua por WhatsApp</a>
+        {% endif %}
+      </div>
+    </article>
+    {% endif %}
+
+    {% if para_detalle %}
+    <article class="nav-card">
+      <img class="nav-card__foto" src="{% static 'img/galeria/cajas-cuchuflis-para-regalar.webp' %}" alt="Cajas de Dulcecita con ventana: cuchuflís bañados en chocolate y cuchuflís rellenos" loading="lazy" decoding="async" width="960" height="720">
+      <div class="nav-card__cuerpo">
+        <h2>Un detalle para cada persona</h2>
+        <p>Para compañeros de trabajo, familia o amigos. Se piden desde {{ minimo_unidades }} por producto{% if minimos_propios %} ({{ minimos_propios }}){% endif %} y, por mayor, desde {{ por_mayor_desde }} unidades al mismo precio.</p>
+        <ul class="nav-precios">
+          {% for p in para_detalle %}<li><a href="{{ p.get_absolute_url }}">{{ p|ancla }}</a>: ${{ p.precio_desde|pesos }} {{ p.unidad_venta }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </article>
+    {% endif %}
+
+    {% for t in tortas %}
+    <article class="nav-card">
+      <img class="nav-card__foto" src="{% static 'img/galeria/torta-cuchuflis-cinta-rosada.webp' %}" alt="Torta de cuchuflís de Dulcecita terminada con cinta rosada" loading="lazy" decoding="async" width="720" height="900">
+      <div class="nav-card__cuerpo">
+        <h2>Para compartir en la celebración: {{ t|ancla|lower }}</h2>
+        <p>{{ t.texto_precios }}</p>
+        <a href="{{ t.get_absolute_url }}" class="btn-ghost">Ver la {{ t|ancla|lower }}</a>
+      </div>
+    </article>
+    {% endfor %}
+
+  </div>
+</section>
+
+<section class="container nav-entrega">
+  <h2>Cuándo pedir y cómo llega</h2>
+  <ul class="nav-datos">
+    {% if oferta_navidad %}<li><i class="bi bi-calendar-check" aria-hidden="true"></i><span>{% if oferta_navidad.cerrado %}<b>Los pedidos de Navidad cerraron el {{ oferta_navidad.pedidos_hasta_texto }}.</b>{% else %}<b>Recibimos pedidos de Navidad hasta el {{ oferta_navidad.pedidos_hasta_texto }}.</b>{% endif %}</span></li>
+    {% endif %}<li><i class="bi bi-clock" aria-hidden="true"></i><span><b>Sale {{ despacho_horas }} horas después del pago.</b></span></li>
+    <li><i class="bi bi-truck" aria-hidden="true"></i><span><b>En Santiago</b> por WhatsApp; <b>a regiones</b> por Paket. <a href="{% url 'delivery' %}">Delivery y retiro</a>.</span></li>
+    <li><i class="bi bi-heart" aria-hidden="true"></i><span><b>Los dulces duran aproximadamente un mes</b> guardados en un ambiente fresco y seco.</span></li>
+  </ul>
+  <p class="nav-empresa">¿Es para tu empresa? Los regalos de fin de año con logo se cotizan en <a href="{% url 'corporativo' %}">venta corporativa</a>.</p>
 </section>
 </div>
 
 {% if preguntas %}
 {% comment %}
   Las mismas preguntas que declara el FAQPage del schema: lo que se declara es
-  exactamente lo que se ve.
+  exactamente lo que se ve. Van plegadas (15-11-2026): se abren con un toque y
+  el texto sigue en la pagina.
 {% endcomment %}
 <section class="section-soft">
   <div class="container">
@@ -111,10 +162,10 @@
     </div>
     <div class="faq-list">
       {% for faq in preguntas %}
-      <article class="faq-item surface-card">
-        <h3>{{ faq.pregunta }}</h3>
+      <details class="faq-item surface-card nav-faq">
+        <summary><h3>{{ faq.pregunta }}</h3></summary>
         <p class="mb-0">{{ faq.respuesta }}</p>
-      </article>
+      </details>
       {% endfor %}
     </div>
     <div class="hero-actions justify-content-center mt-4">
