@@ -44,6 +44,15 @@ MESES_ES = [
 # Dashboard
 # ----------------------------------------------------------------------------
 def dashboard(request):
+    # 15-11-2026: el panel se usa como el de una tienda online. Este inicio (la
+    # utilidad de las cotizaciones corporativas) solo sale si ese modulo esta
+    # a la vista; si no, el inicio es el de la tienda.
+    from django.conf import settings
+
+    if not getattr(settings, "PANEL_VENTA_CORPORATIVA", False):
+        from .tienda import inicio_tienda
+        return inicio_tienda(request)
+
     hoy = timezone.localdate()
     try:
         y, m = (int(p) for p in request.GET.get("mes", "").split("-"))

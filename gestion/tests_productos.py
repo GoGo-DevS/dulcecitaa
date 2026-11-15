@@ -111,7 +111,7 @@ class AccesoTests(_Panel):
         html = self.client.get(reverse("gestion:productos")).content.decode()
         arriba = html.split('class="top-links"', 1)[1].split("</div>", 1)[0]
         abajo = html.split('class="bottom-nav"', 1)[1].split("</nav>", 1)[0]
-        orden = ["Inicio", "Pedidos", "Clientes", "Productos", "Promos", "Web"]
+        orden = ["Inicio", "Ventas", "Productos", "Promos", "Google"]
         for barra in (arriba, abajo):
             posiciones = [barra.index(nombre) for nombre in orden]
             self.assertEqual(posiciones, sorted(posiciones))

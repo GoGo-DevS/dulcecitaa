@@ -18,7 +18,7 @@ class PanelWebTests(TestCase):
         ClicEnlace.objects.create(slug="whatsapp")
         r = self.client.get("/panel/web/?dias=30")
         self.assertEqual(r.status_code, 200)
-        self.assertContains(r, "Tienda web")
+        self.assertContains(r, '<h1 class="page-title">Ventas</h1>')
         self.assertRegex(r.content.decode(), r"15\D{1,6}900")
         self.assertContains(r, "WhatsApp")
         self.assertContains(r, "Herramientas de medición")

@@ -1,0 +1,99 @@
+{% extends "gestion/base.html" %}
+{% load plata %}
+
+{% block title %}Inicio | Gestión Dulcecita{% endblock %}
+{% block nav_inicio %}active{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Tu tienda</h1>
+<p class="page-lead">{% if pedidos_hoy %}Hoy {{ pedidos_hoy|pluralize:"entró,entraron" }} {{ pedidos_hoy }} pedido{{ pedidos_hoy|pluralize }} por ${{ ventas_hoy|pesos }}.{% else %}Hoy todavía no entran pedidos.{% endif %}</p>
+
+<section class="card surface-rose kpi-hero mb-3" aria-label="Ventas de la semana">
+    <div class="card-body text-center py-4">
+        <div class="kpi-label">Ventas de los últimos 7 días</div>
+        <div class="kpi-value">${{ ventas|pesos }}</div>
+        <div class="kpi-split">
+            <span class="kpi-chip num"><span>Pedidos</span>{{ pedidos }}</span>
+            <span class="kpi-chip num"><span>Ticket promedio</span>${{ ticket|pesos }}</span>
+        </div>
+        <p class="tienda-compara mb-0">
+            {% if variacion is None %}En los 7 días anteriores no hubo ventas.
+            {% else %}{% if variacion > 0 %}<b class="tienda-sube">▲ {{ variacion }}%</b>{% elif variacion < 0 %}<b class="tienda-baja">▼ {{ variacion|cut:"-" }}%</b>{% else %}<b>Igual</b>{% endif %}
+            que los 7 días anteriores (${{ ventas_antes|pesos }} en {{ pedidos_antes }} pedido{{ pedidos_antes|pluralize }}).{% endif %}
+        </p>
+    </div>
+</section>
+
+<div class="row g-3 mb-3">
+    <div class="col-6">
+        <a href="{% url 'gestion:productos' %}" class="card stat-card h-100 text-decoration-none"><div class="card-body">
+            <div class="stat-value">{{ productos_en_web }}</div>
+            <div class="stat-label">Productos en la web</div>
+        </div></a>
+    </div>
+    <div class="col-6">
+        <a href="{% url 'gestion:promos' %}" class="card stat-card h-100 text-decoration-none"><div class="card-body">
+            <div class="stat-value">{% if promo %}−{{ promo.porcentaje }}%{% else %}—{% endif %}</div>
+            <div class="stat-label">{% if promo %}{{ promo.nombre }}, hasta el {{ promo.hasta|date:"d/m" }}{% else %}Sin promoción hoy{% endif %}</div>
+        </div></a>
+    </div>
+</div>
+
+<div class="d-grid gap-2 mb-3">
+    <a href="{% url 'gestion:producto_nuevo' %}" class="btn btn-dc"><i class="bi bi-plus-lg"></i> Nuevo producto</a>
+    <div class="row g-2">
+        <div class="col-6"><a href="{% url 'gestion:promo_nueva' %}" class="btn btn-outline-dc btn-sm w-100 h-100"><i class="bi bi-tag"></i> Nueva promoción</a></div>
+        <div class="col-6"><a href="{{ sitio }}" target="_blank" rel="noopener" class="btn btn-outline-dc btn-sm w-100 h-100"><i class="bi bi-box-arrow-up-right"></i> Ver la tienda</a></div>
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center gap-2">
+        <span><i class="bi bi-receipt"></i> Últimos pedidos</span>
+        {% if total_pedidos > ultimos|length %}<a href="{% url 'gestion:ventas' %}" class="btn btn-sm btn-link p-0">Ver los {{ total_pedidos }}</a>{% endif %}
+    </div>
+    <div class="list-group list-group-flush">
+        {% for p in ultimos %}
+            <a href="{% url 'gestion:venta_detalle' p.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2">
+                <span class="min-w-0">
+                    <span class="item-title d-block">#{{ p.pk }} {{ p.nombre_cliente }}</span>
+                    <span class="item-meta d-block">{{ p.creado|date:"d M, H:i" }} · {{ p.get_tipo_entrega_display|lower }}</span>
+                </span>
+                <span class="item-title num flex-shrink-0">${{ p.total|pesos }}</span>
+            </a>
+        {% empty %}
+            <div class="list-group-item item-meta">Aún no llegan pedidos por la web. Comparte dulcecita.cl en Instagram y WhatsApp.</div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if top %}
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-bag-heart"></i> Lo más pedido en 30 días</div>
+    <div class="list-group list-group-flush">
+        {% for fila in top %}
+            <div class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                <span class="item-title min-w-0">{{ fila.producto__nombre }}</span>
+                <span class="text-end flex-shrink-0">
+                    <span class="item-title d-block num">{{ fila.unidades }} u.</span>
+                    <span class="item-meta d-block num">${{ fila.monto|pesos }}</span>
+                </span>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a href="{% url 'gestion:web' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-graph-up-arrow"></i> Ventas en detalle</a>
+    <a href="{% url 'gestion:seo' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-google"></i> Cómo sales en Google</a>
+</div>
+
+<style>
+    .tienda-compara { margin-top: .9rem; font-size: .9rem; }
+    /* Sobre el azul de la tarjeta: el verde y el rojo de Bootstrap no se leen. */
+    .tienda-sube { color: #8fe3b0; }
+    .tienda-baja { color: #ffb4b4; }
+    .num { font-variant-numeric: tabular-nums; }
+</style>
+{% endblock %}

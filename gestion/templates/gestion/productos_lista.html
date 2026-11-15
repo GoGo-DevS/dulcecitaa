@@ -70,7 +70,7 @@
 {% endif %}
 
 <div class="d-flex flex-wrap gap-2 mb-3">
-    <a href="{% url 'gestion:costos' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-calculator"></i> Costos por unidad</a>
+    {% if panel_corporativo %}<a href="{% url 'gestion:costos' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-calculator"></i> Costos por unidad</a>{% endif %}
     <a href="{% url 'gestion:promos' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-tag"></i> Promociones</a>
     <a href="{% url 'gestion:seo' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-google"></i> Cómo salen en Google</a>
 </div>

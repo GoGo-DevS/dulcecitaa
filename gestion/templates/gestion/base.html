@@ -25,12 +25,18 @@
             </a>
             {% if user.is_authenticated %}
             <div class="top-links">
+                {% comment %}
+                  15-11-2026: menu de tienda online. Pedidos y Clientes (cotizaciones
+                  corporativas) solo salen con PANEL_VENTA_CORPORATIVA. El orden de esta
+                  barra y el de la de abajo tienen que ser el MISMO.
+                {% endcomment %}
                 <a href="{% url 'gestion:dashboard' %}"><i class="bi bi-house-door"></i> Inicio</a>
-                <a href="{% url 'gestion:pedidos' %}"><i class="bi bi-receipt"></i> Pedidos</a>
-                <a href="{% url 'gestion:clientes' %}"><i class="bi bi-people"></i> Clientes</a>
+                {% if panel_corporativo %}<a href="{% url 'gestion:pedidos' %}"><i class="bi bi-receipt"></i> Pedidos</a>
+                <a href="{% url 'gestion:clientes' %}"><i class="bi bi-people"></i> Clientes</a>{% endif %}
+                <a href="{% url 'gestion:web' %}"><i class="bi bi-graph-up-arrow"></i> Ventas</a>
                 <a href="{% url 'gestion:productos' %}"><i class="bi bi-bag-heart"></i> Productos</a>
                 <a href="{% url 'gestion:promos' %}"><i class="bi bi-tag"></i> Promos</a>
-                <a href="{% url 'gestion:web' %}"><i class="bi bi-graph-up-arrow"></i> Web</a>
+                <a href="{% url 'gestion:seo' %}"><i class="bi bi-google"></i> Google</a>
             </div>
             <form method="post" action="{% url 'gestion:logout' %}" class="ms-auto m-0">
                 {% csrf_token %}
@@ -58,11 +64,16 @@
         <a href="{% url 'gestion:dashboard' %}" class="{% block nav_inicio %}{% endblock %}">
             <i class="bi bi-house-door" aria-hidden="true"></i>Inicio
         </a>
+        {% if panel_corporativo %}
         <a href="{% url 'gestion:pedidos' %}" class="{% block nav_pedidos %}{% endblock %}">
             <i class="bi bi-receipt" aria-hidden="true"></i>Pedidos
         </a>
         <a href="{% url 'gestion:clientes' %}" class="{% block nav_clientes %}{% endblock %}">
             <i class="bi bi-people" aria-hidden="true"></i>Clientes
+        </a>
+        {% endif %}
+        <a href="{% url 'gestion:web' %}" class="{% block nav_web %}{% endblock %}">
+            <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>Ventas
         </a>
         {% comment %}
           15-11-2026: Productos entra al menu. El orden de esta barra y el de
@@ -74,8 +85,8 @@
         <a href="{% url 'gestion:promos' %}" class="{% block nav_promos %}{% endblock %}">
             <i class="bi bi-tag" aria-hidden="true"></i>Promos
         </a>
-        <a href="{% url 'gestion:web' %}" class="{% block nav_web %}{% endblock %}">
-            <i class="bi bi-graph-up-arrow" aria-hidden="true"></i>Web
+        <a href="{% url 'gestion:seo' %}" class="{% block nav_google %}{% endblock %}">
+            <i class="bi bi-google" aria-hidden="true"></i>Google
         </a>
     </nav>
 

@@ -1,16 +1,11 @@
 {% extends "gestion/base.html" %}
 
 {% block title %}Google | Gestión Dulcecita{% endblock %}
-{% block nav_web %}active{% endblock %}
+{% block nav_google %}active{% endblock %}
 
 {% block content %}
 <h1 class="page-title">Cómo sales en Google</h1>
 <p class="page-lead">Así muestra Google cada página de dulcecita.cl, revisada recién. Lo que puedes mejorar tú está marcado.</p>
-
-<nav class="chip-row" aria-label="Secciones de la web">
-    <a href="{% url 'gestion:web' %}" class="btn btn-sm btn-outline-secondary">Ventas</a>
-    <a href="{% url 'gestion:seo' %}" class="btn btn-sm btn-dc" aria-current="true">Google</a>
-</nav>
 
 <section class="card surface-rose kpi-hero mb-3" aria-label="Resumen">
     <div class="card-body text-center py-4">

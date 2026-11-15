@@ -218,7 +218,8 @@ class VentasTests(_Panel):
         self.assertNotIn("Falta configurar", fila)
         self.assertIn(reverse("gestion:seo"), html)
 
-    def test_el_inicio_resume_la_tienda_web(self):
+    @override_settings(PANEL_VENTA_CORPORATIVA=True)
+    def test_el_inicio_corporativo_tambien_resume_la_tienda_web(self):
         _pedido(15900, hace_dias=0)
         _pedido(9000, hace_dias=4)
         html = self.client.get(reverse("gestion:dashboard")).content.decode()

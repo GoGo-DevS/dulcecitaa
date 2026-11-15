@@ -1,7 +1,7 @@
 from django.contrib.auth import views as auth_views
 from django.urls import path
 
-from . import productos, seo_panel, views
+from . import productos, seo_panel, tienda, views
 from .forms import GestionLoginForm
 
 app_name = "gestion"
@@ -62,5 +62,8 @@ urlpatterns = [
     # Costos por unidad
     path("costos/", views.costos, name="costos"),
     path("web/", views.web, name="web"),
+    # Pedidos hechos en dulcecita.cl, dentro del panel (antes solo en /admin/).
+    path("web/pedidos/", tienda.ventas_lista, name="ventas"),
+    path("web/pedidos/<int:pk>/", tienda.venta_detalle, name="venta_detalle"),
     path("web/seo/", seo_panel.seo, name="seo"),
 ]

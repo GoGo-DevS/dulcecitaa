@@ -1,17 +1,12 @@
 {% extends "gestion/base.html" %}
 {% load humanize plata %}
 
-{% block title %}Web | Gestión Dulcecita{% endblock %}
+{% block title %}Ventas | Gestión Dulcecita{% endblock %}
 {% block nav_web %}active{% endblock %}
 
 {% block content %}
-<h1 class="page-title">Tienda web</h1>
+<h1 class="page-title">Ventas</h1>
 <p class="page-lead">Pedidos y clics de dulcecita.cl, al momento. Las visitas y los mapas de calor están en las herramientas de abajo.</p>
-
-<nav class="chip-row" aria-label="Secciones de la web">
-    <a href="{% url 'gestion:web' %}" class="btn btn-sm btn-dc" aria-current="true">Ventas</a>
-    <a href="{% url 'gestion:seo' %}" class="btn btn-sm btn-outline-secondary">Google</a>
-</nav>
 
 <nav class="chip-row" aria-label="Periodo">
     {% for valor, etiqueta in opciones_dias %}
@@ -151,10 +146,14 @@
 </div>
 
 <div class="card mb-3">
-    <div class="card-header"><i class="bi bi-receipt"></i> Últimos pedidos web</div>
+    <div class="card-header d-flex justify-content-between align-items-center gap-2">
+        <span><i class="bi bi-receipt"></i> Últimos pedidos</span>
+        <a href="{% url 'gestion:ventas' %}" class="btn btn-sm btn-link p-0">Ver todos</a>
+    </div>
     <div class="list-group list-group-flush">
         {% for p in ultimos %}
-            <a href="{% url 'admin:BebesitaAPP_pedido_change' p.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2">
+            {# 15-11-2026: se abren en el panel. Antes iban a /admin/, que la dueña no usa. #}
+            <a href="{% url 'gestion:venta_detalle' p.pk %}" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-2">
                 <span class="min-w-0">
                     <span class="item-title d-block">#{{ p.pk }} {{ p.nombre_cliente }}</span>
                     <span class="item-meta d-block">{{ p.creado|date:"d M, H:i" }} {{ p.get_tipo_entrega_display|lower }}{% if p.cantidad_cajas %}, {{ p.cantidad_cajas }} box{% endif %}</span>

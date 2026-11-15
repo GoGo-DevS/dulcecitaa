@@ -1,0 +1,86 @@
+{% extends "gestion/base.html" %}
+{% load plata %}
+
+{% block title %}Pedido #{{ pedido.pk }} | Gestión Dulcecita{% endblock %}
+{% block nav_web %}active{% endblock %}
+
+{% block content %}
+<a href="{% url 'gestion:ventas' %}" class="btn btn-sm btn-link text-muted ps-0 mb-1">
+  <i class="bi bi-arrow-left"></i> Pedidos de la tienda
+</a>
+<h1 class="page-title mb-1">Pedido #{{ pedido.pk }}</h1>
+<p class="page-lead">{{ pedido.creado|date:"l j \d\e F, H:i" }} · {{ unidades }} unidad{{ unidades|pluralize:"es" }}</p>
+
+<section class="card surface-rose kpi-hero mb-3" aria-label="Total del pedido">
+    <div class="card-body text-center py-4">
+        <div class="kpi-label">Total del pedido</div>
+        <div class="kpi-value">${{ pedido.total|pesos }}</div>
+        <div class="kpi-split">
+            <span class="kpi-chip">{{ pedido.get_tipo_entrega_display }}</span>
+        </div>
+    </div>
+</section>
+
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-person"></i> Quién compra</div>
+    <div class="card-body">
+        <p class="item-title mb-1">{{ pedido.nombre_cliente }}</p>
+        <p class="item-meta mb-1">{{ pedido.telefono }}</p>
+        <p class="item-meta mb-3"><a href="mailto:{{ pedido.email_cliente }}">{{ pedido.email_cliente }}</a></p>
+        {% if whatsapp %}
+        <a href="{{ whatsapp }}" target="_blank" rel="noopener" class="btn btn-wa"><i class="bi bi-whatsapp"></i> Escribirle por WhatsApp</a>
+        {% else %}
+        <p class="item-meta mb-0">El teléfono que dejó no sirve para WhatsApp: escríbele al correo.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-truck"></i> Entrega</div>
+    <div class="card-body">
+        <p class="item-title mb-1">{{ pedido.get_tipo_entrega_display }}{% if pedido.comuna_sector %} · {{ pedido.comuna_sector }}{% endif %}</p>
+        {% if pedido.direccion %}<p class="item-meta mb-0">{{ pedido.direccion|linebreaksbr }}</p>{% endif %}
+        {% if pedido.comentario_ocasion %}
+        <hr>
+        <p class="form-label mb-1">Lo que escribió el cliente</p>
+        <p class="mb-0">{{ pedido.comentario_ocasion|linebreaksbr }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-bag-heart"></i> Qué pidió</div>
+    <div class="list-group list-group-flush">
+        {% for linea in lineas %}
+            <div class="list-group-item d-flex justify-content-between align-items-start gap-2">
+                <span class="min-w-0">
+                    <span class="item-title d-block">{{ linea.item.cantidad }} × {{ linea.item.producto.nombre }}</span>
+                    {% if linea.item.detalle %}<span class="item-meta d-block">{{ linea.item.detalle }}</span>{% endif %}
+                    <span class="item-meta d-block num">${{ linea.item.precio|pesos }} c/u</span>
+                </span>
+                <span class="item-title num flex-shrink-0">${{ linea.subtotal|pesos }}</span>
+            </div>
+        {% empty %}
+            <div class="list-group-item item-meta">Este pedido no tiene líneas guardadas.</div>
+        {% endfor %}
+        <div class="list-group-item d-flex justify-content-between gap-2">
+            <span class="item-meta">Productos</span><span class="item-meta num">${{ subtotal|pesos }}</span>
+        </div>
+        {% if pedido.costo_caja %}
+        <div class="list-group-item d-flex justify-content-between gap-2">
+            <span class="item-meta">Empaque ({{ pedido.cantidad_cajas }} box)</span><span class="item-meta num">${{ pedido.costo_caja|pesos }}</span>
+        </div>
+        {% endif %}
+        {% if es_despacho or pedido.costo_despacho %}
+        <div class="list-group-item d-flex justify-content-between gap-2">
+            <span class="item-meta">Despacho</span><span class="item-meta num">{% if pedido.costo_despacho %}${{ pedido.costo_despacho|pesos }}{% else %}Por coordinar{% endif %}</span>
+        </div>
+        {% endif %}
+        <div class="list-group-item d-flex justify-content-between gap-2">
+            <span class="item-title">Total</span><span class="item-title num">${{ pedido.total|pesos }}</span>
+        </div>
+    </div>
+</div>
+
+<style>.num { font-variant-numeric: tabular-nums; }</style>
+{% endblock %}

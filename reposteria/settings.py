@@ -120,6 +120,12 @@ LOGIN_URL = "gestion:login"
 LOGIN_REDIRECT_URL = "gestion:dashboard"
 LOGOUT_REDIRECT_URL = "gestion:login"
 
+# 15-11-2026 (pedido de Diego): el panel queda como el de una tienda online.
+# "Pedidos" y "Clientes" (las cotizaciones corporativas armadas a mano) se
+# OCULTAN del menu y del inicio "de momento": sus pantallas y sus datos siguen
+# ahi. Para volver a mostrarlos, PANEL_VENTA_CORPORATIVA=true en el entorno.
+PANEL_VENTA_CORPORATIVA = env_bool("PANEL_VENTA_CORPORATIVA", default=False)
+
 ROOT_URLCONF = "reposteria.urls"
 
 TEMPLATES = [
@@ -135,6 +141,7 @@ TEMPLATES = [
                 "BebesitaAPP.context_processors.cart_count",
                 "BebesitaAPP.context_processors.site_config",
                 "BebesitaAPP.context_processors.seo",
+                "gestion.context_processors.panel",
             ],
         },
     },
