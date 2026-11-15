@@ -89,7 +89,9 @@ class Command(BaseCommand):
         """Torta de cuchuflis (15-09-2026): se crea una vez si no existe.
 
         Precio fijo por tamaño y cobertura (no es base + recargo parejo):
-        50 sin cobertura 14.990 / con 17.990, 100 sin 29.990 / con 34.990.
+        50 sin cobertura 14.990 / con 17.490, 100 sin 29.990 / con 34.990.
+        Confirmados por la duena el 15-11-2026 (la de 50 con cobertura era
+        17.990); la base que ya existia se actualizo con la migracion 0019.
         """
         from BebesitaAPP.models import PrecioCombinacion, ProductoImagen
 
@@ -118,7 +120,7 @@ class Command(BaseCommand):
         self._poner_foto(torta, "torta-cuchuflis-v2.jpg")
         torta.save()
         torta.opciones.add(t50, t100, sin, choc, blanco)
-        for tam, cob, precio in [(t50, sin, 14990), (t50, choc, 17990), (t50, blanco, 17990),
+        for tam, cob, precio in [(t50, sin, 14990), (t50, choc, 17490), (t50, blanco, 17490),
                                  (t100, sin, 29990), (t100, choc, 34990), (t100, blanco, 34990)]:
             pc = PrecioCombinacion.objects.create(producto=torta, precio=precio)
             pc.opciones.set([tam, cob])
