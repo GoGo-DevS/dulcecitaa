@@ -3313,3 +3313,14 @@ a.dr-topbar--promo:hover { filter: brightness(1.05); }
 .nav-faq[open] summary::after { content: "−"; }
 .nav-faq summary h3 { margin: 0; font-size: 1.05rem; }
 .nav-faq[open] summary { margin-bottom: .6rem; }
+
+/* 16-11-2026 — /corporativo/ con menos texto y con las fotos nuevas de Tamara
+   (pedido de Diego). Usa las mismas piezas que /navidad/ (.nav-intro, .nav-grid,
+   .nav-card, .nav-datos, .nav-mas); aca solo va lo propio de esta pagina. */
+.corp-dulces { font-size: .9rem; }
+.nav-card__cuerpo .corp-dulces a { font-weight: 700; }
+.corp-plazos { margin-top: 1.1rem; }
+/* La franja de datos ya deja su aire abajo: la seccion del formulario no suma el suyo arriba. */
+/* El margen de ancla deja el aviso libre de la guirnalda que cuelga de la cabecera en temporada. */
+.corp-cotizar { padding-top: 0; scroll-margin-top: 1.4rem; }
+.corp-avisos { margin-bottom: 1.2rem; }

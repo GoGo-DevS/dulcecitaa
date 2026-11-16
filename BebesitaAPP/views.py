@@ -303,7 +303,12 @@ def corporativo(request):
     else:
         form = CorporativoForm()
 
-    return render(request, "corporativo.html", {"form": form, "schema_migas": seo.schema_migas(("Venta corporativa", reverse("corporativo")))})
+    return render(request, "corporativo.html", {
+        "form": form,
+        "schema_migas": seo.schema_migas(("Venta corporativa", reverse("corporativo"))),
+        "whatsapp_corporativo": _whatsapp_con_texto(
+            f"Hola {settings.BRAND_NAME}, quiero cotizar dulces corporativos para mi empresa."),
+    })
 
 
 def contacto(request):
