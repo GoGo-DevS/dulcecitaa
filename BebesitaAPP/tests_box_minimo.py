@@ -97,7 +97,7 @@ class BoxMinimoTests(TestCase):
     def test_navidad_dice_desde_cuanto_parte_el_box(self):
         html = self.client.get("/navidad/").content.decode()
         self.assertIn("El box parte en $9.500, con el empaque incluido.", html)
-        self.assertIn("El box más simple parte en $9.500.", html)
+        self.assertIn("Un box parte en $9.500, con el empaque incluido.", html)
 
     @override_settings(BOX_MINIMO_TOTAL=0)
     def test_sin_minimo_vuelve_a_lo_de_antes(self):

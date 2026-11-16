@@ -76,7 +76,7 @@
       {% endif %}
       <div class="nav-card__cuerpo">
         <h2>{% if oferta_navidad %}Box navideño para regalar{% else %}Un box de dulces para regalar{% endif %}</h2>
-        <p>Eliges los dulces y la cobertura en <a href="{% url 'arma_tu_box' %}">Arma tu box</a>, desde {{ minimo_box }} por producto; el empaque cuesta ${{ precio_caja|pesos }}.{% if minimo_box_total %} El box parte en ${{ minimo_box_total|pesos }}, con el empaque incluido.{% endif %}</p>
+        <p>Eliges los dulces y la cobertura en <a href="{% url 'arma_tu_box' %}">Arma tu box</a>, desde {{ minimo_box }} por producto; el empaque cuesta ${{ precio_caja|pesos }}.{% if minimo_box_total %} El box parte en ${{ minimo_box_total|pesos }}, con el empaque incluido.{% endif %} ¿Más de un box? Se cotiza aparte{% if whatsapp_navidad %} por <a href="{{ whatsapp_navidad }}" target="_blank" rel="noopener">WhatsApp</a>{% endif %}.</p>
         {% if oferta_navidad %}
         <p>En Navidad va en empaque navideño con cinta y tarjeta, por los mismos ${{ precio_caja|pesos }} del empaque.</p>
         {% endif %}

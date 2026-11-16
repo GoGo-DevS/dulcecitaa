@@ -691,11 +691,13 @@ def navidad(request):
     if box_desde:
         navideno = (" En Navidad va en empaque navideño con cinta y tarjeta, al mismo precio."
                     if oferta else "")
+        # 16-11-2026, correccion de la duena por escrito: el precio de partida vale
+        # para UN box; si el cliente quiere varios, se cotiza aparte. La respuesta
+        # anterior ("Depende de lo que elijas...") no lo decia.
         preguntas.append(fichas_seo._Pregunta(
             "¿Cuánto cuesta un box de dulces para Navidad?",
-            f"Depende de lo que elijas: cada dulce va a su precio del catálogo, desde {minimo} por "
-            f"producto, más ${pesos(caja)} del empaque. El box más simple parte en ${pesos(box_desde)}."
-            f"{navideno}"))
+            f"Un box parte en ${pesos(box_desde)}, con el empaque incluido. Si quieres más de uno, "
+            f"se cotiza aparte: escríbenos por WhatsApp.{navideno}"))
     if oferta:
         pan = oferta["pan"]
         if oferta["cerrado"]:
