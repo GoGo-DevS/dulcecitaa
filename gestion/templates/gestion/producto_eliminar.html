@@ -62,7 +62,7 @@
               <option value="{{ d.pk }}"{% if elegido == d.pk|stringformat:"s" %} selected{% endif %}>{{ d.nombre }} ({{ d.get_absolute_url }})</option>
             {% endfor %}
           </select>
-          <div class="form-text">Si es un duplicado, elige el producto que se queda. Si no lo reemplaza ninguno, deja el catálogo.</div>
+          <div class="form-text">Si es un duplicado, elige el producto que se queda. Si no lo reemplaza ninguno, deja el catálogo. Solo aparecen los productos que están a la vista: si el que se queda está oculto, muéstralo primero.</div>
           {% if error %}<div class="text-danger small mt-1">{{ error }}</div>{% endif %}
         </div>
         <div class="d-flex flex-wrap gap-2">
