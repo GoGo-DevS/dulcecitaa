@@ -3,6 +3,12 @@
 {% block title %}{{ seo_titulo }}{% endblock %}
 {% block meta_description %}{{ seo_descripcion }}{% endblock %}
 {% block og_type %}product{% endblock %}
+{% comment %}
+  Un producto oculto (o archivado porque tiene pedidos) sigue respondiendo 200:
+  vuelve en su temporada sin perder nada. Pero no se indexa: antes el
+  /productos/pan-de-pascua/ oculto salia con "index, follow" (20-11-2026).
+{% endcomment %}
+{% block robots %}{% if p.visible %}{{ block.super }}{% else %}noindex, follow{% endif %}{% endblock %}
 {% block og_image_meta %}{% endblock %}
 {% block og_title %}{{ p.nombre }} | {{ site_brand }}{% endblock %}
 {% block og_description %}{{ seo_descripcion }}{% endblock %}

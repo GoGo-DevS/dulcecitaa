@@ -22,6 +22,7 @@ from .models import (
     PedidoItem,
     PreguntaFrecuente,
     Producto,
+    RedireccionProducto,
     Testimonio,
 )
 
@@ -576,11 +577,31 @@ def eliminar_carrito_ajax(request, linea):
     )
 
 
+def _redirigir_borrado(request, **filtro):
+    """301 de la direccion de un producto borrado desde el panel, o None.
+
+    Mismo criterio que la direccion vieja con numero: Google traspasa lo que
+    ya tenia y la visita no cae en un 404. El destino lo eligio quien borro.
+    """
+    redireccion = RedireccionProducto.objects.select_related("destino").filter(**filtro).first()
+    if redireccion is None:
+        return None
+    destino = redireccion.url_destino()
+    if request.META.get("QUERY_STRING"):
+        destino += "?" + request.META["QUERY_STRING"]
+    return redirect(destino, permanent=True)
+
+
 @ensure_csrf_cookie
 def producto_detalle(request, pk):
-    producto = get_object_or_404(Producto.objects.prefetch_related("opciones"), pk=pk)
-    imagenes = getattr(producto, "imagenes", None)
-    ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto),
+    producto = Producto.objects.prefetch_related("opciones").filter(pk=pk).first()
+    if producto is None:
+        respuesta = None if request.GET.get("modal") == "1" else _redirigir_borrado(request, pk_antiguo=pk)
+        if respuesta:
+            return respuesta
+        raise Http404("Producto no encontrado")
+    # Fotos extra en el orden en que se subieron (no hay campo de orden).
+    ctx = {"p": producto, "imagenes": producto.imagenes.order_by("pk"), "schema": seo.schema_producto(producto),
            "preguntas": producto.preguntas.filter(activa=True)[:8]}
 
     if request.GET.get("modal") == "1":
@@ -599,17 +620,24 @@ def producto_detalle(request, pk):
 def producto_ficha(request, slug):
     # precios_combinacion: la torta responde "¿cuánto vale?" con un precio por
     # combinacion (fichas_seo._texto_precios); sin esto eran 2 consultas por fila.
-    producto = get_object_or_404(
-        Producto.objects.prefetch_related("opciones", "precios_combinacion"),
-        slug=slug, variante_de__isnull=True)
-    imagenes = getattr(producto, "imagenes", None)
+    producto = (Producto.objects.prefetch_related("opciones", "precios_combinacion")
+                .filter(slug=slug, variante_de__isnull=True).first())
+    if producto is None:
+        # Un producto borrado desde el panel deja su direccion apuntando a otro
+        # lado (RedireccionProducto). Una direccion que nunca existio, 404.
+        respuesta = _redirigir_borrado(request, slug=slug)
+        if respuesta:
+            return respuesta
+        raise Http404("Producto no encontrado")
+    # Un producto OCULTO sigue respondiendo 200 (vuelve en su temporada sin
+    # perder nada), pero la plantilla le pone noindex: ver producto_detalle_page.
     # Los otros productos del catalogo, enlazados desde la ficha: antes una
     # ficha no enlazaba a ninguna otra, y las que solo llegaban por el sitemap
     # quedaron "descubiertas, sin indexar".
     relacionados = (Producto.objects.filter(visible=True, variante_de__isnull=True)
                     .exclude(pk=producto.pk).prefetch_related("precios_combinacion")
                     .order_by("orden", "nombre")[:4])
-    ctx = {"p": producto, "imagenes": imagenes.all() if imagenes else [], "schema": seo.schema_producto(producto),
+    ctx = {"p": producto, "imagenes": producto.imagenes.order_by("pk"), "schema": seo.schema_producto(producto),
            "preguntas": fichas_seo.preguntas(producto),
            "seo_titulo": fichas_seo.titulo(producto),
            "seo_descripcion": fichas_seo.descripcion(producto),

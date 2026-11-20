@@ -99,9 +99,17 @@ class AccesoTests(_Panel):
         self.assertEqual((self.alfajores.precio, self.alfajores.visible, self.alfajores.disponible),
                          (1590, True, True))
 
-    def test_no_existe_ninguna_ruta_para_borrar_un_producto(self):
+    def test_eliminar_por_get_o_sin_confirmar_no_borra_nada(self):
+        # Hasta el 20-11-2026 aca se exigia que NO existiera ruta de borrado.
+        # Ahora existe (tests_borrar_y_fotos_2011), pero solo actua con un POST
+        # confirmado; un GET o un POST suelto no tocan nada.
         self.client.force_login(self.duena)
-        for sufijo in ("eliminar", "borrar", "delete"):
+        url = reverse("gestion:producto_eliminar", args=[self.alfajores.pk])
+        self.assertEqual(self.client.get(url).status_code, 200)
+        self.assertEqual(self.client.post(url).status_code, 200)
+        self.alfajores.refresh_from_db()
+        self.assertTrue(self.alfajores.visible)
+        for sufijo in ("borrar", "delete"):
             url = f"/panel/productos/{self.alfajores.pk}/{sufijo}/"
             self.assertEqual(self.client.post(url).status_code, 404, url)
         self.assertTrue(Producto.objects.filter(pk=self.alfajores.pk).exists())

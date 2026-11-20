@@ -1,5 +1,5 @@
 {% extends "gestion/base.html" %}
-{% load plata %}
+{% load plata fotos %}
 
 {% block title %}{{ titulo }} | Gestión Dulcecita{% endblock %}
 {% block nav_productos %}active{% endblock %}
@@ -20,7 +20,7 @@
 <div class="alert alert-info" role="status">Está corriendo «{{ promo.nombre }}» ({{ promo.porcentaje }}%). Aquí va el precio normal: el descuento se aplica solo.</div>
 {% endif %}
 
-{% if form.errors or errores_combos %}
+{% if form.errors or errores_combos or errores_fotos %}
 <div class="alert alert-error" role="alert">No se guardó. Revisa lo marcado en rojo.</div>
 {% endif %}
 
@@ -50,6 +50,26 @@
         {{ form.imagen }}
         <div class="form-text">{{ form.imagen.help_text }}{% if producto %} Si no eliges otra, queda la que está.{% endif %}</div>
         {% if form.imagen.errors %}<div class="text-danger small mt-1">{{ form.imagen.errors|striptags }}</div>{% endif %}
+      </div>
+      {# Fotos extra (20-11-2026): la ficha las muestra en carrusel despues de la principal. #}
+      <div class="mt-3 mb-0" data-fotos-extra>
+        <label class="form-label" for="id_fotos_extra">Fotos extra <span class="item-meta">({{ fotos_extra|length }} de {{ max_fotos_extra }})</span></label>
+        {% if fotos_extra %}
+        <div class="prod-galeria">
+          {% for f in fotos_extra %}
+          <div class="prod-galeria-item">
+            <img src="{{ f.imagen.url|foto:240 }}" alt="Foto extra {{ forloop.counter }} de {{ producto.nombre }}" width="96" height="96" loading="lazy">
+            <label class="form-check prod-galeria-quitar">
+              <input type="checkbox" class="form-check-input" name="quitar_foto" value="{{ f.pk }}">
+              <span class="form-check-label">Quitar</span>
+            </label>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <input type="file" name="fotos_extra" id="id_fotos_extra" class="form-control" accept="image/*" multiple>
+        <div class="form-text">Puedes elegir varias a la vez. En la ficha salen después de la foto principal, en el orden en que las subes. Se achican solas, igual que la principal.{% if fotos_extra %} Marca «Quitar» y guarda para sacar una.{% endif %}</div>
+        {% for error in errores_fotos %}<div class="text-danger small mt-1">{{ error }}</div>{% endfor %}
       </div>
     </div>
   </div>
@@ -146,16 +166,24 @@
 <div class="card mb-3">
   <div class="card-body d-flex flex-wrap gap-2 align-items-center justify-content-between">
     <span class="item-meta">{% if producto.visible %}¿Ya no lo vendes? Ocúltalo: sale de la web y los pedidos anteriores no se pierden.{% else %}Está oculto: no sale en la web.{% endif %}</span>
-    <form method="post" action="{% url 'gestion:producto_visible' producto.pk %}" class="m-0">
-      {% csrf_token %}
-      <button type="submit" class="btn btn-sm btn-outline-secondary">{% if producto.visible %}Ocultar de la web{% else %}Mostrar en la web{% endif %}</button>
-    </form>
+    <span class="d-flex flex-wrap gap-2">
+      <form method="post" action="{% url 'gestion:producto_visible' producto.pk %}" class="m-0">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-sm btn-outline-secondary">{% if producto.visible %}Ocultar de la web{% else %}Mostrar en la web{% endif %}</button>
+      </form>
+      {# Abre la confirmacion: ahi se dice si se borra o se archiva, y por que. #}
+      <a href="{% url 'gestion:producto_eliminar' producto.pk %}" class="btn btn-sm btn-outline-danger">Eliminar…</a>
+    </span>
   </div>
 </div>
 {% endif %}
 
 <style>
   .prod-actual { width: 120px; height: 120px; object-fit: cover; border-radius: 14px; display: block; }
+  .prod-galeria { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: .6rem; }
+  .prod-galeria-item { width: 96px; }
+  .prod-galeria-item img { width: 96px; height: 96px; object-fit: cover; border-radius: 12px; display: block; }
+  .prod-galeria-quitar { margin: .25rem 0 0; font-size: .85rem; }
   .prod-opciones { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: .1rem .8rem; }
   .prod-interruptor { align-items: flex-start; padding: .35rem 0; }
   .prod-interruptor .form-check-input { margin-top: .15rem; }

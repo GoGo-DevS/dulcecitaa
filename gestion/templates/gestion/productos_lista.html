@@ -37,6 +37,7 @@
                 <div class="prod-acciones flex-shrink-0">
                     <a href="{% url 'gestion:producto_editar' p.pk %}" class="btn btn-sm btn-outline-dc">Editar</a>
                     <a href="{{ p.get_absolute_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-link text-muted" aria-label="Ver {{ p.nombre }} en la web"><i class="bi bi-box-arrow-up-right"></i> Ver</a>
+                    <a href="{% url 'gestion:producto_eliminar' p.pk %}" class="btn btn-sm btn-link text-danger prod-eliminar" aria-label="Eliminar {{ p.nombre }}">Eliminar</a>
                 </div>
             </div>
         {% empty %}
@@ -49,7 +50,7 @@
 <details class="card mb-3">
     <summary class="card-header"><i class="bi bi-eye-slash"></i> Ocultos <span class="item-meta">({{ ocultos|length }})</span></summary>
     <div class="list-group list-group-flush">
-        <div class="list-group-item item-meta">No salen en la web. Aquí quedan los productos antiguos y las cajas que creaste en un pedido. No se borran para que los pedidos anteriores sigan completos.</div>
+        <div class="list-group-item item-meta">No salen en la web ni en Google. Aquí quedan los productos antiguos, los archivados y las cajas que creaste en un pedido. Los que tienen pedidos no se borran, se archivan: así los pedidos anteriores siguen completos.</div>
         {% for p in ocultos %}
             <div class="list-group-item d-flex justify-content-between align-items-center gap-2">
                 <span class="min-w-0">
@@ -62,6 +63,7 @@
                         {% csrf_token %}
                         <button type="submit" class="btn btn-sm btn-outline-dc">Mostrar</button>
                     </form>
+                    <a href="{% url 'gestion:producto_eliminar' p.pk %}" class="btn btn-sm btn-link text-danger px-1" aria-label="Eliminar {{ p.nombre }}" title="Eliminar"><i class="bi bi-trash3"></i></a>
                 </span>
             </div>
         {% endfor %}
@@ -80,6 +82,7 @@
     .prod-foto img, .prod-sin-foto { width: 64px; height: 64px; border-radius: 12px; object-fit: cover; display: block; }
     .prod-sin-foto { display: flex; align-items: center; justify-content: center; background: var(--surface, #f6f8fb); color: var(--muted, #5a6b7e); font-size: 1.4rem; }
     .prod-acciones { display: flex; flex-direction: column; align-items: flex-end; gap: .15rem; }
+    .prod-eliminar { font-size: .8rem; padding-top: 0; padding-bottom: 0; }
     details > summary { cursor: pointer; list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
     .num { font-variant-numeric: tabular-nums; }

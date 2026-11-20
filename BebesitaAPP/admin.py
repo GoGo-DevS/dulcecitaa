@@ -14,6 +14,7 @@ from .models import (
     Producto,
     ProductoImagen,
     Promocion,
+    RedireccionProducto,
     Testimonio,
 )
 
@@ -106,6 +107,15 @@ class PedidoAdmin(admin.ModelAdmin):
     readonly_fields = ("creado", "total", "costo_despacho", "costo_caja")
     ordering = ("-creado",)
     inlines = [PedidoItemInline]
+
+
+@admin.register(RedireccionProducto)
+class RedireccionProductoAdmin(admin.ModelAdmin):
+    """Los productos borrados desde el panel y a donde lleva su direccion vieja."""
+    list_display = ("nombre", "slug", "pk_antiguo", "destino", "borrado_por", "creado")
+    search_fields = ("nombre", "slug")
+    readonly_fields = ("nombre", "pk_antiguo", "borrado_por", "creado")
+    autocomplete_fields = ("destino",)
 
 
 @admin.register(PedidoItem)

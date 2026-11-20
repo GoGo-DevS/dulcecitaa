@@ -1,0 +1,84 @@
+{% extends "gestion/base.html" %}
+{% load fotos %}
+
+{% block title %}Eliminar {{ producto.nombre }} | Gestión Dulcecita{% endblock %}
+{% block nav_productos %}active{% endblock %}
+
+{% block content %}
+{% comment %}
+  Confirmacion de "Eliminar" (20-11-2026). Dice exactamente lo que va a pasar.
+  La pagina NO decide nada: al recibir el POST la vista vuelve a revisar si el
+  producto tiene historia, por si entro un pedido mientras esto estaba abierto.
+{% endcomment %}
+<a href="{% url 'gestion:producto_editar' producto.pk %}" class="btn btn-sm btn-link text-muted ps-0 mb-1">
+  <i class="bi bi-arrow-left"></i> Volver
+</a>
+<h1 class="page-title mb-1">Eliminar «{{ producto.nombre }}»</h1>
+<p class="page-lead">Dirección en la web: <span class="num">{{ producto.get_absolute_url }}</span>{% if not producto.visible %} · hoy está oculto{% endif %}.</p>
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="elim-cabeza">
+      {% if producto.imagen %}<img src="{{ producto.imagen.url|foto:240 }}" alt="" width="72" height="72" class="elim-foto">{% endif %}
+      {% if motivos %}
+        <h2 class="h5 mb-0"><i class="bi bi-archive"></i> No se puede borrar: se va a archivar</h2>
+      {% else %}
+        <h2 class="h5 mb-0 text-danger"><i class="bi bi-trash3"></i> Se va a borrar para siempre</h2>
+      {% endif %}
+    </div>
+
+    {% if motivos %}
+      <p data-motivos>«{{ producto.nombre }}» {{ motivos_texto }}. Si se borrara, esa historia se perdería: los pedidos quedarían sin la línea de este producto.</p>
+      <p class="mb-1">Al archivarlo:</p>
+      <ul class="elim-lista">
+        <li>Sale del catálogo, de la portada, del sitemap y de Google{% if not producto.visible %} (ya estaba oculto){% endif %}.</li>
+        <li>Su página sigue existiendo con la marca «noindex», para que Google la deje de mostrar.</li>
+        <li>Queda guardado con sus pedidos, fotos y precios. Lo puedes volver a mostrar cuando quieras desde «Ocultos».</li>
+      </ul>
+      <form method="post" class="d-flex flex-wrap gap-2 m-0">
+        {% csrf_token %}
+        <input type="hidden" name="confirmar" value="si">
+        <button type="submit" class="btn btn-dc btn-lg flex-grow-1">{% if producto.visible %}Archivar{% else %}Dejarlo archivado{% endif %}</button>
+        <a href="{% url 'gestion:productos' %}" class="btn btn-outline-secondary btn-lg">Cancelar</a>
+      </form>
+    {% else %}
+      <p>No tiene pedidos de la web, ni cajas o componentes de pedidos del panel, ni costo cargado: por eso se puede borrar.</p>
+      <p class="mb-1">Al confirmar:</p>
+      <ul class="elim-lista" data-se-van>
+        <li>Se borra «{{ producto.nombre }}» con {{ se_van_texto }}.</li>
+        <li>Si alguien lo tenía en su carrito, desaparece de su carrito.</li>
+        <li>Los archivos de las fotos no se borran del almacenamiento: solo dejan de verse en la web.</li>
+        <li>Quien entre a <span class="num">{{ producto.get_absolute_url }}</span> llega a lo que elijas abajo, con una redirección permanente (301): no cae en una página de error y Google no pierde lo que ya tenía.</li>
+        <li><strong>No se puede deshacer.</strong> Si solo quieres sacarlo por un tiempo, mejor ocúltalo.</li>
+      </ul>
+      <form method="post" class="m-0">
+        {% csrf_token %}
+        <input type="hidden" name="confirmar" value="si">
+        <div class="mb-3">
+          <label class="form-label" for="id_destino">La dirección antigua lleva a</label>
+          <select name="destino" id="id_destino" class="form-select">
+            <option value="catalogo"{% if elegido == "catalogo" %} selected{% endif %}>El catálogo (/productos/)</option>
+            {% for d in destinos %}
+              <option value="{{ d.pk }}"{% if elegido == d.pk|stringformat:"s" %} selected{% endif %}>{{ d.nombre }} ({{ d.get_absolute_url }})</option>
+            {% endfor %}
+          </select>
+          <div class="form-text">Si es un duplicado, elige el producto que se queda. Si no lo reemplaza ninguno, deja el catálogo.</div>
+          {% if error %}<div class="text-danger small mt-1">{{ error }}</div>{% endif %}
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <button type="submit" class="btn btn-danger btn-lg flex-grow-1">Sí, eliminar para siempre</button>
+          <a href="{% url 'gestion:productos' %}" class="btn btn-outline-secondary btn-lg">Cancelar</a>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .elim-cabeza { display: flex; align-items: center; gap: .8rem; margin-bottom: .9rem; }
+  .elim-foto { width: 72px; height: 72px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
+  .elim-lista { padding-left: 1.2rem; margin-bottom: 1rem; }
+  .elim-lista li { margin-bottom: .3rem; }
+  .num { font-variant-numeric: tabular-nums; word-break: break-all; }
+</style>
+{% endblock %}

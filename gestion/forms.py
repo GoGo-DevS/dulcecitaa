@@ -174,8 +174,11 @@ class ProductoForm(forms.ModelForm):
     Lo que NO esta, a proposito:
     - la direccion web (slug): cambiarla rompe los enlaces ya compartidos y lo
       que Google tiene indexado;
-    - borrar: los pedidos apuntan al producto con CASCADE, borrarlo se llevaria
-      los pedidos que lo compraron. Un producto que ya no se vende se OCULTA.
+    - borrar: no es un campo. Va por su propia pantalla (productos.producto_eliminar),
+      que borra solo lo que no tiene ninguna historia y archiva lo demas: los
+      pedidos apuntan al producto con CASCADE.
+    - las fotos extra: van por fuera del ModelForm (productos._leer_fotos_extra),
+      con el mismo achicar_foto que la principal.
     """
 
     FOTO_LADO_MAXIMO = 1400      # px del lado mas largo

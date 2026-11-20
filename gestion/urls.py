@@ -50,14 +50,16 @@ urlpatterns = [
     path("promos/<int:pk>/eliminar/", views.promo_eliminar, name="promo_eliminar"),
 
     # Productos de la tienda web (15-11-2026): antes solo se editaban en /admin/.
-    # No hay ruta para borrar a proposito: un producto se oculta, no se borra
-    # (los pedidos apuntan a el con CASCADE).
+    # Eliminar (20-11-2026): GET muestra lo que va a pasar y solo un POST
+    # confirmado actua. Con pedidos o costos el producto se ARCHIVA, nunca se
+    # borra (las lineas de pedido de la web apuntan a el con CASCADE).
     path("productos/", productos.productos_lista, name="productos"),
     path("productos/nuevo/", productos.producto_form, name="producto_nuevo"),
     path("productos/<int:pk>/editar/", productos.producto_form, name="producto_editar"),
     path("productos/<int:pk>/visible/", productos.producto_toggle, {"campo": "visible"}, name="producto_visible"),
     path("productos/<int:pk>/disponible/", productos.producto_toggle, {"campo": "disponible"},
          name="producto_disponible"),
+    path("productos/<int:pk>/eliminar/", productos.producto_eliminar, name="producto_eliminar"),
 
     # Costos por unidad
     path("costos/", views.costos, name="costos"),

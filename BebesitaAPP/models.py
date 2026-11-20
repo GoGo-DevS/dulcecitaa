@@ -250,11 +250,58 @@ class PedidoItem(models.Model):
 
 
 class ProductoImagen(models.Model):
+    # Sin campo de orden: la ficha las muestra despues de la foto principal en
+    # el orden en que se subieron (por id). Se cargan desde el panel desde el
+    # 20-11-2026; antes solo desde /admin/.
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name="imagenes")
     imagen = models.ImageField(upload_to="productos/galeria/")
 
     def __str__(self):
         return f"Imagen de {self.producto.nombre}"
+
+
+class RedireccionProducto(models.Model):
+    """La direccion de un producto que se borro y a donde lleva ahora (20-11-2026).
+
+    Desde el panel se pueden borrar los productos que nunca se vendieron (los
+    duplicados como /productos/pan-de-pascua-2/). Esa direccion pudo quedar
+    compartida por WhatsApp o guardada en Google: un 404 ahi pierde la visita y
+    lo que Google ya tenia ganado. Con esta fila la direccion vieja responde
+    301 al destino que se eligio al borrar (otro producto o el catalogo).
+
+    Tambien es el registro de lo borrado: que producto, cuando y quien.
+    """
+    slug = models.SlugField("Dirección antigua", max_length=120, unique=True, null=True, blank=True,
+                            help_text="Lo que iba después de /productos/.")
+    pk_antiguo = models.PositiveIntegerField(
+        "Número antiguo", null=True, blank=True, db_index=True,
+        help_text="El id del producto borrado, para la dirección vieja /producto/<número>/.")
+    nombre = models.CharField("Producto borrado", max_length=100)
+    destino = models.ForeignKey(
+        Producto, on_delete=models.SET_NULL, null=True, blank=True, related_name="redirecciones_entrantes",
+        help_text="A dónde lleva la dirección antigua. Vacío = el catálogo.")
+    borrado_por = models.CharField(max_length=150, blank=True, default="")
+    creado = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ("-creado",)
+        verbose_name = "Dirección de producto borrado"
+        verbose_name_plural = "Direcciones de productos borrados"
+
+    def __str__(self):
+        return f"/productos/{self.slug}/ → {self.url_destino()}"
+
+    def url_destino(self):
+        """El producto elegido si sigue a la vista; si no, el catalogo.
+
+        Si el destino se oculta despues, la direccion vieja no debe llevar a
+        una pagina que ya no se vende: cae al catalogo hasta que vuelva.
+        """
+        from django.urls import reverse
+        destino = self.destino
+        if destino and destino.visible and destino.variante_de_id is None:
+            return destino.get_absolute_url()
+        return reverse("productos")
 
 
 class BeneficioDiferencial(models.Model):
