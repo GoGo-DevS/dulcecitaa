@@ -221,14 +221,16 @@ class NoSeBorraConHistoriaTests(_Base):
     def test_con_un_pedido_web_se_archiva_y_la_linea_queda_con_su_producto(self):
         linea = self._pedido_web(self.pan2)
         respuesta = self._eliminar(self.pan2, destino=self.alfajores.pk)
-        self.assertContains(respuesta, "«Pan de pascua» no se borró porque está en 1 pedido de la web")
-        self.assertContains(respuesta, "Quedó archivado")
+        # Primero la plata: si el producto se hubiera borrado, la linea se fue con
+        # el (CASCADE) y esto falla con DoesNotExist.
+        linea.refresh_from_db()
+        self.assertEqual((linea.producto_id, linea.cantidad, linea.precio), (self.pan2.pk, 10, 8990))
+        self.assertEqual(Pedido.objects.get(pk=linea.pedido_id).total, 89900)
         self.assertTrue(self._existe(self.pan2))
         self.pan2.refresh_from_db()
         self.assertFalse(self.pan2.visible)
-        linea.refresh_from_db()  # falla con DoesNotExist si el producto se hubiera borrado (CASCADE)
-        self.assertEqual((linea.producto_id, linea.cantidad, linea.precio), (self.pan2.pk, 10, 8990))
-        self.assertEqual(Pedido.objects.get(pk=linea.pedido_id).total, 89900)
+        self.assertContains(respuesta, "«Pan de pascua» no se borró porque está en 1 pedido de la web")
+        self.assertContains(respuesta, "Quedó archivado")
         self.assertFalse(RedireccionProducto.objects.exists())
         # Archivado no es 404: su pagina sigue, pero fuera de Google.
         ficha = self.client_class().get("/productos/pan-de-pascua-2/")
