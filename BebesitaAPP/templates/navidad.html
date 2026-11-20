@@ -101,6 +101,9 @@
       <div class="nav-card__cuerpo">
         <h2>Pan de pascua artesanal</h2>
         <p>Pan de pascua artesanal en formato de {{ oferta_navidad.pan.formato }}, a ${{ oferta_navidad.pan.precio|pesos }}. Lo vendemos desde el {{ oferta_navidad.pan.desde_texto }}.</p>
+        {% if pan_ficha %}
+        <a href="{{ pan_ficha.get_absolute_url }}" class="btn-main">Ver el pan de pascua artesanal</a>
+        {% endif %}
         {% if not oferta_navidad.cerrado and whatsapp_pan %}
         <a href="{{ whatsapp_pan }}" class="btn-ghost" target="_blank" rel="noopener">Encargar pan de pascua por WhatsApp</a>
         {% endif %}

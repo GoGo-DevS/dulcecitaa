@@ -124,7 +124,8 @@ class FichasSeoTests(TestCase):
     def test_producto_nuevo_sin_textos_propios_no_se_rompe(self):
         nuevo = _crear("Chilenitos", 990, descripcion="Chilenitos con manjar.")
         html = self.client.get(f"/productos/{nuevo.slug}/").content.decode()
-        self.assertEqual(_title(html), "Chilenitos artesanales desde $990 | Dulcecita")
+        # 20-11-2026: sin "artesanales" (quedaba en plural para productos en singular).
+        self.assertEqual(_title(html), "Chilenitos desde $990 | Dulcecita")
         self.assertEqual(_meta(html), "Chilenitos con manjar.")
         # 16-10-2026: toda ficha trae las preguntas comunes de la duena (duracion,
         # personalizacion, por mayor), aunque no tenga preguntas propias.

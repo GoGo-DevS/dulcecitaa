@@ -782,6 +782,12 @@ def navidad(request):
         "oferta_navidad": oferta,
         "whatsapp_pan": _whatsapp_con_texto(
             f"Hola {settings.BRAND_NAME}, quiero encargar pan de pascua.") if oferta else "",
+        # 20-11-2026: el pan ya se vende en la tienda. La tarjeta enlaza a su
+        # ficha (la pagina que tiene que posicionar para "pan de pascua"), solo
+        # si existe y esta visible.
+        "pan_ficha": (Producto.objects.filter(slug=oferta["pan"].get("slug") or "", visible=True,
+                                              variante_de__isnull=True).first()
+                      if oferta else None),
     })
 
 

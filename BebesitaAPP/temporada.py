@@ -36,6 +36,9 @@ OFERTAS_NAVIDAD = {
             "formato": "medio kilo",
             "precio": 8590,
             "desde": datetime.date(2026, 11, 20),
+            # 20-11-2026: el pan ya es un producto de la tienda; /navidad/ enlaza
+            # a su ficha. Si el producto no existe o esta oculto, no hay enlace.
+            "slug": "pan-de-pascua",
         },
     },
 }

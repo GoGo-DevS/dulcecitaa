@@ -52,8 +52,10 @@ def schema_negocio():
         "priceRange": "$",
         "currenciesAccepted": "CLP",
         "paymentAccepted": "Transferencia bancaria",
-        "areaServed": {"@type": "Country", "name": "Chile"},
-        "address": {"@type": "PostalAddress", "addressLocality": "Santiago",
+        # 20-11-2026: retiro y entrega a domicilio en Maipu (Diego); el resto de
+        # Chile por Paket. Sin calle: es la casa de la duena.
+        "areaServed": [{"@type": "City", "name": "Maipú"}, {"@type": "Country", "name": "Chile"}],
+        "address": {"@type": "PostalAddress", "addressLocality": "Maipú",
                     "addressRegion": "Región Metropolitana", "addressCountry": "CL"},
         "sameAs": [u for u in [getattr(settings, "INSTAGRAM_URL", "")] if u],
     }

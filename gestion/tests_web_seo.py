@@ -46,8 +46,10 @@ class _Panel(TestCase):
             descripcion="Alfajor de triple capa: galletas suaves, relleno cremoso de manjar y cobertura de chocolate.")
         self.alfajores.opciones.add(choc)
         self.banados = _producto("Cuchuflís bañados", 350, "Ricos.", orden=3, minimo=30)
-        self.nuevo = _producto("Pan de pascua", 8590, orden=6, minimo=1,
-                               descripcion="Pan de pascua artesanal de medio kilo, con frutos secos y fruta confitada.")
+        # 20-11-2026: el pan de pascua ahora tiene ficha propia; el producto "sin
+        # textos propios" de estas pruebas pasa a ser otro.
+        self.nuevo = _producto("Chilenitos", 8590, orden=6, minimo=1,
+                               descripcion="Chilenitos rellenos de manjar, hechos a mano y bañados en merengue.")
         self.client.force_login(self.duena)
 
 
@@ -100,14 +102,14 @@ class GoogleTests(_Panel):
         self.assertIn('<span class="badge bg-success flex-shrink-0">Lista</span>', ficha)
 
     def test_un_producto_sin_textos_propios_usa_su_descripcion_y_lo_dice(self):
-        ficha = self._tarjeta(self._html(), "Pan de pascua")
-        self.assertIn("Pan de pascua artesanales desde $8.590 | Dulcecita", ficha)
-        self.assertIn("Pan de pascua artesanal de medio kilo", ficha)
+        ficha = self._tarjeta(self._html(), "Chilenitos")
+        self.assertIn("Chilenitos desde $8.590 | Dulcecita", ficha)
+        self.assertIn("Chilenitos rellenos de manjar", ficha)
         self.assertIn("<b>Para Diego:</b> Usa el título genérico.", ficha)
 
     def test_un_producto_oculto_no_se_revisa(self):
         Producto.objects.filter(pk=self.nuevo.pk).update(visible=False)
-        self.assertNotIn("Pan de pascua", self._html())
+        self.assertNotIn("Chilenitos", self._html())
 
     def test_el_resumen_cuenta_listas_y_pendientes(self):
         html = self._html()

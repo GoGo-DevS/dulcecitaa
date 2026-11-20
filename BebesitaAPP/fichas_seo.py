@@ -21,6 +21,7 @@ Si un producto no esta aca (la duena crea uno nuevo), la ficha usa el armado
 generico de siempre: nada se rompe.
 """
 from django.conf import settings
+from django.utils import timezone
 
 TITULO_MAX = 60
 DESCRIPCION_MAX = 155
@@ -145,6 +146,9 @@ def _fichas(producto):
                 "también se venden por mayor al mismo precio del catálogo.",
             ],
         },
+        # Se arma solo si la pide su ficha (ver ficha()): calcularla para cada
+        # producto sumaba una consulta de precio por producto en el pie y el catalogo.
+        "pan-de-pascua": _ficha_pan_de_pascua,
         "torta-de-cuchuflis": {
             "ancla": "Torta de cuchuflís",
             # 02-11-2026: Google sugiere "cuanto vale una torta de cuchuflis",
@@ -178,9 +182,45 @@ def _fichas(producto):
     }
 
 
+def _ficha_pan_de_pascua(producto):
+    """Ficha del pan de pascua (20-11-2026).
+
+    Solo lo confirmado: medio kilo y $8.590 (temporada.OFERTAS_NAVIDAD, audios
+    de Tamara del 11-11) y, segun Diego el 20-11, retiro y entrega a domicilio
+    en Maipu; a otras comunas se coordina por WhatsApp y se cotiza segun la
+    comuna. NO se publica lo que no dijo: cuanto dura el pan, despacho a
+    regiones, precio por cantidad ni personalizacion. Por eso esta ficha no
+    lleva las PREGUNTAS_COMUNES de los dulces ("duran aproximadamente un mes").
+    """
+    from . import temporada
+
+    oferta = temporada.oferta_navidad()
+    precio = _pesos(producto.precio_desde())
+    formato = f" de {oferta['pan']['formato']}" if oferta else ""
+    parrafos = [f"Pan de pascua artesanal{formato}, hecho a mano. Cuesta ${precio} y lo "
+                "puedes comprar aquí mismo o encargarlo por WhatsApp."]
+    if oferta and timezone.localdate() < oferta["pan"]["desde"]:
+        parrafos.append(f"Lo vendemos desde el {oferta['pan']['desde_texto']}.")
+    parrafos.append("Si estás en Maipú, lo retiras o te lo llevamos a tu casa. Para otras comunas "
+                    "coordinamos la entrega por WhatsApp y te cotizamos el envío según dónde estés.")
+    if oferta and not oferta["cerrado"]:
+        parrafos.append(f"Recibimos pedidos de Navidad hasta el {oferta['pedidos_hasta_texto']}.")
+    return {
+        "ancla": "Pan de pascua artesanal",
+        "pregunta_precio": "¿Cuánto vale el pan de pascua?",
+        "titulo": "Pan de pascua artesanal en Maipú",
+        "h1": "Pan de pascua artesanal en Maipú",
+        "descripcion": (f"Pan de pascua artesanal{formato} a ${precio}. Retiro y entrega a domicilio "
+                        "en Maipú; a otras comunas lo coordinamos por WhatsApp."),
+        "parrafos": parrafos,
+        "sin_preguntas_comunes": True,
+    }
+
+
 def ficha(producto):
     """El dict de la ficha, o None si el producto no tiene textos propios."""
-    return _fichas(producto).get(producto.slug or "")
+    datos = _fichas(producto).get(producto.slug or "")
+    return datos(producto) if callable(datos) else datos
 
 
 def titulo(producto, marca=None):
@@ -192,7 +232,9 @@ def titulo(producto, marca=None):
     """
     marca = marca or settings.BRAND_NAME
     datos = ficha(producto)
-    base = datos["titulo"] if datos else f"{producto.nombre} artesanales"
+    # Sin ficha propia, el nombre tal cual: "X artesanales" quedaba en plural
+    # para productos en singular ("PAN DE PASCUA artesanales", 19-11-2026).
+    base = datos["titulo"] if datos else producto.nombre
     precio = _pesos(producto.precio_desde())
     for candidato in (f"{base} desde ${precio} | {marca}", f"{base} | {marca}"):
         if len(candidato) <= TITULO_MAX:
@@ -386,6 +428,8 @@ def preguntas(producto, limite=8):
     vistas = {_norma(p.pregunta) for p in propias}
     precio = pregunta_precio(producto)
     generadas = [precio] if precio and _norma(precio.pregunta) not in vistas else []
-    comunes = [_Pregunta(p, r.format(por_mayor=por_mayor_desde(producto)))
-               for p, r in PREGUNTAS_COMUNES if _norma(p) not in vistas]
+    datos = ficha(producto) or {}
+    comunes = [] if datos.get("sin_preguntas_comunes") else [
+        _Pregunta(p, r.format(por_mayor=por_mayor_desde(producto)))
+        for p, r in PREGUNTAS_COMUNES if _norma(p) not in vistas]
     return (propias + generadas + comunes)[:limite]
