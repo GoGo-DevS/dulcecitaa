@@ -1,6 +1,6 @@
 {% load plata %}
 
-{% load fotos %}<div class="product-detail-wrap">
+{% load fotos %}<div class="product-detail-wrap{% if es_pagina %} product-detail-wrap--pagina{% endif %}">
   <div class="product-detail-media">
     {% if imagenes and imagenes|length > 0 %}
     <div id="carouselProd" class="carousel slide detail-carousel">

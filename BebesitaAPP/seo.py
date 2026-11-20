@@ -83,7 +83,12 @@ def _oferta(producto):
         # priceValidUntil: hasta cuando vale este precio. Con promocion es el
         # ultimo dia de la campana; es lo que le dice a Google que el precio
         # bajo es temporal y no el nuevo precio de lista.
-        **({"priceValidUntil": Promocion.vigente().hasta.isoformat()} if Promocion.vigente() else {}),
+        # validFrom (20-11-2026, aviso de Search Console del 17-11): el primer
+        # dia de la MISMA promocion (Promocion.desde). Sale solo junto con
+        # priceValidUntil: sin promocion no hay fechas que declarar y no se
+        # inventa ninguna.
+        **({"validFrom": promo.desde.isoformat(), "priceValidUntil": promo.hasta.isoformat()}
+           if (promo := Promocion.vigente()) else {}),
         "itemCondition": "https://schema.org/NewCondition",
         "seller": {"@id": _abs("/#negocio")},
         # El minimo de ESTE producto: la torta se vende desde 1 y el schema

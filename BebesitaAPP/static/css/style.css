@@ -626,6 +626,17 @@ a:hover { color: var(--tinta); }
   flex-wrap: wrap;
 }
 
+/* Ficha como PAGINA (20-11-2026). La columna del texto se estira al alto de la
+   foto (vertical, 900x1200) y el margin-top:auto de arriba mandaba los botones
+   al fondo: en el pan de pascua quedaban 451 px vacios entre los sellos y
+   "Agregar al carrito" a 1440 de ancho. Ese auto es para el MODAL, que tiene su
+   propia regla (#modalProducto .detail-actions, sticky abajo). En la pagina el
+   bloque se centra en el alto de la foto y los botones siguen al contenido.
+   Solo con la clase --pagina: centrar dentro del modal, que se desplaza,
+   cortaria el principio del texto cuando no cabe. */
+.product-detail-wrap--pagina .product-detail-content { justify-content: center; }
+.product-detail-wrap--pagina .detail-actions { margin-top: .4rem; }
+
 .product-modal-surface {
   border-radius: var(--radius-lg);
   overflow: hidden;

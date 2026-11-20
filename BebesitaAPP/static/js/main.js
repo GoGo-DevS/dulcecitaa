@@ -133,7 +133,17 @@
       if (pendiente) return;
       pendiente = true;
       window.requestAnimationFrame(() => {
-        cabecera.classList.toggle('encogida', window.scrollY > 120);
+        // Histeresis (20-11-2026): se encoge al pasar 120 y solo vuelve bajo 60.
+        // Con un umbral unico titilaba: la cabecera es sticky y al encogerse
+        // la pagina pierde hasta 25 px de alto, Chrome corrige el scroll en esa
+        // misma cantidad (scroll anchoring), el scroll cae bajo 120, la clase
+        // se va, la cabecera crece y vuelta a empezar. Medido en vivo: 23
+        // cambios de clase en 0,7 s con el scroll quieto en 124. La distancia
+        // entre los dos umbrales (60) supera la mayor correccion posible.
+        const y = window.scrollY;
+        const encogida = cabecera.classList.contains('encogida');
+        if (!encogida && y > 120) cabecera.classList.add('encogida');
+        else if (encogida && y < 60) cabecera.classList.remove('encogida');
         medir();
         pendiente = false;
       });
