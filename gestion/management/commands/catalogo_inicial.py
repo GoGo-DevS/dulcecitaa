@@ -76,7 +76,21 @@ class Command(BaseCommand):
         nombres = [item["nombre"] for item in CATALOGO]
         principales = Producto.objects.filter(variante_de__isnull=True)
 
-        if principales.filter(nombre__in=nombres).exists():
+        # 21-11-2026: "ya cargado" se decide tambien por las DIRECCIONES (slugs) de los
+        # 4 productos de fabrica, que no cambian al renombrar, y por las redirecciones
+        # de los que se borraron a proposito desde el panel. Antes era solo por los
+        # NOMBRES: si la duena los renombraba (ya iban "ALFAJORES" y "CUCHUFLIS
+        # RELLENOS"), el siguiente deploy ocultaba toda la tienda y recreaba el
+        # catalogo viejo con los precios viejos.
+        from django.db.models import Q
+        from django.utils.text import slugify
+
+        from BebesitaAPP.models import RedireccionProducto
+
+        slugs = [slugify(n) for n in nombres]
+        ya_cargado = (principales.filter(Q(nombre__in=nombres) | Q(slug__in=slugs)).exists()
+                      or RedireccionProducto.objects.filter(slug__in=slugs).exists())
+        if ya_cargado:
             self.stdout.write("Catalogo nuevo ya cargado: no se toca.")
         else:
             self._cargar(nombres)
@@ -95,11 +109,20 @@ class Command(BaseCommand):
         """
         from BebesitaAPP.models import PrecioCombinacion, ProductoImagen
 
+        from BebesitaAPP.models import RedireccionProducto
+
         nombre = "Torta de cuchuflís"
-        existente = Producto.objects.filter(nombre=nombre).first()
+        # 21-11-2026: se busca por la DIRECCION, que no cambia al renombrar. Buscarla
+        # por el nombre exacto recreaba la torta en cada deploy despues de que la
+        # duena la llamo "TORTA CUCHUFLIS": asi nacio torta-de-cuchuflis-2, y volvio a
+        # nacer el 21-11 minutos despues de que la migracion 0021 la borrara.
+        existente = (Producto.objects.filter(slug="torta-de-cuchuflis", variante_de__isnull=True).first()
+                     or Producto.objects.filter(nombre__iexact=nombre, variante_de__isnull=True).first())
         if existente:
             self._fotos_torta_v2(existente)
             return
+        if RedireccionProducto.objects.filter(slug__startswith="torta-de-cuchuflis").exists():
+            return  # la borraron a proposito desde el panel: no se recrea
         categoria, _ = CategoriaProducto.objects.get_or_create(
             slug="dulce", defaults={"nombre": "Dulce", "orden": 1, "activa": True})
         t50 = Opcion.objects.get_or_create(tipo="tamano", nombre="50 cuchuflís", defaults={"orden": 1})[0]

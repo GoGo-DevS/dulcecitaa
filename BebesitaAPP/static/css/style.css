@@ -1782,6 +1782,11 @@ html {
 }
 .dr-tile:hover .dr-tile-overlay { opacity: 1; }
 .dr-tile-name { color: var(--crema); font-weight: 700; font-size: .98rem; line-height: 1.2; }
+/* 21-11-2026: los nombres se VEN en mayusculas en las tarjetas (la duena los
+   escribia en mayusculas en el panel para eso). El dato queda escrito normal:
+   en mayusculas salia asi en el title de Google, el schema, el carrito y los
+   correos, y desarmaba la busqueda por nombre de catalogo_inicial. */
+.dr-tile-name, .catalog-card__nombre { text-transform: uppercase; letter-spacing: .02em; }
 .dr-tile-price { color: var(--dr-pink); font-weight: 700; font-size: .9rem; }
 
 .dr-products-cta { text-align: center; margin: 2.4rem 0 .5rem; }
