@@ -3011,8 +3011,9 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
 /* 23-11-2026: con "Navidad" en el menú volvió el mismo problema, ahora de 1280
    a 1460px. En 1366 (el notebook más común) la página se corría 141px hacia el
    lado y el logo quedaba cortado. Medido en vivo con Playwright:
-   - de 1280 a 1399 el contenedor mide 1140: menú compacto.
-   - desde 1400 mide 1320: tamaño completo, con menos espacio entre enlaces.
+   - de 1280 a 1399 el contenedor mide 1150: menú compacto.
+   - desde 1400 mide 1340 (regla "Pantallas grandes"): tamaño completo, con
+     menos espacio entre enlaces.
    - de 992 a 1099 "Haz tu pedido" pasaba 17-21px el borde del contenedor y
      quedaba pegado a la orilla: menos relleno lateral en los enlaces.
    El gap va con !important porque gap-lg-4 de Bootstrap lo trae así; sin eso el
