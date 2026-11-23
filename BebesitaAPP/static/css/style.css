@@ -3008,6 +3008,30 @@ main p, .page-hero p, .section-head p, .ig-hero__bajada { line-height: 1.65; }
   .dr-nav .dr-logo-img { max-height: 52px; width: auto; }
 }
 
+/* 23-11-2026: con "Navidad" en el menú volvió el mismo problema, ahora de 1280
+   a 1460px. En 1366 (el notebook más común) la página se corría 141px hacia el
+   lado y el logo quedaba cortado. Medido en vivo con Playwright:
+   - de 1280 a 1399 el contenedor mide 1140: menú compacto.
+   - desde 1400 mide 1320: tamaño completo, con menos espacio entre enlaces.
+   - de 992 a 1099 "Haz tu pedido" pasaba 17-21px el borde del contenedor y
+     quedaba pegado a la orilla: menos relleno lateral en los enlaces.
+   El gap va con !important porque gap-lg-4 de Bootstrap lo trae así; sin eso el
+   column-gap de arriba no se aplica.
+   Prueba: docs/pruebas-visuales/menu_sin_desborde.py (mide en el navegador). */
+@media (min-width: 992px) and (max-width: 1099.98px) {
+  .dr-nav .nav-link:not(.dr-pedido) { padding-inline: .35rem !important; }
+}
+@media (min-width: 1280px) and (max-width: 1399.98px) {
+  .dr-nav .navbar-nav { gap: .9rem !important; }
+  .dr-nav .nav-link { font-size: .85rem; letter-spacing: .05em; }
+  .dr-nav .dr-pedido { padding: .78rem 1.4rem !important; font-size: .82rem; }
+  .dr-nav .dr-logo-img { height: 52px; }
+}
+@media (min-width: 1400px) {
+  .dr-nav .navbar-nav { gap: 1rem !important; }
+  .dr-nav .nav-link { letter-spacing: .06em; }
+}
+
 /* Franja azul: Paket vuelve, debajo de las líneas y en la misma letra delgada */
 .ig-minimo .ig-lineas__despacho {
   display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .5rem;
