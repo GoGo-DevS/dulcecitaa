@@ -692,7 +692,11 @@ def navidad(request):
     productos = list(Producto.objects.filter(visible=True, disponible=True, variante_de__isnull=True)
                      .prefetch_related("opciones", "precios_combinacion").order_by("orden", "nombre"))
     para_detalle = [p for p in productos if p.en_box]
-    tortas = [p for p in productos if not p.en_box]
+    # 23-11-2026: el pan de pascua tiene su propia tarjeta (la de la oferta). Antes
+    # caia tambien aca por no ir en el box y salia dos veces, con la foto de la torta
+    # y "Ver la pan de pascua".
+    slug_pan = temporada.OFERTAS_NAVIDAD.get(temporada._hoy().year, {}).get("pan_de_pascua", {}).get("slug")
+    tortas = [p for p in productos if not p.en_box and p.slug != slug_pan]
 
     # El box se calcula con las mismas filas y precios que /arma-tu-box/.
     minimo = arma_box.minimo_box()

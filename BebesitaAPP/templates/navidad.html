@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load static plata fichas %}
+{% load static plata fichas fotos %}
 {% comment %}
   03-11-2026: regalos de Navidad para PERSONAS. Google sugiere "box navideños
   para regalar", "box de dulces para navidad", "alfajores para navidad",
@@ -127,11 +127,18 @@
 
     {% for t in tortas %}
     <article class="nav-card">
+      {% comment %}23-11-2026: la foto de cada tarjeta es la de SU producto (antes era fija,
+        la de la torta, aunque la tarjeta fuera de otro). La torta conserva su foto vertical
+        de galeria. El boton no lleva articulo: "Ver la" solo calzaba con "torta".{% endcomment %}
+      {% if t.slug == "torta-de-cuchuflis" %}
       <img class="nav-card__foto" src="{% static 'img/galeria/torta-cuchuflis-cinta-rosada.webp' %}" alt="Torta de cuchuflís de Dulcecita terminada con cinta rosada" loading="lazy" decoding="async" width="720" height="900">
+      {% elif t.imagen %}
+      <img class="nav-card__foto" src="{{ t.imagen.url|foto:720 }}" alt="{{ t|ancla }} de Dulcecita" loading="lazy" decoding="async" width="720" height="900">
+      {% endif %}
       <div class="nav-card__cuerpo">
         <h2>Para compartir en la celebración: {{ t|ancla|lower }}</h2>
         <p>{{ t.texto_precios }}</p>
-        <a href="{{ t.get_absolute_url }}" class="btn-ghost">Ver la {{ t|ancla|lower }}</a>
+        <a href="{{ t.get_absolute_url }}" class="btn-ghost">Ver detalle y precios</a>
       </div>
     </article>
     {% endfor %}
