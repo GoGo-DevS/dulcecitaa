@@ -56,3 +56,21 @@ class TarjetasDeNavidad(TestCase):
         html = self._html()
         bloque = html.split("Para compartir en la celebración: torta de cuchuflís")[0].rsplit("<article", 1)[1]
         self.assertIn("torta-cuchuflis-cinta-rosada", bloque)
+
+    def _tarjeta_pan(self, html):
+        return html.split("<h2>Pan de pascua artesanal</h2>")[0].rsplit("<article", 1)[1]
+
+    def test_la_tarjeta_del_pan_muestra_la_foto_de_su_ficha_con_el_precio(self, _):
+        """Captura de Diego del 23-11: la tarjeta del pan era un bloque azul sin foto."""
+        bloque = self._tarjeta_pan(self._html())
+        self.assertIn(self.pan.imagen.url, bloque)
+        self.assertIn("nav-card__precio", bloque)
+        self.assertIn("$8.590", bloque)
+        self.assertNotIn("nav-card__sello", bloque)
+
+    def test_sin_foto_el_pan_conserva_el_sello_con_el_precio(self, _):
+        Producto.objects.filter(pk=self.pan.pk).update(imagen="")
+        bloque = self._tarjeta_pan(self._html())
+        self.assertIn("nav-card__sello", bloque)
+        self.assertIn("$8.590", bloque)
+        self.assertNotIn("<img", bloque)

@@ -94,10 +94,19 @@
 
     {% if oferta_navidad %}
     <article class="nav-card">
+      {% comment %}23-11-2026 (Diego: "coloca foto"): la tarjeta del pan muestra la foto
+        principal de su ficha, con el precio encima. Sin ficha o sin foto, queda el sello azul.{% endcomment %}
+      {% if pan_ficha and pan_ficha.imagen %}
+      <div class="nav-card__media">
+        <img class="nav-card__foto nav-card__foto--pan" src="{{ pan_ficha.imagen.url|foto:720 }}" alt="Pan de pascua artesanal de Dulcecita" loading="lazy" decoding="async" width="720" height="960">
+        <span class="nav-card__precio" aria-hidden="true">Pan de pascua · {{ oferta_navidad.pan.formato }}<b>${{ oferta_navidad.pan.precio|pesos }}</b></span>
+      </div>
+      {% else %}
       <div class="nav-card__sello" aria-hidden="true">
         <span>Pan de pascua · {{ oferta_navidad.pan.formato }}</span>
         <b>${{ oferta_navidad.pan.precio|pesos }}</b>
       </div>
+      {% endif %}
       <div class="nav-card__cuerpo">
         <h2>Pan de pascua artesanal</h2>
         <p>Pan de pascua artesanal en formato de {{ oferta_navidad.pan.formato }}, a ${{ oferta_navidad.pan.precio|pesos }}. Lo vendemos desde el {{ oferta_navidad.pan.desde_texto }}.</p>

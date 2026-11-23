@@ -3308,6 +3308,16 @@ a.dr-topbar--promo:hover { filter: brightness(1.05); }
 }
 .nav-card__sello span { color: #fff; font-size: .8rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
 .nav-card__sello b { color: var(--rosa); font-size: clamp(2.4rem, 6vw, 3.2rem); line-height: 1; }
+/* 23-11-2026: foto del pan con el precio encima. La foto es vertical y la tarjeta 4:3:
+   el pan queda en la mitad de abajo, por eso el recorte baja (object-position). */
+.nav-card__media { position: relative; }
+.nav-card__foto--pan { object-position: 50% 75%; }
+.nav-card__precio {
+  position: absolute; top: .8rem; left: .8rem; display: grid; gap: .2rem; padding: .5rem .8rem;
+  border-radius: var(--radius-sm); background: var(--azul); color: #fff; box-shadow: 0 6px 18px rgba(42, 64, 87, .25);
+  font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+}
+.nav-card__precio b { color: var(--rosa); font-size: 1.6rem; letter-spacing: 0; line-height: 1; }
 .nav-precios { margin: 0; padding: 0; list-style: none; }
 .nav-precios li { padding: .5rem 0; border-top: 1px solid var(--rosa-suave); font-size: .95rem; line-height: 1.35; }
 .nav-precios a { font-weight: 700; }
